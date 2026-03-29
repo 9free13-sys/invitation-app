@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Criar Convite{% endblock %}
+
+{% block content %}
+<style>
+    .form-wrapper {
+        max-width: 500px;
+        margin: 60px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+        text-align: center;
+        margin-bottom: 25px;
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+    }
+
+    button {
+        width: 100%;
+        padding: 14px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-weight: bold;
+        cursor: pointer;
+    }
+</style>
+
+<div class="form-wrapper">
+    <h2>Criar Convite</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <input type="text" name="event_name" placeholder="Nome do evento" required>
+        <input type="date" name="event_date" required>
+        <input type="text" name="guest_name" placeholder="Nome do convidado" required>
+        <input type="text" name="phone" placeholder="Telefone" required>
+
+        <button type="submit">Criar convite</button>
+    </form>
+</div>
+{% endblock %}

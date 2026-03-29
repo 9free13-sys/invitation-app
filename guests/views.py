@@ -1,7 +1,23 @@
-from django.shortcuts import redirect, get_object_or_404, render
-from .models import Guest
+from django.shortcuts import render, redirect
+from events.models import Event
+from guests.models import Guest
 
+def create_invite(request):
+    if request.method == 'POST':
+        event = Event.objects.create(
+            name=request.POST['event_name'],
+            date=request.POST['event_date']
+        )
 
+        guest = Guest.objects.create(
+            full_name=request.POST['guest_name'],
+            phone=request.POST['phone'],
+            event=event
+        )
+
+        return redirect(f"/invite/{guest.token}/")
+
+    return render(request, 'create_invite.html')
 def guest_list(request):
     guests = Guest.objects.all().order_by('-id')
     return render(request, 'guests/guest_list.html', {'guests': guests})
