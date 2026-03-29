@@ -23,9 +23,12 @@ class GuestAdmin(admin.ModelAdmin):
             phone = "244" + phone
 
         message = (
-            f"Olá {obj.full_name}, está convidado(a) para o evento {obj.event.name}. "
-            f"Confirme a sua presença no link: {invite_url}"
-        )
+            f"Olá {obj.full_name},\n\n"
+            f"Você está convidado(a) para o evento *{obj.event.name}*.\n"
+            f"Para confirmar a sua presença, clique no link abaixo:\n"
+            f"{invite_url}\n\n"
+            f"Obrigado."
+    )
         wa_url = f"https://wa.me/{phone}?text={quote(message)}"
         return format_html('<a href="{}" target="_blank">WhatsApp</a>', wa_url)
     whatsapp_link.short_description = "WhatsApp"
