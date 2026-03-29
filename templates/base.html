@@ -12,6 +12,21 @@
             background: #f4f6fb;
         }
 
+    .cta-btn {
+        background: white;
+        color: #2563eb !important;
+        padding: 10px 16px;
+        border-radius: 999px;
+        font-weight: 700;
+        margin-left: 20px;
+        display: inline-block;
+    }
+
+        .cta-btn:hover {
+        opacity: 1;
+        background: #eff6ff;
+    }
+
         .navbar {
             background: #2563eb;
             padding: 15px 30px;
@@ -48,16 +63,17 @@
 </head>
 <body>
 
-    <div class="navbar">
-        <div class="nav-container">
-            <span class="logo">🎉 InvitePro</span>
+  <div class="navbar">
+    <div class="nav-container">
+        <span class="logo">🎉 InvitePro</span>
 
-            <div class="nav-links">
-                <a href="/">Home</a>
-                <a href="/admin/">Admin</a>
-            </div>
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/admin/">Admin</a>
+            <a href="/" class="cta-btn">Faça agora o seu convite digital</a>
         </div>
     </div>
+</div>
 
     <div class="container">
         {% block content %}
