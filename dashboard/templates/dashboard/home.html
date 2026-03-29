@@ -46,68 +46,55 @@
             font-size: 18px;
         }
 
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 18px;
-            margin-bottom: 35px;
-        }
+            .stat-box {
+        background: white;
+        padding: 20px;
+        border-radius: 14px;
+        text-align: center;
+        width: 150px;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06);
+        transition: 0.3s;
+    }
 
-        .stat-box {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-        }
+    .stat-box:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+    }
 
-        .stat-box h3 {
-            margin: 0;
-            font-size: 34px;
-            color: #1d4ed8;
-        }
+    .stat-number {
+        font-size: 28px;
+        font-weight: bold;
+        color: #2563eb;
+    }
 
-        .stat-box p {
-            margin: 8px 0 0 0;
-            color: #475569;
-            font-size: 15px;
-        }
+    .stat-label {
+        font-size: 14px;
+        color: #6b7280;
+    }
 
-        .buttons {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-        }
+        .main-btn {
+    display: inline-block;
+    padding: 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-weight: 600;
+    text-align: center;
+    color: white;
+    transition: 0.3s;
+}
 
-        .btn {
-            display: block;
-            text-align: center;
-            padding: 16px;
-            background: #1e40af;
-            color: white;
-            text-decoration: none;
-            border-radius: 14px;
-            font-size: 18px;
-            font-weight: bold;
-            transition: 0.2s ease;
-            box-shadow: 0 8px 18px rgba(30, 64, 175, 0.20);
-        }
+.btn-dark {
+    background: #0f172a;
+}
 
-        .btn:hover {
-            background: #2563eb;
-            transform: translateY(-3px) scale(1.02);
-        }
-        .btn:active {
-             transform: scale(0.97);
-        }
-        .btn.secondary {
-            background: #0f172a;
-            box-shadow: 0 8px 18px rgba(15, 23, 42, 0.20);
-        }
+.btn-blue {
+    background: #2563eb;
+}
 
-        .btn.secondary:hover {
-            background: #1e293b;
-        }
+.main-btn:hover {
+    transform: translateY(-3px);
+    opacity: 0.9;
+}
 
         @media (max-width: 768px) {
             .container {
@@ -165,11 +152,10 @@
         </div>
 
         <div class="buttons">
-        <a href="/admin/" class="btn secondary">⚙️ Admin</a>
-        <a href="/events/" class="btn">📅 Eventos</a>
-        <a href="/guests/" class="btn">👥 Convidados</a>
-        <a href="/events/" class="btn">✉️ Convites</a></div>
-    </div>
+        <a href="/admin/" class="main-btn btn-dark">⚙️ Admin</a>
+        <a href="/events/" class="main-btn btn-blue">📅 Eventos</a>
+        <a href="/guests/" class="main-btn btn-blue">👥 Convidados</a>
+        <a href="/invitations/" class="main-btn btn-blue">✉️ Convites</a> </div>
 
 </body>
 </html>
