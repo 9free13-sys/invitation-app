@@ -195,12 +195,15 @@
                     <span class="label">Data</span>
                    {{ guest.event.date|date:"d/m/Y" }}
 
-                <div class="info-item">
-                    <span class="label">Estado da resposta</span>
-                    {% if guest.status == "confirmed" %}
+                 <div class="info-item">
+                        <span class="label">Estado da resposta</span>
+
+                    {% if guest.status == "confirmado" %}
                         <span class="status status-confirmed">Confirmado</span>
-                    {% elif guest.status == "declined" %}
-                        <span class="status status-declined">Não confirmado</span>
+
+                    {% elif guest.status == "recusado" %}
+                        <span class="status status-declined">Recusado</span>
+
                     {% else %}
                         <span class="status">Pendente</span>
                     {% endif %}
