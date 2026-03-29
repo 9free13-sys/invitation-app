@@ -4,35 +4,109 @@
 
 {% block content %}
 <style>
-    .invite-card {
-        max-width: 500px;
-        margin: 60px auto;
-        background: white;
-        padding: 40px;
-        border-radius: 20px;
-        text-align: center;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    .invite-wrapper {
+        max-width: 760px;
+        margin: 50px auto;
     }
 
-    h1 {
+    .invite-card {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border-radius: 28px;
+        padding: 50px 40px;
+        text-align: center;
+        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        border: 1px solid #e5e7eb;
+    }
+
+    .invite-badge {
+        width: 90px;
+        height: 90px;
+        margin: 0 auto 20px;
+        border-radius: 50%;
+        background: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 40px;
+    }
+
+    .invite-title {
+        font-size: 42px;
+        font-weight: 800;
+        color: #0f172a;
         margin-bottom: 10px;
     }
 
+    .invite-subtitle {
+        font-size: 18px;
+        color: #64748b;
+        margin-bottom: 35px;
+    }
+
+    .guest-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 10px;
+    }
+
+    .event-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        padding: 25px;
+        margin: 30px 0;
+    }
+
+    .event-label {
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        color: #64748b;
+        margin-bottom: 8px;
+    }
+
     .event-name {
-        font-size: 22px;
-        font-weight: bold;
+        font-size: 30px;
+        font-weight: 800;
         color: #2563eb;
-        margin: 15px 0;
+        margin-bottom: 10px;
+    }
+
+    .event-date {
+        font-size: 17px;
+        color: #475569;
+    }
+
+    .action-text {
+        font-size: 17px;
+        color: #475569;
+        margin: 30px 0 20px;
+    }
+
+    .actions {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-top: 10px;
     }
 
     .btn {
         display: inline-block;
-        margin: 10px;
-        padding: 12px 20px;
-        border-radius: 10px;
+        padding: 16px 20px;
+        border-radius: 14px;
         text-decoration: none;
-        font-weight: bold;
+        font-size: 18px;
+        font-weight: 700;
         color: white;
+        transition: 0.25s ease;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        opacity: 0.95;
     }
 
     .confirm {
@@ -42,22 +116,50 @@
     .decline {
         background: #dc2626;
     }
+
+    @media (max-width: 700px) {
+        .invite-card {
+            padding: 35px 22px;
+        }
+
+        .invite-title {
+            font-size: 32px;
+        }
+
+        .event-name {
+            font-size: 24px;
+        }
+
+        .actions {
+            grid-template-columns: 1fr;
+        }
+    }
 </style>
 
-<div class="invite-card">
-    <h1>🎉 Convite</h1>
+<div class="invite-wrapper">
+    <div class="invite-card">
+        <div class="invite-badge">🎉</div>
 
-    <p>Olá <strong>{{ guest.full_name }}</strong>,</p>
+        <div class="invite-title">Convite Especial</div>
+        <div class="invite-subtitle">Confirme a sua presença de forma rápida e simples</div>
 
-    <p>Você está convidado(a) para:</p>
+        <p>Olá,</p>
+        <div class="guest-name">{{ guest.full_name }}</div>
 
-    <div class="event-name">
-        {{ guest.event.name }}
+        <div class="event-box">
+            <div class="event-label">Evento</div>
+            <div class="event-name">{{ guest.event.name }}</div>
+            <div class="event-date">{{ guest.event.date|date:"d/m/Y" }}</div>
+        </div>
+
+        <div class="action-text">
+            Escolha uma das opções abaixo para responder ao convite.
+        </div>
+
+        <div class="actions">
+            <a href="/invite/{{ guest.token }}/confirm/" class="btn confirm">✅ Confirmar presença</a>
+            <a href="/invite/{{ guest.token }}/decline/" class="btn decline">❌ Recusar</a>
+        </div>
     </div>
-
-    <p>Escolha uma opção:</p>
-
-    <a href="/invite/{{ guest.token }}/confirm/" class="btn confirm">Confirmar</a>
-    <a href="/invite/{{ guest.token }}/decline/" class="btn decline">Recusar</a>
 </div>
 {% endblock %}
