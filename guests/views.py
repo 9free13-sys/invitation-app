@@ -25,9 +25,9 @@ def invite_response(request, token, action):
     guest = get_object_or_404(Guest, token=token)
 
     if action == 'confirm':
-        guest.confirmed = True
+        guest.status = 'confirmado'
     elif action == 'decline':
-        guest.confirmed = False
+        guest.status = 'recusado'
 
     guest.save()
 
