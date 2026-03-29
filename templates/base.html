@@ -14,28 +14,50 @@
 
         /* Navbar */
         .navbar {
-            background: #2563eb;
-            padding: 15px 30px;
+    background: #2563eb;
+    padding: 15px 30px;
+}
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             color: white;
-            font-weight: bold;
-            font-size: 18px;
         }
 
-        .container {
-            padding: 30px;
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
         }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.8;
+        }
+
+                .container {
+                    padding: 30px;
+                }
     </style>
 </head>
 <body>
 
-    <div class="navbar">
-        Sistema de Convites
-    </div>
+   <div class="navbar">
+    <div class="nav-container">
+        <span class="logo">🎉 InvitePro</span>
 
-    <div class="container">
-        {% block content %}
-        {% endblock %}
+        <div class="nav-links">
+            <a href="/">Home</a>
+            <a href="/admin/">Admin</a>
+        </div>
     </div>
-
+</div>
 </body>
 </html>
