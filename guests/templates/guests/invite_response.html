@@ -1,47 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resposta ao Convite</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
+
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f6fa;
-            padding: 40px;
-            text-align: center;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
         .card {
             background: white;
-            width: 500px;
-            margin: auto;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 560px;
+            padding: 35px 28px;
+            border-radius: 24px;
+            box-shadow: 0 18px 45px rgba(0, 0, 0, 0.08);
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 64px;
+            margin-bottom: 18px;
         }
 
         h1 {
-            margin-bottom: 20px;
+            margin: 0 0 14px;
+            color: #0f172a;
+            font-size: 30px;
         }
 
-        p {
+        .message {
             font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 24px;
+        }
+
+        .message.confirmado {
+            color: #166534;
+        }
+
+        .message.recusado {
+            color: #991b1b;
+        }
+
+        .info-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 18px;
+            padding: 18px;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .info-box p {
+            margin: 10px 0;
+            font-size: 16px;
+            color: #334155;
+        }
+
+        .btn {
+            display: inline-block;
+            margin-top: 28px;
+            text-decoration: none;
+            background: #1e40af;
+            color: white;
+            padding: 12px 22px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .subtext {
+            color: #64748b;
+            font-size: 15px;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .card {
+                padding: 28px 20px;
+            }
+
+            h1 {
+                font-size: 25px;
+            }
+
+            .icon {
+                font-size: 54px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="card">
-        <h1>Resposta registada</h1>
-
-        <p><strong>Convidado:</strong> {{ guest.full_name }}</p>
-        <p><strong>Evento:</strong> {{ guest.event.name }}</p>
-        <p><strong>Data:</strong> {{ guest.event.date }}</p>
-<p><strong>Local:</strong> {{ guest.event.location }}</p>
-
         {% if action == 'confirm' %}
-            <p>✅ A tua presença foi confirmada com sucesso.</p>
+            <div class="icon">✅</div>
+            <h1>Presença confirmada</h1>
+            <p class="message confirmado">A tua resposta foi registada com sucesso.</p>
         {% elif action == 'decline' %}
-            <p>❌ A tua presença foi recusada.</p>
+            <div class="icon">❌</div>
+            <h1>Resposta registada</h1>
+            <p class="message recusado">Informaste que não poderás comparecer.</p>
         {% endif %}
+
+        <p class="subtext">Obrigado por responder ao convite.</p>
+
+        <div class="info-box">
+            <p><strong>Convidado:</strong> {{ guest.full_name }}</p>
+            <p><strong>Evento:</strong> {{ guest.event.name }}</p>
+            <p><strong>Data:</strong> {{ guest.event.date }}</p>
+            <p><strong>Local:</strong> {{ guest.event.location }}</p>
+        </div>
+
+        <a href="javascript:window.close()" class="btn">Fechar</a>
     </div>
 </body>
 </html>
