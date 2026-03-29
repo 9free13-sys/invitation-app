@@ -280,9 +280,8 @@
 
     <script>
 function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-    let linkConfirmar = "http://192.168.1.15:8000/invite/" + token + "/confirm/";
-    let linkRecusar = "http://192.168.1.15:8000/invite/" + token + "/decline/";
-
+    let linkConfirmar = "https://invitation-app-n5rh.onrender.com/invite/" + token + "/confirm/";
+    let linkRecusar = "https://invitation-app-n5rh.onrender.com/invite/" + token + "/decline/";
     let mensagem =
     "Olá " + nome + ",\n\n" +
     "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
@@ -291,8 +290,7 @@ function enviarWhatsApp(nome, evento, data, local, telefone, token) {
     "👉 Confirmar presença:\n" + linkConfirmar + "\n\n" +
     "❌ Não poderei comparecer:\n" + linkRecusar;
 
-    let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
-    window.open(url, '_blank');
+    let url = "https://invitation-app-n5rh.onrender.com/invite/{{ guest.token }}/confirm/";
 }
 </script>
 
