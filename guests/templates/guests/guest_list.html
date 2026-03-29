@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Convidados</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 30px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            width: 700px;
+            margin: 15px auto;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.08);
+        }
+
+        .name {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .info {
+            margin-top: 8px;
+            font-size: 16px;
+        }
+
+        .status {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .empty {
+            text-align: center;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Lista de Convidados</h1>
+
+    {% if guests %}
+        {% for guest in guests %}
+            <div class="card">
+                <div class="name">{{ guest.full_name }}</div>
+                <div class="info"><strong>Evento:</strong> {{ guest.event.name }}</div>
+                <div class="info"><strong>Telefone:</strong> {{ guest.phone }}</div>
+                <div class="info"><strong>Email:</strong> {{ guest.email }}</div>
+
+                <div class="status">
+                    {% if guest.confirmed %}
+                        ✅ Confirmado
+                    {% else %}
+                        ❌ Não confirmado
+                    {% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <p class="empty">Nenhum convidado encontrado.</p>
+    {% endif %}
+
+</body>
+</html>

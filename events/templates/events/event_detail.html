@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.name }}</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eef2ff, #f8fafc);
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .back-btn {
+            text-decoration: none;
+            background: #0f172a;
+            color: white;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-weight: bold;
+        }
+
+        .event-card, .stats-box, .section {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            margin-bottom: 25px;
+        }
+
+        .event-card h1 {
+            margin-top: 0;
+            color: #0f172a;
+        }
+
+        .badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .info {
+            margin: 10px 0;
+            color: #475569;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .stat {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 18px;
+            text-align: center;
+        }
+
+        .stat h4 {
+            margin: 0;
+            font-size: 28px;
+            color: #1d4ed8;
+        }
+
+        .guest-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .guest-item {
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 18px;
+            margin-bottom: 16px;
+            background: #f8fafc;
+        }
+
+        .guest-name {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        form input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid #cbd5e1;
+            border-radius: 12px;
+            margin-bottom: 12px;
+        }
+
+        form button, .wa-btn, .copy-btn {
+            background: #1e40af;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .guest-links a, .guest-actions a {
+            display: inline-block;
+            margin: 6px 6px 0 0;
+            text-decoration: none;
+            background: #e2e8f0;
+            color: #0f172a;
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        .status {
+            margin-top: 12px;
+            font-weight: bold;
+            display: inline-block;
+            padding: 8px 12px;
+            border-radius: 999px;
+            font-size: 14px;
+        }
+
+        .status.confirmado {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status.pendente {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .status.recusado {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        @media (max-width: 900px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="topbar">
+            <a href="/events/" class="back-btn">← Voltar aos eventos</a>
+        </div>
+
+        <div class="event-card">
+            <h1>{{ event.name }}</h1>
+            <div class="badge">{{ event.event_type_label }}</div>
+            <div class="info"><strong>Data:</strong> {{ event.date }}</div>
+            <div class="info"><strong>Local:</strong> {{ event.location }}</div>
+            <div class="info"><strong>Descrição:</strong> {{ event.description }}</div>
+        </div>
+
+        <div class="stats-box">
+    <h3>📊 Estatísticas do Evento</h3>
+    <div class="stats-grid">
+        <div class="stat">
+            <h4>{{ total_guests }}</h4>
+            <p>Total convidados</p>
+        </div>
+        <div class="stat">
+            <h4>{{ confirmed_guests }}</h4>
+            <p>Confirmados</p>
+        </div>
+        <div class="stat">
+            <h4>{{ pending_guests }}</h4>
+            <p>Pendentes</p>
+        </div>
+        <div class="stat">
+            <h4>{{ declined_guests }}</h4>
+            <p>Recusados</p>
+        </div>
+        <div class="stat">
+            <h4>{{ percentage }}%</h4>
+            <p>Presença</p>
+        </div>
+    </div>
+</div>
+
+        <div class="section">
+            <h3>➕ Adicionar Convidado</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <input type="text" name="full_name" placeholder="Nome completo" required>
+                <input type="text" name="phone" placeholder="Telefone">
+                <input type="email" name="email" placeholder="Email">
+                <button type="submit">Adicionar convidado</button>
+            </form>
+        </div>
+
+        <div class="section">
+            <h2>👥 Convidados</h2>
+
+            {% if guests %}
+                <ul class="guest-list">
+                    {% for guest in guests %}
+                        <li class="guest-item">
+                            <div class="guest-name">{{ guest.full_name }}</div>
+
+                          
+                            <div style="margin-top:10px;">
+                                <button class="wa-btn" onclick="enviarWhatsApp(
+                                    '{{ guest.full_name }}',
+                                    '{{ guest.event.name }}',
+                                    '{{ guest.event.date }}',
+                                    '{{ guest.event.location }}',
+                                    '{{ guest.phone }}',
+                                    '{{ guest.token }}'
+                                )">
+                                    📨 Enviar convite
+                                </button>
+
+                                <button class="copy-btn" onclick="navigator.clipboard.writeText('http://192.168.1.15:8000/invite/{{ guest.token }}/confirm/')">
+                                    📋 Copiar link
+                                </button>
+                            </div>
+
+                           <div class="guest-actions">
+                    {% if guest.status == 'confirmado' %}
+                         <div class="status confirmado">✅ Confirmado</div>
+        <a href="/decline/{{ guest.id }}/">Recusar</a>
+
+                    {% elif guest.status == 'recusado' %}
+        <div class="status recusado">🚫 Recusado</div>
+        <a href="/confirm/{{ guest.id }}/">Confirmar</a>
+
+                     {% else %}
+        <div class="status pendente">⏳ Pendente</div>
+        <a href="/confirm/{{ guest.id }}/">Confirmar</a>
+        <a href="/decline/{{ guest.id }}/">Recusar</a>
+                     {% endif %}
+</div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Nenhum convidado ainda.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+function enviarWhatsApp(nome, evento, data, local, telefone, token) {
+    let linkConfirmar = "http://192.168.1.15:8000/invite/" + token + "/confirm/";
+    let linkRecusar = "http://192.168.1.15:8000/invite/" + token + "/decline/";
+
+    let mensagem =
+    "Olá " + nome + ",\n\n" +
+    "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
+    "📅 Data: " + data + "\n" +
+    "📍 Local: " + local + "\n\n" +
+    "👉 Confirmar presença:\n" + linkConfirmar + "\n\n" +
+    "❌ Não poderei comparecer:\n" + linkRecusar;
+
+    let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+    window.open(url, '_blank');
+}
+</script>
+
+</body>
+</html>

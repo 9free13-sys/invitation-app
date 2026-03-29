@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Resposta ao Convite</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .card {
+            background: white;
+            width: 500px;
+            margin: auto;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Resposta registada</h1>
+
+        <p><strong>Convidado:</strong> {{ guest.full_name }}</p>
+        <p><strong>Evento:</strong> {{ guest.event.name }}</p>
+        <p><strong>Data:</strong> {{ guest.event.date }}</p>
+<p><strong>Local:</strong> {{ guest.event.location }}</p>
+
+        {% if action == 'confirm' %}
+            <p>✅ A tua presença foi confirmada com sucesso.</p>
+        {% elif action == 'decline' %}
+            <p>❌ A tua presença foi recusada.</p>
+        {% endif %}
+    </div>
+</body>
+</html>
