@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Convite{% endblock %}
+
+{% block content %}
+<style>
+    .invite-card {
+        max-width: 500px;
+        margin: 60px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 20px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+        margin-bottom: 10px;
+    }
+
+    .event-name {
+        font-size: 22px;
+        font-weight: bold;
+        color: #2563eb;
+        margin: 15px 0;
+    }
+
+    .btn {
+        display: inline-block;
+        margin: 10px;
+        padding: 12px 20px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: bold;
+        color: white;
+    }
+
+    .confirm {
+        background: #16a34a;
+    }
+
+    .decline {
+        background: #dc2626;
+    }
+</style>
+
+<div class="invite-card">
+    <h1>🎉 Convite</h1>
+
+    <p>Olá <strong>{{ guest.full_name }}</strong>,</p>
+
+    <p>Você está convidado(a) para:</p>
+
+    <div class="event-name">
+        {{ guest.event.name }}
+    </div>
+
+    <p>Escolha uma opção:</p>
+
+    <a href="/invite/{{ guest.token }}/confirm/" class="btn confirm">Confirmar</a>
+    <a href="/invite/{{ guest.token }}/decline/" class="btn decline">Recusar</a>
+</div>
+{% endblock %}

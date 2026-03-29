@@ -20,6 +20,9 @@ def decline_guest(request, guest_id):
     guest.save()
     return redirect('event_detail', event_id=guest.event.id)
 
+def invite_page(request, token):
+    guest = get_object_or_404(Guest, token=token)
+    return render(request, 'guests/invite_page.html', {'guest': guest})
 
 def invite_response(request, token, action):
     guest = get_object_or_404(Guest, token=token)
