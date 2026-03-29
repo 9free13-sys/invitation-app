@@ -1,19 +1,16 @@
-from django.shortcuts import render
 from events.models import Event
 from guests.models import Guest
-
+from django.shortcuts import render
 
 def home(request):
     total_events = Event.objects.count()
     total_guests = Guest.objects.count()
-    confirmed_guests = Guest.objects.filter(status='confirmado').count()
-    unconfirmed_guests = Guest.objects.filter(status='pendente').count() + Guest.objects.filter(status='recusado').count()
+    total_confirmed = Guest.objects.filter(status='confirmado').count()
+    total_declined = Guest.objects.filter(status='recusado').count()
 
-    context = {
+    return render(request, 'dashboard/home.html', {
         'total_events': total_events,
         'total_guests': total_guests,
-        'confirmed_guests': confirmed_guests,
-        'unconfirmed_guests': unconfirmed_guests,
-    }
-
-    return render(request, 'dashboard/home.html', context)
+        'total_confirmed': total_confirmed,
+        'total_declined': total_declined,
+    })
