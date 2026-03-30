@@ -57,12 +57,14 @@
                 <div class="info"><strong>Email:</strong> {{ guest.email }}</div>
 
                 <div class="status">
-                    {% if guest.confirmed %}
-                        ✅ Confirmado
-                    {% else %}
-                        ❌ Não confirmado
-                    {% endif %}
-                </div>
+                {% if guest.status == 'confirmado' %}
+                    ✅ Confirmado
+                {% elif guest.status == 'recusado' %}
+                    ❌ Não confirmado
+                {% else %}
+                    ⏳ Pendente
+                {% endif %}
+            </div>
             </div>
         {% endfor %}
     {% else %}
