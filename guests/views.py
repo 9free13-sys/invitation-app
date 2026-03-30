@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Guest
 from events.models import Event
 from guests.models import Guest
-
+from django.contrib.auth.decorators import login_required
 def create_invite(request):
     if request.method == 'POST':
         event = Event.objects.create(
@@ -19,6 +19,8 @@ def create_invite(request):
         return redirect(f"/invite/{guest.token}/")
 
     return render(request, 'create_invite.html')
+
+@login_required
 def guest_list(request):
     guests = Guest.objects.all().order_by('-id')
     return render(request, 'guests/guest_list.html', {'guests': guests})

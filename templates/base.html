@@ -22,6 +22,23 @@
         display: inline-block;
     }
 
+    .logout-btn {
+        background: transparent;
+        color: white !important;
+        padding: 10px 14px;
+        border-radius: 999px;
+        font-weight: 700;
+        margin-left: 12px;
+        display: inline-block;
+        border: 1px solid rgba(255,255,255,0.35);
+    }
+
+    .logout-btn:hover {
+        background: rgba(255,255,255,0.12);
+        opacity: 1;
+}
+
+
         .cta-btn:hover {
         opacity: 1;
         background: #eff6ff;
@@ -63,12 +80,18 @@
 </head>
 <body>
 
- <div class="navbar">
+<div class="navbar">
     <div class="nav-container">
         <span class="logo">🎉 InvitePro</span>
 
         <div class="nav-links">
             <a href="/create/" class="cta-btn">Criar meu convite agora</a>
+
+            {% if request.user.is_authenticated %}
+                <a href="/logout/" class="logout-btn">Sair</a>
+            {% else %}
+                <a href="/login/" class="logout-btn">Entrar</a>
+            {% endif %}
         </div>
     </div>
 </div>

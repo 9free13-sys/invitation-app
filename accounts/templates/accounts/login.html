@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+
+{% block title %}Entrar{% endblock %}
+
+{% block content %}
+<style>
+    .auth-wrapper {
+        max-width: 480px;
+        margin: 60px auto;
+    }
+
+    .auth-card {
+        background: white;
+        border-radius: 24px;
+        padding: 35px;
+        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+    }
+
+    .auth-card h1 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        text-align: center;
+        color: #0f172a;
+    }
+
+    .auth-card p {
+        text-align: center;
+        color: #64748b;
+        margin-bottom: 25px;
+    }
+
+    form p {
+        margin-bottom: 14px;
+    }
+
+    form label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        color: #334155;
+    }
+
+    form input {
+        width: 100%;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 12px;
+        font-size: 15px;
+    }
+
+    ul.errorlist {
+        color: #b91c1c;
+        font-size: 14px;
+        margin: 0 0 8px 0;
+        padding-left: 18px;
+    }
+
+    .submit-btn {
+        width: 100%;
+        background: #2563eb;
+        color: white;
+        border: none;
+        padding: 14px;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+    }
+</style>
+
+<div class="auth-wrapper">
+    <div class="auth-card">
+        <h1>Entrar</h1>
+        <p>Faça login para gerir os seus eventos e convites.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="submit-btn">Entrar</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
