@@ -2,12 +2,15 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Event
 from guests.models import Guest
 import uuid
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def event_list(request):
     events = Event.objects.all().order_by('-date')
     return render(request, 'events/event_list.html', {'events': events})
 
 
+@login_required
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
     
