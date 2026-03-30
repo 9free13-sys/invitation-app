@@ -138,7 +138,29 @@
 
 <div class="invite-wrapper">
     <div class="invite-card">
-        <div class="invite-badge">🎉</div>
+        <div class="invite-badge">
+    {% if guest.event.event_type == "aniversario" %}
+        🎂
+    {% elif guest.event.event_type == "casamento" %}
+        💍
+    {% elif guest.event.event_type == "noivado" %}
+        💕
+    {% elif guest.event.event_type == "baptizado" %}
+        ✝️
+    {% elif guest.event.event_type == "cha_de_bebe" %}
+        🍼
+    {% elif guest.event.event_type == "formatura" %}
+        🎓
+    {% elif guest.event.event_type == "conferencia" %}
+        🎤
+    {% elif guest.event.event_type == "reuniao" %}
+        📊
+    {% elif guest.event.event_type == "evento_corporativo" %}
+        🏢
+    {% else %}
+        🎉
+    {% endif %}
+</div>
 
         <div class="invite-title">Convite Especial</div>
         <div class="invite-subtitle">Confirme a sua presença de forma rápida e simples</div>
