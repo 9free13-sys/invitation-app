@@ -161,7 +161,7 @@
                 {% for event in events %}
                     <div class="card">
                         <div class="title">
-                            <a href="/events/{{ event.id }}/">{{ event.name }}</a>
+                            <a href="/event/{{ event.id }}/">{{ event.name }}</a>
                         </div>
 
                         <div class="badge">{{ event.event_type_label }}</div>
@@ -170,7 +170,7 @@
                         <div class="info"><strong>Local:</strong> {{ event.location }}</div>
 
                         <div class="actions">
-                            <a href="/events/{{ event.id }}/" class="details-btn">Ver detalhes</a>
+                            <a href="/event/{{ event.id }}/" class="details-btn">Ver detalhes</a>
                         </div>
                     </div>
                 {% endfor %}
