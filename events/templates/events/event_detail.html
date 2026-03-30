@@ -254,20 +254,16 @@
                                 </button>
                             </div>
 
-                           <div class="guest-actions">
-                    {% if guest.status == 'confirmado' %}
-                         <div class="status confirmado">✅ Confirmado</div>
-        <a href="/decline/{{ guest.id }}/">Recusar</a>
+                         <div class="guest-actions">
+    {% if guest.status == 'confirmado' %}
+        <div class="status confirmado">✅ Confirmado</div>
 
-                    {% elif guest.status == 'recusado' %}
+    {% elif guest.status == 'recusado' %}
         <div class="status recusado">🚫 Recusado</div>
-        <a href="/confirm/{{ guest.id }}/">Confirmar</a>
 
-                     {% else %}
+    {% else %}
         <div class="status pendente">⏳ Pendente</div>
-        <<a href="{% url 'confirm_guest' guest.id %}">Confirmar</a>
-        <a href="{% url 'decline_guest' guest.id %}">Recusar</a>
-                     {% endif %}
+    {% endif %}
 </div>
                         </li>
                     {% endfor %}
