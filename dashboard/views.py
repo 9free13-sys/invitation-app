@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from events.models import Event
 from guests.models import Guest
-
+from django.contrib.auth.decorators import login_required
 def create_invite(request):
     if request.method == 'POST':
         event = Event.objects.create(
@@ -16,7 +16,7 @@ def create_invite(request):
     return render(request, 'create_invite.html', {
         'event_types': Event.EVENT_TYPES
     })
-
+@login_required
 def home(request):
     total_events = Event.objects.count()
     total_guests = Guest.objects.count()
