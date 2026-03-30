@@ -91,6 +91,10 @@
         opacity: 0.95;
     }
 
+    .full-width-btn {
+    grid-column: 1 / -1;
+}
+
     .btn-dark {
         background: #0f172a;
     }
@@ -165,12 +169,9 @@
             </div>
         </div>
 
-        <div class="actions-grid">
-            <a href="/admin/" class="main-btn btn-dark">⚙️ Admin</a>
-            <a href="/events/" class="main-btn btn-blue">📅 Eventos</a>
-            <a href="/guests/" class="main-btn btn-blue">👥 Convidados</a>
-            <a href="/invitations/" class="main-btn btn-blue">✉️ Convites</a>
-        </div>
-    </div>
+<div class="actions-grid">
+    <a href="/event/" class="main-btn btn-blue">📅 Meus eventos</a>
+    <a href="/guests/" class="main-btn btn-blue">👥 Convidados</a>
+    <a href="/create/" class="main-btn btn-dark full-width-btn">➕ Criar evento</a>
 </div>
 {% endblock %}
