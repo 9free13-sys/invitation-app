@@ -249,8 +249,8 @@
                                     📨 Enviar convite
                                 </button>
 
-                                <button class="copy-btn" onclick="navigator.clipboard.writeText('http://192.168.1.15:8000/invite/{{ guest.token }}/confirm/')">
-                                    📋 Copiar link
+                                <button class="copy-btn" onclick="navigator.clipboard.writeText('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
+                                 📋 Copiar link
                                 </button>
                             </div>
 
@@ -265,8 +265,8 @@
 
                      {% else %}
         <div class="status pendente">⏳ Pendente</div>
-        <a href="/confirm/{{ guest.id }}/">Confirmar</a>
-        <a href="/decline/{{ guest.id }}/">Recusar</a>
+        <<a href="{% url 'confirm_guest' guest.id %}">Confirmar</a>
+        <a href="{% url 'decline_guest' guest.id %}">Recusar</a>
                      {% endif %}
 </div>
                         </li>
@@ -280,21 +280,19 @@
 
     <script>
 function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-    let linkConfirmar = "https://invitation-app-n5rh.onrender.com/invite/" + token + "/confirm/";
-    let linkRecusar = "https://invitation-app-n5rh.onrender.com/invite/" + token + "/decline/";
+    let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
 
     let mensagem =
     "Olá " + nome + ",\n\n" +
     "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
     "📅 Data: " + data + "\n" +
     "📍 Local: " + local + "\n\n" +
-    "👉 Confirmar presença:\n" + linkConfirmar + "\n\n" +
-    "❌ Não poderei comparecer:\n" + linkRecusar;
+    "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
 
     let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
     window.open(url, "_blank");
 }
-</script>
+    </script>
 
 </body>
 </html>
