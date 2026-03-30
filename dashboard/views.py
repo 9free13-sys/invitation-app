@@ -5,11 +5,12 @@ from django.contrib.auth.decorators import login_required
 def create_invite(request):
     if request.method == 'POST':
         event = Event.objects.create(
+            owner=request.user,
             name=request.POST['event_name'],
             event_type=request.POST['event_type'],
             date=request.POST['event_date'],
             location=request.POST['location']
-        )
+    )
 
         return redirect("/")  # por agora
 
@@ -18,11 +19,13 @@ def create_invite(request):
     })
 @login_required
 def home(request):
-    total_events = Event.objects.count()
-    total_guests = Guest.objects.count()
-    total_confirmed = Guest.objects.filter(status='confirmado').count()
-    total_declined = Guest.objects.filter(status='recusado').count()
+    user_events = Event.objects.filter(owner=request.user)
+    total_events = user_events.count()
+    total_guests = Guest.objects.filter(event__owner=request.user).count()
+    total_confirmed = Guest.objects.filter(event__owner=request.user, status='confirmado').count()
+    total_declined = Guest.objects.filter(event__owner=request.user, status='recusado').count()
 
+    
     return render(request, 'dashboard/home.html', {
         'total_events': total_events,
         'total_guests': total_guests,

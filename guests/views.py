@@ -22,7 +22,7 @@ def create_invite(request):
 
 @login_required
 def guest_list(request):
-    guests = Guest.objects.all().order_by('-id')
+    guests = Guest.objects.filter(event__owner=request.user).order_by('-id')
     return render(request, 'guests/guest_list.html', {'guests': guests})
 
 
