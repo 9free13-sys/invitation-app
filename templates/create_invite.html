@@ -35,6 +35,15 @@
         border-radius: 10px;
         font-weight: bold;
         cursor: pointer;
+
+
+    select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+}
     }
 </style>
 
@@ -42,14 +51,21 @@
     <h2>Criar Convite</h2>
 
     <form method="POST">
-        {% csrf_token %}
+    {% csrf_token %}
 
-        <input type="text" name="event_name" placeholder="Nome do evento" required>
-        <input type="date" name="event_date" required>
-        <input type="text" name="guest_name" placeholder="Nome do convidado" required>
-        <input type="text" name="phone" placeholder="Telefone" required>
+    <input type="text" name="event_name" placeholder="Nome do evento" required>
 
-        <button type="submit">Criar convite</button>
-    </form>
+    <select name="event_type" required>
+    <option value="">Tipo de evento</option>
+    {% for value, label in event_types %}
+        <option value="{{ value }}">{{ label }}</option>
+    {% endfor %}
+</select>
+    <input type="date" name="event_date" required>
+
+    <input type="text" name="location" placeholder="Localização" required>
+
+    <button type="submit">Criar convite</button>
+</form>
 </div>
 {% endblock %}

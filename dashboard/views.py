@@ -1,6 +1,21 @@
+from django.shortcuts import render, redirect
 from events.models import Event
 from guests.models import Guest
-from django.shortcuts import render
+
+def create_invite(request):
+    if request.method == 'POST':
+        event = Event.objects.create(
+            name=request.POST['event_name'],
+            event_type=request.POST['event_type'],
+            date=request.POST['event_date'],
+            location=request.POST['location']
+        )
+
+        return redirect("/")  # por agora
+
+    return render(request, 'create_invite.html', {
+        'event_types': Event.EVENT_TYPES
+    })
 
 def home(request):
     total_events = Event.objects.count()
@@ -13,4 +28,7 @@ def home(request):
         'total_guests': total_guests,
         'total_confirmed': total_confirmed,
         'total_declined': total_declined,
+
+
+        
     })
