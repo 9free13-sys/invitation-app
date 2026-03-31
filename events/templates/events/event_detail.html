@@ -31,6 +31,12 @@
             margin-bottom: 25px;
         }
 
+        .topbar-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
         .back-btn {
             text-decoration: none;
             background: #0f172a;
@@ -38,6 +44,20 @@
             padding: 12px 18px;
             border-radius: 12px;
             font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            transition: 0.2s ease;
+        }
+
+        .back-btn:hover {
+            opacity: 0.95;
+            transform: translateY(-1px);
+        }
+
+        .secondary-btn {
+            background: #2563eb;
         }
 
         .event-card, .stats-box, .section {
@@ -49,8 +69,10 @@
         }
 
         .event-card h1 {
-            margin-top: 0;
+            margin: 0 0 14px 0;
             color: #0f172a;
+            font-size: 34px;
+            line-height: 1.2;
         }
 
         .badge {
@@ -67,11 +89,24 @@
         .info {
             margin: 10px 0;
             color: #475569;
+            line-height: 1.5;
+            word-break: break-word;
+        }
+
+        .info strong {
+            color: #0f172a;
+        }
+
+        .stats-box h3,
+        .section h2,
+        .section h3 {
+            margin-top: 0;
+            color: #0f172a;
         }
 
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 15px;
             margin-top: 15px;
         }
@@ -85,14 +120,22 @@
         }
 
         .stat h4 {
-            margin: 0;
+            margin: 0 0 8px 0;
             font-size: 28px;
             color: #1d4ed8;
+        }
+
+        .stat p {
+            margin: 0;
+            color: #475569;
+            font-size: 14px;
+            line-height: 1.4;
         }
 
         .guest-list {
             list-style: none;
             padding: 0;
+            margin: 0;
         }
 
         .guest-item {
@@ -106,7 +149,16 @@
         .guest-name {
             font-size: 20px;
             font-weight: bold;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            color: #0f172a;
+            word-break: break-word;
+        }
+
+        .guest-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 12px;
         }
 
         form input {
@@ -115,6 +167,13 @@
             border: 1px solid #cbd5e1;
             border-radius: 12px;
             margin-bottom: 12px;
+            font-size: 15px;
+        }
+
+        form input:focus {
+            outline: none;
+            border-color: #2563eb;
+            box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
         }
 
         form button, .wa-btn, .copy-btn {
@@ -125,21 +184,24 @@
             border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
+            min-height: 42px;
+            transition: 0.2s ease;
         }
 
-        .guest-links a, .guest-actions a {
-            display: inline-block;
-            margin: 6px 6px 0 0;
-            text-decoration: none;
-            background: #e2e8f0;
-            color: #0f172a;
-            padding: 10px 14px;
-            border-radius: 10px;
-            font-weight: bold;
+        form button:hover, .wa-btn:hover, .copy-btn:hover {
+            background: #2563eb;
+        }
+
+        .copy-btn {
+            background: #334155;
+        }
+
+        .copy-btn:hover {
+            background: #475569;
         }
 
         .status {
-            margin-top: 12px;
+            margin-top: 14px;
             font-weight: bold;
             display: inline-block;
             padding: 8px 12px;
@@ -163,36 +225,124 @@
         }
 
         .finish-box {
-    margin-top: 24px;
-    text-align: center;
-}
+            margin-top: 28px;
+            text-align: center;
+        }
 
-.finish-btn {
-    display: inline-block;
-    text-decoration: none;
-    background: #2563eb;
-    color: white;
-    padding: 14px 24px;
-    border-radius: 14px;
-    font-weight: 700;
-    transition: 0.2s ease;
-    box-shadow: 0 8px 20px rgba(37,99,235,0.18);
-}
+        .finish-btn {
+            display: inline-block;
+            text-decoration: none;
+            background: #2563eb;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 14px;
+            font-weight: 700;
+            transition: 0.2s ease;
+            box-shadow: 0 8px 20px rgba(37,99,235,0.18);
+            min-height: 48px;
+        }
 
-.finish-btn:hover {
-    background: #1d4ed8;
-    transform: translateY(-2px);
-}
+        .finish-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 1000px) {
+            .stats-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
 
         @media (max-width: 900px) {
+            body {
+                padding: 22px 14px;
+            }
+
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
+            }
+
+            .event-card h1 {
+                font-size: 28px;
             }
         }
 
         @media (max-width: 600px) {
+            body {
+                padding: 16px 10px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .topbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .topbar-actions {
+                width: 100%;
+                flex-direction: column;
+            }
+
+            .back-btn {
+                width: 100%;
+                text-align: center;
+                padding: 13px 16px;
+            }
+
+            .event-card, .stats-box, .section {
+                padding: 18px 16px;
+                border-radius: 16px;
+            }
+
+            .event-card h1 {
+                font-size: 24px;
+            }
+
+            .badge {
+                font-size: 13px;
+            }
+
+            .info {
+                font-size: 15px;
+            }
+
             .stats-grid {
                 grid-template-columns: 1fr;
+                gap: 12px;
+            }
+
+            .stat {
+                padding: 16px;
+            }
+
+            .stat h4 {
+                font-size: 24px;
+            }
+
+            .guest-item {
+                padding: 16px 14px;
+            }
+
+            .guest-name {
+                font-size: 18px;
+            }
+
+            .guest-buttons {
+                flex-direction: column;
+            }
+
+            .wa-btn,
+            .copy-btn,
+            form button,
+            .finish-btn {
+                width: 100%;
+            }
+
+            form input {
+                font-size: 16px;
             }
         }
     </style>
@@ -201,9 +351,11 @@
 
     <div class="container">
         <div class="topbar">
-    <a href="/event/" class="back-btn">← Voltar aos eventos</a>
-    <a href="/create/" class="back-btn">➕ Criar evento</a>
-</div>
+            <div class="topbar-actions">
+                <a href="/event/" class="back-btn">← Voltar aos eventos</a>
+                <a href="/create/" class="back-btn secondary-btn">➕ Criar evento</a>
+            </div>
+        </div>
 
         <div class="event-card">
             <h1>{{ event.name }}</h1>
@@ -214,30 +366,30 @@
         </div>
 
         <div class="stats-box">
-    <h3>📊 Estatísticas do Evento</h3>
-    <div class="stats-grid">
-        <div class="stat">
-            <h4>{{ total_guests }}</h4>
-            <p>Total convidados</p>
+            <h3>📊 Estatísticas do Evento</h3>
+            <div class="stats-grid">
+                <div class="stat">
+                    <h4>{{ total_guests }}</h4>
+                    <p>Total convidados</p>
+                </div>
+                <div class="stat">
+                    <h4>{{ confirmed_guests }}</h4>
+                    <p>Confirmados</p>
+                </div>
+                <div class="stat">
+                    <h4>{{ pending_guests }}</h4>
+                    <p>Pendentes</p>
+                </div>
+                <div class="stat">
+                    <h4>{{ declined_guests }}</h4>
+                    <p>Recusados</p>
+                </div>
+                <div class="stat">
+                    <h4>{{ percentage }}%</h4>
+                    <p>Presença</p>
+                </div>
+            </div>
         </div>
-        <div class="stat">
-            <h4>{{ confirmed_guests }}</h4>
-            <p>Confirmados</p>
-        </div>
-        <div class="stat">
-            <h4>{{ pending_guests }}</h4>
-            <p>Pendentes</p>
-        </div>
-        <div class="stat">
-            <h4>{{ declined_guests }}</h4>
-            <p>Recusados</p>
-        </div>
-        <div class="stat">
-            <h4>{{ percentage }}%</h4>
-            <p>Presença</p>
-        </div>
-    </div>
-</div>
 
         <div class="section">
             <h3>➕ Adicionar Convidado</h3>
@@ -259,8 +411,7 @@
                         <li class="guest-item">
                             <div class="guest-name">{{ guest.full_name }}</div>
 
-                          
-                            <div style="margin-top:10px;">
+                            <div class="guest-buttons">
                                 <button class="wa-btn" onclick="enviarWhatsApp(
                                     '{{ guest.full_name }}',
                                     '{{ guest.event.name }}',
@@ -273,21 +424,19 @@
                                 </button>
 
                                 <button class="copy-btn" onclick="navigator.clipboard.writeText('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
-                                 📋 Copiar link
+                                    📋 Copiar link
                                 </button>
                             </div>
 
-                         <div class="guest-actions">
-    {% if guest.status == 'confirmado' %}
-        <div class="status confirmado">✅ Confirmado</div>
-
-    {% elif guest.status == 'recusado' %}
-        <div class="status recusado">🚫 Recusado</div>
-
-    {% else %}
-        <div class="status pendente">⏳ Pendente</div>
-    {% endif %}
-</div>
+                            <div class="guest-actions">
+                                {% if guest.status == 'confirmado' %}
+                                    <div class="status confirmado">✅ Confirmado</div>
+                                {% elif guest.status == 'recusado' %}
+                                    <div class="status recusado">🚫 Recusado</div>
+                                {% else %}
+                                    <div class="status pendente">⏳ Pendente</div>
+                                {% endif %}
+                            </div>
                         </li>
                     {% endfor %}
                 </ul>
@@ -295,31 +444,30 @@
                 <p>Nenhum convidado ainda.</p>
             {% endif %}
 
-<div class="finish-box">
-    {% if event.owner %}
-        <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
-    {% else %}
-        <a href="/login/" class="finish-btn">✅ Concluir</a>
-    {% endif %}
-</div>
-
+            <div class="finish-box">
+                {% if event.owner %}
+                    <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
+                {% else %}
+                    <a href="/login/" class="finish-btn">✅ Concluir</a>
+                {% endif %}
+            </div>
         </div>
     </div>
 
     <script>
-function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-    let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
+        function enviarWhatsApp(nome, evento, data, local, telefone, token) {
+            let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
 
-    let mensagem =
-    "Olá " + nome + ",\n\n" +
-    "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
-    "📅 Data: " + data + "\n" +
-    "📍 Local: " + local + "\n\n" +
-    "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
+            let mensagem =
+            "Olá " + nome + ",\n\n" +
+            "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
+            "📅 Data: " + data + "\n" +
+            "📍 Local: " + local + "\n\n" +
+            "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
 
-    let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
-    window.open(url, "_blank");
-}
+            let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+            window.open(url, "_blank");
+        }
     </script>
 
 </body>
