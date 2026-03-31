@@ -4,68 +4,204 @@
 
 {% block content %}
 <style>
-    .form-wrapper {
-        max-width: 500px;
-        margin: 60px auto;
+    .form-page {
+        max-width: 820px;
+        margin: 40px auto;
+    }
+
+    .form-card {
         background: white;
-        padding: 40px;
-        border-radius: 20px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        border-radius: 28px;
+        box-shadow: 0 16px 40px rgba(0,0,0,0.08);
+        overflow: hidden;
+        border: 1px solid #e2e8f0;
     }
 
-    h2 {
-        text-align: center;
-        margin-bottom: 25px;
+    .form-header {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        padding: 34px 36px;
     }
 
-    input {
+    .form-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 34px;
+    }
+
+    .form-header p {
+        margin: 0;
+        font-size: 16px;
+        opacity: 0.95;
+    }
+
+    .form-body {
+        padding: 34px 36px;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 18px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+        margin-bottom: 8px;
+    }
+
+    .form-group input,
+    .form-group select {
         width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
+        padding: 14px 16px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        font-size: 15px;
+        background: #f8fafc;
+        outline: none;
+        transition: 0.2s ease;
     }
 
-    button {
-        width: 100%;
-        padding: 14px;
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .helper-box {
+        margin-top: 24px;
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1e40af;
+        border-radius: 16px;
+        padding: 16px 18px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .actions {
+        margin-top: 26px;
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .submit-btn {
+        flex: 1;
+        min-width: 220px;
         background: #2563eb;
         color: white;
         border: none;
-        border-radius: 10px;
-        font-weight: bold;
+        padding: 15px 18px;
+        border-radius: 14px;
+        font-weight: 700;
+        font-size: 16px;
         cursor: pointer;
+        transition: 0.2s ease;
+    }
 
+    .submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
 
-    select {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-}
+    .back-link {
+        flex: 1;
+        min-width: 220px;
+        text-align: center;
+        text-decoration: none;
+        background: #0f172a;
+        color: white;
+        padding: 15px 18px;
+        border-radius: 14px;
+        font-weight: 700;
+        transition: 0.2s ease;
+    }
+
+    .back-link:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+    }
+
+    @media (max-width: 700px) {
+        .form-header,
+        .form-body {
+            padding: 24px 20px;
+        }
+
+        .form-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group.full {
+            grid-column: auto;
+        }
+
+        .form-header h1 {
+            font-size: 28px;
+        }
     }
 </style>
 
-<div class="form-wrapper">
-    <h2>Criar Convite</h2>
+<div class="form-page">
+    <div class="form-card">
+        <div class="form-header">
+            <h1>✨ Criar Convite</h1>
+            <p>Preencha os dados do evento para gerar o seu convite digital.</p>
+        </div>
 
-    <form method="POST">
-    {% csrf_token %}
+        <div class="form-body">
+            <form method="POST">
+                {% csrf_token %}
 
-    <input type="text" name="event_name" placeholder="Nome do evento" required>
+                <div class="form-grid">
+                    <div class="form-group full">
+                        <label for="event_name">Nome do evento</label>
+                        <input type="text" id="event_name" name="event_name" placeholder="Ex.: Casamento da Ana e Pedro" required>
+                    </div>
 
-    <select name="event_type" required>
-    <option value="">Tipo de evento</option>
-    {% for value, label in event_types %}
-        <option value="{{ value }}">{{ label }}</option>
-    {% endfor %}
-</select>
-    <input type="date" name="event_date" required>
+                    <div class="form-group">
+                        <label for="event_type">Tipo de evento</label>
+                        <select id="event_type" name="event_type" required>
+                            <option value="">Selecione uma opção</option>
+                            {% for value, label in event_types %}
+                                <option value="{{ value }}">{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
 
-    <input type="text" name="location" placeholder="Localização" required>
+                    <div class="form-group">
+                        <label for="event_date">Data do evento</label>
+                        <input type="date" id="event_date" name="event_date" required>
+                    </div>
 
-    <button type="submit">Criar convite</button>
-</form>
+                    <div class="form-group full">
+                        <label for="location">Localização</label>
+                        <input type="text" id="location" name="location" placeholder="Ex.: Luanda, Talatona, Salão X" required>
+                    </div>
+                </div>
+
+                <div class="helper-box">
+                    Depois de criar o evento, poderás adicionar convidados e partilhar o convite por link ou WhatsApp.
+                </div>
+
+                <div class="actions">
+                    <button type="submit" class="submit-btn">Criar convite</button>
+                    <a href="/" class="back-link">Voltar ao painel</a>
+                </div>
+            </form>
+        </div>
+    </div>
 </div>
 {% endblock %}
