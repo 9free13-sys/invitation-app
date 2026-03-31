@@ -10,124 +10,145 @@
     }
 
     .invite-card {
-        background: linear-gradient(135deg, #ffffff, #f8fbff);
-        border-radius: 28px;
-        padding: 50px 40px;
+        background: #ffffff;
+        border-radius: 24px;
+        padding: 48px 40px;
         text-align: center;
-        box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
         border: 1px solid #e5e7eb;
     }
 
     .invite-badge {
-        width: 90px;
-        height: 90px;
+        width: 72px;
+        height: 72px;
         margin: 0 auto 20px;
         border-radius: 50%;
-        background: #eff6ff;
+        background: #f8fafc;
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 40px;
+        font-size: 28px;
+        border: 1px solid #e2e8f0;
     }
 
     .invite-title {
-        font-size: 42px;
+        font-size: 38px;
         font-weight: 800;
         color: #0f172a;
         margin-bottom: 10px;
     }
 
     .invite-subtitle {
-        font-size: 18px;
+        font-size: 17px;
         color: #64748b;
-        margin-bottom: 35px;
+        margin-bottom: 34px;
+    }
+
+    .guest-line {
+        font-size: 17px;
+        color: #475569;
+        margin-bottom: 8px;
     }
 
     .guest-name {
-        font-size: 24px;
+        font-size: 30px;
         font-weight: 700;
-        color: #1e293b;
-        margin-bottom: 10px;
+        color: #111827;
+        margin-bottom: 24px;
     }
 
     .event-box {
         background: #f8fafc;
         border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 25px;
-        margin: 30px 0;
+        border-radius: 18px;
+        padding: 24px;
+        margin: 28px 0;
+        text-align: center;
     }
 
     .event-label {
-        font-size: 13px;
+        font-size: 12px;
         font-weight: 700;
-        letter-spacing: 1px;
+        letter-spacing: 0.8px;
         text-transform: uppercase;
         color: #64748b;
         margin-bottom: 8px;
     }
 
     .event-name {
-        font-size: 30px;
-        font-weight: 800;
-        color: #2563eb;
-        margin-bottom: 10px;
+        font-size: 28px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 8px;
     }
 
     .event-date {
-        font-size: 17px;
+        font-size: 16px;
         color: #475569;
     }
 
     .action-text {
-        font-size: 17px;
-        color: #475569;
-        margin: 30px 0 20px;
+        font-size: 16px;
+        color: #64748b;
+        margin: 28px 0 18px;
     }
 
     .actions {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
-        margin-top: 10px;
+        gap: 14px;
+        margin-top: 8px;
     }
 
     .btn {
         display: inline-block;
-        padding: 16px 20px;
+        padding: 15px 18px;
         border-radius: 14px;
         text-decoration: none;
-        font-size: 18px;
+        font-size: 16px;
         font-weight: 700;
-        color: white;
-        transition: 0.25s ease;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+        transition: 0.2s ease;
+        border: 1px solid transparent;
     }
 
     .btn:hover {
-        transform: translateY(-2px);
-        opacity: 0.95;
+        transform: translateY(-1px);
     }
 
     .confirm {
-        background: #16a34a;
+        background: #2563eb;
+        color: white;
+    }
+
+    .confirm:hover {
+        background: #1d4ed8;
     }
 
     .decline {
-        background: #dc2626;
+        background: white;
+        color: #334155;
+        border-color: #cbd5e1;
+    }
+
+    .decline:hover {
+        background: #f8fafc;
     }
 
     @media (max-width: 700px) {
         .invite-card {
-            padding: 35px 22px;
+            padding: 34px 22px;
         }
 
         .invite-title {
-            font-size: 32px;
+            font-size: 30px;
+        }
+
+        .guest-name {
+            font-size: 24px;
         }
 
         .event-name {
-            font-size: 24px;
+            font-size: 22px;
         }
 
         .actions {
@@ -139,33 +160,33 @@
 <div class="invite-wrapper">
     <div class="invite-card">
         <div class="invite-badge">
-    {% if guest.event.event_type == "aniversario" %}
-        🎂
-    {% elif guest.event.event_type == "casamento" %}
-        💍
-    {% elif guest.event.event_type == "noivado" %}
-        💕
-    {% elif guest.event.event_type == "baptizado" %}
-        ✝️
-    {% elif guest.event.event_type == "cha_de_bebe" %}
-        🍼
-    {% elif guest.event.event_type == "formatura" %}
-        🎓
-    {% elif guest.event.event_type == "conferencia" %}
-        🎤
-    {% elif guest.event.event_type == "reuniao" %}
-        📊
-    {% elif guest.event.event_type == "evento_corporativo" %}
-        🏢
-    {% else %}
-        🎉
-    {% endif %}
-</div>
+            {% if guest.event.event_type == "aniversario" %}
+                🎂
+            {% elif guest.event.event_type == "casamento" %}
+                💍
+            {% elif guest.event.event_type == "noivado" %}
+                💕
+            {% elif guest.event.event_type == "baptizado" %}
+                ✝️
+            {% elif guest.event.event_type == "cha_de_bebe" %}
+                🍼
+            {% elif guest.event.event_type == "formatura" %}
+                🎓
+            {% elif guest.event.event_type == "conferencia" %}
+                🎤
+            {% elif guest.event.event_type == "reuniao" %}
+                📊
+            {% elif guest.event.event_type == "evento_corporativo" %}
+                🏢
+            {% else %}
+                📩
+            {% endif %}
+        </div>
 
-        <div class="invite-title">Convite Especial</div>
-        <div class="invite-subtitle">Confirme a sua presença de forma rápida e simples</div>
+        <div class="invite-title">Convite</div>
+        <div class="invite-subtitle">Confirme a sua presença de forma simples e rápida.</div>
 
-        <p>Olá,</p>
+        <div class="guest-line">Olá,</div>
         <div class="guest-name">{{ guest.full_name }}</div>
 
         <div class="event-box">
@@ -179,8 +200,8 @@
         </div>
 
         <div class="actions">
-            <a href="/invite/{{ guest.token }}/confirm/" class="btn confirm">✅ Confirmar presença</a>
-            <a href="/invite/{{ guest.token }}/decline/" class="btn decline">❌ Recusar</a>
+            <a href="/invite/{{ guest.token }}/confirm/" class="btn confirm">Confirmar presença</a>
+            <a href="/invite/{{ guest.token }}/decline/" class="btn decline">Recusar</a>
         </div>
     </div>
 </div>
