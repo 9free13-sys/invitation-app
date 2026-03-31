@@ -5,7 +5,7 @@ from django.contrib.auth.decorators import login_required
 def create_invite(request):
     if request.method == 'POST':
         event = Event.objects.create(
-    owner=request.user,
+    owner=request.user if request.user.is_authenticated else None,
     name=request.POST['event_name'],
     event_type=request.POST['event_type'],
     date=request.POST['event_date'],
@@ -13,6 +13,8 @@ def create_invite(request):
     description=request.POST.get('description', '')
 
 )
+        
+        request.session['pending_event_id'] = event.id
 
         return redirect('event_detail', event_id=event.id)  # por agora
 

@@ -296,7 +296,11 @@
             {% endif %}
 
 <div class="finish-box">
-    <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
+    {% if event.owner %}
+        <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
+    {% else %}
+        <a href="/login/" class="finish-btn">✅ Concluir</a>
+    {% endif %}
 </div>
 
         </div>
