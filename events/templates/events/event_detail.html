@@ -162,6 +162,28 @@
             color: #991b1b;
         }
 
+        .finish-box {
+    margin-top: 24px;
+    text-align: center;
+}
+
+.finish-btn {
+    display: inline-block;
+    text-decoration: none;
+    background: #2563eb;
+    color: white;
+    padding: 14px 24px;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: 0.2s ease;
+    box-shadow: 0 8px 20px rgba(37,99,235,0.18);
+}
+
+.finish-btn:hover {
+    background: #1d4ed8;
+    transform: translateY(-2px);
+}
+
         @media (max-width: 900px) {
             .stats-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -271,6 +293,11 @@
             {% else %}
                 <p>Nenhum convidado ainda.</p>
             {% endif %}
+
+<div class="finish-box">
+    <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
+</div>
+
         </div>
     </div>
 
