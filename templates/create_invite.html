@@ -163,22 +163,30 @@
         transform: translateY(-1px);
     }
 
-    @media (max-width: 700px) {
+@media (max-width: 700px) {
+    body {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+
     .form-page {
         margin: 12px auto;
         max-width: 100%;
+        padding: 0;
     }
 
     .form-card {
+        width: 100%;
         border-radius: 16px;
+        overflow: hidden;
     }
 
     .form-header {
-        padding: 16px 16px;
+        padding: 16px 14px;
     }
 
     .form-body {
-        padding: 16px 16px 18px;
+        padding: 16px 14px 18px;
     }
 
     .form-header h1 {
@@ -209,6 +217,7 @@
     .form-group input,
     .form-group select,
     .form-group textarea {
+        width: 100%;
         padding: 11px 13px;
         font-size: 15px;
         border-radius: 12px;
@@ -239,6 +248,7 @@
         font-size: 14px;
         border-radius: 12px;
     }
+}
 }
     }
 </style>
