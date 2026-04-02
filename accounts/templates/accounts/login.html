@@ -7,6 +7,7 @@
     .auth-wrapper {
         max-width: 480px;
         margin: 60px auto;
+        padding: 0 16px;
     }
 
     .auth-card {
@@ -14,6 +15,7 @@
         border-radius: 24px;
         padding: 35px;
         box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        box-sizing: border-box;
     }
 
     .auth-card h1 {
@@ -27,6 +29,11 @@
         text-align: center;
         color: #64748b;
         margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    form {
+        width: 100%;
     }
 
     form p {
@@ -41,11 +48,14 @@
     }
 
     form input {
+        display: block;
         width: 100%;
+        max-width: 100%;
         padding: 12px 14px;
         border: 1px solid #cbd5e1;
         border-radius: 12px;
         font-size: 15px;
+        box-sizing: border-box;
     }
 
     ul.errorlist {
@@ -56,6 +66,7 @@
     }
 
     .submit-btn {
+        display: block;
         width: 100%;
         background: #2563eb;
         color: white;
@@ -65,10 +76,57 @@
         font-weight: 700;
         cursor: pointer;
         margin-top: 10px;
+        box-sizing: border-box;
     }
 
     .submit-btn:hover {
         background: #1d4ed8;
+    }
+
+    .bottom-link {
+        text-align: center;
+        margin-top: 18px;
+    }
+
+    .bottom-link span {
+        color: #64748b;
+    }
+
+    .bottom-link a {
+        color: #2563eb;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 6px;
+    }
+
+    @media (max-width: 700px) {
+        .auth-wrapper {
+            margin: 20px auto;
+            padding: 0 12px;
+        }
+
+        .auth-card {
+            padding: 22px 18px;
+            border-radius: 18px;
+        }
+
+        .auth-card h1 {
+            font-size: 28px;
+        }
+
+        .auth-card p {
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+
+        form input,
+        .submit-btn {
+            font-size: 15px;
+        }
+
+        .bottom-link {
+            font-size: 14px;
+        }
     }
 </style>
 
@@ -82,14 +140,11 @@
             {{ form.as_p }}
             <button type="submit" class="submit-btn">Entrar</button>
         </form>
+
+        <div class="bottom-link">
+            <span>Ainda não tem conta?</span>
+            <a href="/register/">Criar conta</a>
+        </div>
     </div>
 </div>
-
-        <div style="text-align:center; margin-top:18px;">
-            <span style="color:#64748b;">Ainda não tem conta?</span>
-            <a href="/register/" style="color:#2563eb; font-weight:700; text-decoration:none; margin-left:6px;">
-                Criar conta
-            </a>
-        </div>
-
 {% endblock %}
