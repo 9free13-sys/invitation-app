@@ -2,13 +2,22 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout
 from events.models import Event
+from .models import UserProfile
 
 
 def register_view(request):
     if request.method == 'POST':
         form = UserCreationForm(request.POST)
+        phone = request.POST.get('phone', '').strip()
+
         if form.is_valid():
             user = form.save()
+
+            if phone:
+                profile, _ = UserProfile.objects.get_or_create(user=user)
+                profile.phone = phone
+                profile.save()
+
             login(request, user)
 
             pending_event_id = request.session.get('pending_event_id')

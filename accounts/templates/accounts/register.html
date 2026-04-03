@@ -5,54 +5,123 @@
 {% block content %}
 <style>
     .auth-wrapper {
-        max-width: 480px;
-        margin: 60px auto;
+        max-width: 520px;
+        margin: 52px auto;
     }
 
     .auth-card {
         background: white;
+        border: 1px solid #e2e8f0;
         border-radius: 24px;
-        padding: 35px;
-        box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        padding: 38px 34px;
     }
 
-    .auth-card h1 {
-        margin-top: 0;
-        margin-bottom: 10px;
+    .auth-header {
         text-align: center;
+        margin-bottom: 28px;
+    }
+
+    .auth-badge {
+        width: 62px;
+        height: 62px;
+        margin: 0 auto 16px;
+        border-radius: 18px;
+        background: linear-gradient(135deg, #dbeafe, #eff6ff);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .auth-title {
+        margin: 0 0 10px 0;
+        font-size: 34px;
+        font-weight: 800;
         color: #0f172a;
     }
 
-    .auth-card p {
-        text-align: center;
+    .auth-subtitle {
+        margin: 0;
+        font-size: 16px;
         color: #64748b;
-        margin-bottom: 25px;
+        line-height: 1.5;
+    }
+
+    form {
+        width: 100%;
     }
 
     form p {
-        margin-bottom: 14px;
+        margin: 0 0 16px 0;
     }
 
     form label {
         display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 700;
         color: #334155;
     }
 
     form input {
+        display: block;
         width: 100%;
-        padding: 12px 14px;
+        max-width: 100%;
+        padding: 14px 15px;
         border: 1px solid #cbd5e1;
-        border-radius: 12px;
+        border-radius: 14px;
         font-size: 15px;
+        background: #f8fafc;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
     }
 
-    .helptext {
+    form input:focus {
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .manual-field {
+        margin-bottom: 16px;
+    }
+
+    .manual-field label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .manual-field input {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        font-size: 15px;
+        background: #f8fafc;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .manual-field input:focus {
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .field-help {
         display: block;
         margin-top: 6px;
         color: #64748b;
         font-size: 13px;
+        line-height: 1.4;
     }
 
     ul.errorlist {
@@ -63,32 +132,112 @@
     }
 
     .submit-btn {
+        display: block;
         width: 100%;
+        border: none;
         background: #2563eb;
         color: white;
-        border: none;
-        padding: 14px;
-        border-radius: 12px;
+        padding: 15px 18px;
+        border-radius: 14px;
+        font-size: 16px;
         font-weight: 700;
         cursor: pointer;
-        margin-top: 10px;
+        margin-top: 8px;
+        transition: 0.2s ease;
     }
 
     .submit-btn:hover {
         background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .auth-footer {
+        margin-top: 22px;
+        text-align: center;
+        font-size: 15px;
+        color: #64748b;
+    }
+
+    .auth-footer a {
+        color: #2563eb;
+        font-weight: 700;
+        text-decoration: none;
+        margin-left: 6px;
+    }
+
+    @media (max-width: 700px) {
+        .auth-wrapper {
+            margin: 18px auto;
+            max-width: 100%;
+        }
+
+        .auth-card {
+            padding: 24px 18px;
+            border-radius: 18px;
+        }
+
+        .auth-badge {
+            width: 52px;
+            height: 52px;
+            border-radius: 14px;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .auth-title {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+
+        .auth-subtitle {
+            font-size: 14px;
+        }
+
+        form input,
+        .manual-field input {
+            padding: 12px 14px;
+            font-size: 15px;
+            border-radius: 12px;
+        }
+
+        .submit-btn {
+            padding: 14px 16px;
+            font-size: 15px;
+            border-radius: 12px;
+        }
+
+        .auth-footer {
+            font-size: 14px;
+        }
     }
 </style>
 
 <div class="auth-wrapper">
     <div class="auth-card">
-        <h1>Criar conta</h1>
-        <p>Crie a sua conta para começar a gerir convites digitais.</p>
+        <div class="auth-header">
+            <div class="auth-badge">📝</div>
+            <h1 class="auth-title">Criar conta</h1>
+            <p class="auth-subtitle">Crie a sua conta para começar a gerir convites digitais.</p>
+        </div>
 
         <form method="POST">
             {% csrf_token %}
+
             {{ form.as_p }}
+
+            <div class="manual-field">
+                <label for="phone">Telefone</label>
+                <input type="text" id="phone" name="phone" placeholder="Ex.: 923 000 000">
+                <small class="field-help">Poderás usar este número depois para iniciar sessão.</small>
+            </div>
+
             <button type="submit" class="submit-btn">Criar conta</button>
         </form>
+
+        <div class="auth-footer">
+            Já tem conta?
+            <a href="/login/">Entrar</a>
+        </div>
     </div>
 </div>
 {% endblock %}
