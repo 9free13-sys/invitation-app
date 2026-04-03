@@ -237,15 +237,16 @@
                 <span>InvitePro</span>
             </a>
 
-            <div class="nav-links">
-                <a href="/create/" class="nav-link-btn cta-btn">Criar meu convite agora</a>
+         <div class="nav-links">
+    <a href="/create/" class="nav-link-btn cta-btn">Criar meu convite agora</a>
 
-                {% if request.user.is_authenticated %}
-                    <a href="/logout/" class="nav-link-btn ghost-btn">Sair</a>
-                {% else %}
-                    <a href="/login/" class="nav-link-btn ghost-btn">Entrar</a>
-                {% endif %}
-            </div>
+    {% if request.user.is_authenticated %}
+        <a href="/profile/" class="nav-link-btn ghost-btn">Meu perfil</a>
+        <a href="/logout/" class="nav-link-btn ghost-btn">Sair</a>
+    {% else %}
+        <a href="/login/" class="nav-link-btn ghost-btn">Entrar</a>
+    {% endif %}
+</div>
         </div>
     </div>
 

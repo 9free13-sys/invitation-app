@@ -1,474 +1,691 @@
-<!DOCTYPE html>
-<html lang="pt">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ event.name }}</title>
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+{% extends "base.html" %}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #eef2ff, #f8fafc);
-            min-height: 100vh;
-            padding: 30px 20px;
-        }
+{% block title %}{{ event.name }} | InvitePro{% endblock %}
 
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+{% block content %}
+<style>
+    .detail-wrapper {
+        max-width: 1120px;
+        margin: 6px auto 0;
+    }
 
-        .topbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-            margin-bottom: 25px;
-        }
+    .hero-card {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border: 1px solid #e2e8f0;
+        border-radius: 28px;
+        padding: 30px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        margin-bottom: 22px;
+    }
 
-        .topbar-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+    .hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
 
-        .back-btn {
-            text-decoration: none;
-            background: #0f172a;
-            color: white;
-            padding: 12px 18px;
-            border-radius: 12px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 46px;
-            transition: 0.2s ease;
-        }
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
 
-        .back-btn:hover {
-            opacity: 0.95;
-            transform: translateY(-1px);
-        }
+    .hero-title {
+        margin: 0 0 10px 0;
+        font-size: 36px;
+        line-height: 1.15;
+        color: #0f172a;
+        font-weight: 800;
+        word-break: break-word;
+    }
 
-        .secondary-btn {
-            background: #2563eb;
-        }
+    .hero-subtitle {
+        margin: 0;
+        max-width: 700px;
+        font-size: 16px;
+        color: #64748b;
+        line-height: 1.6;
+    }
 
-        .event-card, .stats-box, .section {
-            background: white;
+    .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        transition: 0.2s ease;
+    }
+
+    .hero-btn.primary {
+        background: #2563eb;
+        color: white;
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+    }
+
+    .hero-btn.primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .hero-btn.secondary {
+        background: #0f172a;
+        color: white;
+    }
+
+    .hero-btn.secondary:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+    }
+
+    .detail-grid {
+        display: grid;
+        grid-template-columns: 1.1fr 0.9fr;
+        gap: 20px;
+        margin-top: 22px;
+    }
+
+    .info-card,
+    .stats-card,
+    .form-card,
+    .guests-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .section-title {
+        margin: 0 0 18px 0;
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .event-type-badge {
+        display: inline-block;
+        background: #eff6ff;
+        color: #1d4ed8;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 16px;
+    }
+
+    .meta-grid {
+        display: grid;
+        gap: 12px;
+    }
+
+    .meta-item {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #475569;
+        word-break: break-word;
+    }
+
+    .meta-label {
+        min-width: 84px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
+    }
+
+    .stat-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 32px;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1;
+        margin-bottom: 8px;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .form-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .form-group input {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 13px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        font-size: 15px;
+        background: #f8fafc;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .submit-btn {
+        margin-top: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        border: none;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .guest-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 14px;
+    }
+
+    .guest-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+    }
+
+    .guest-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .guest-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    .guest-meta {
+    display: grid;
+    gap: 6px;
+    margin-bottom: 14px;
+}
+
+.guest-meta-item {
+    font-size: 14px;
+    color: #475569;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.guest-meta-item strong {
+    color: #0f172a;
+}
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status.confirmado {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status.pendente {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status.recusado {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .guest-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .guest-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+        text-decoration: none;
+    }
+
+    .guest-btn.primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .guest-btn.primary:hover {
+        background: #1d4ed8;
+    }
+
+    .guest-btn.dark {
+        background: #334155;
+        color: white;
+    }
+
+    .guest-btn.dark:hover {
+        background: #475569;
+    }
+
+    .finish-box {
+        margin-top: 22px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .finish-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 14px 22px;
+        border-radius: 14px;
+        text-decoration: none;
+        background: #2563eb;
+        color: white;
+        font-weight: 700;
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+        transition: 0.2s ease;
+    }
+
+    .finish-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .empty-box {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border: 1px dashed #93c5fd;
+        border-radius: 18px;
+        padding: 24px;
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+        .detail-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .hero-card,
+        .info-card,
+        .stats-card,
+        .form-card,
+        .guests-card {
+            padding: 20px 18px;
             border-radius: 20px;
-            padding: 24px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            margin-bottom: 25px;
         }
 
-        .event-card h1 {
-            margin: 0 0 14px 0;
-            color: #0f172a;
-            font-size: 34px;
-            line-height: 1.2;
+        .hero-title {
+            font-size: 28px;
         }
 
-        .badge {
-            display: inline-block;
-            background: #dbeafe;
-            color: #1d4ed8;
-            padding: 8px 12px;
-            border-radius: 999px;
+        .hero-subtitle {
             font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 15px;
         }
 
-        .info {
-            margin: 10px 0;
-            color: #475569;
-            line-height: 1.5;
-            word-break: break-word;
+        .hero-actions {
+            width: 100%;
+            flex-direction: column;
         }
 
-        .info strong {
-            color: #0f172a;
-        }
-
-        .stats-box h3,
-        .section h2,
-        .section h3 {
-            margin-top: 0;
-            color: #0f172a;
+        .hero-btn,
+        .submit-btn,
+        .finish-btn {
+            width: 100%;
         }
 
         .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(5, 1fr);
-            gap: 15px;
-            margin-top: 15px;
+            grid-template-columns: 1fr;
         }
 
-        .stat {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 14px;
-            padding: 18px;
-            text-align: center;
+        .form-grid {
+            grid-template-columns: 1fr;
         }
 
-        .stat h4 {
-            margin: 0 0 8px 0;
-            font-size: 28px;
-            color: #1d4ed8;
+        .form-group.full {
+            grid-column: auto;
         }
 
-        .stat p {
-            margin: 0;
-            color: #475569;
-            font-size: 14px;
-            line-height: 1.4;
-        }
-
-        .guest-list {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-        }
-
-        .guest-item {
-            border: 1px solid #e2e8f0;
-            border-radius: 16px;
-            padding: 18px;
-            margin-bottom: 16px;
-            background: #f8fafc;
-        }
-
-        .guest-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 12px;
-            color: #0f172a;
-            word-break: break-word;
+        .guest-top {
+            flex-direction: column;
+            align-items: flex-start;
         }
 
         .guest-buttons {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-            margin-top: 12px;
+            flex-direction: column;
         }
 
-        form input {
+        .guest-btn {
             width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #cbd5e1;
-            border-radius: 12px;
-            margin-bottom: 12px;
-            font-size: 15px;
         }
 
-        form input:focus {
-            outline: none;
-            border-color: #2563eb;
-            box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+        .meta-item {
+            flex-direction: column;
+            gap: 2px;
         }
 
-        form button, .wa-btn, .copy-btn {
-            background: #1e40af;
-            color: white;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
-            font-weight: bold;
-            cursor: pointer;
-            min-height: 42px;
-            transition: 0.2s ease;
+        .meta-label {
+            min-width: 0;
         }
+    }
 
-        form button:hover, .wa-btn:hover, .copy-btn:hover {
-            background: #2563eb;
-        }
+.copy-toast {
+    position: fixed;
+    right: 20px;
+    bottom: 20px;
+    background: #0f172a;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: 0.25s ease;
+    z-index: 9999;
+}
 
-        .copy-btn {
-            background: #334155;
-        }
+.copy-toast.show {
+    opacity: 1;
+    transform: translateY(0);
+}
 
-        .copy-btn:hover {
-            background: #475569;
-        }
+@media (max-width: 700px) {
+    .copy-toast {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+        text-align: center;
+    }
+}
 
-        .status {
-            margin-top: 14px;
-            font-weight: bold;
-            display: inline-block;
-            padding: 8px 12px;
-            border-radius: 999px;
-            font-size: 14px;
-        }
+</style>
 
-        .status.confirmado {
-            background: #dcfce7;
-            color: #166534;
-        }
-
-        .status.pendente {
-            background: #fef3c7;
-            color: #92400e;
-        }
-
-        .status.recusado {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-
-        .finish-box {
-            margin-top: 28px;
-            text-align: center;
-        }
-
-        .finish-btn {
-            display: inline-block;
-            text-decoration: none;
-            background: #2563eb;
-            color: white;
-            padding: 14px 24px;
-            border-radius: 14px;
-            font-weight: 700;
-            transition: 0.2s ease;
-            box-shadow: 0 8px 20px rgba(37,99,235,0.18);
-            min-height: 48px;
-        }
-
-        .finish-btn:hover {
-            background: #1d4ed8;
-            transform: translateY(-2px);
-        }
-
-        @media (max-width: 1000px) {
-            .stats-grid {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-
-        @media (max-width: 900px) {
-            body {
-                padding: 22px 14px;
-            }
-
-            .stats-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-
-            .event-card h1 {
-                font-size: 28px;
-            }
-        }
-
-        @media (max-width: 600px) {
-            body {
-                padding: 16px 10px;
-            }
-
-            .container {
-                max-width: 100%;
-            }
-
-            .topbar {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .topbar-actions {
-                width: 100%;
-                flex-direction: column;
-            }
-
-            .back-btn {
-                width: 100%;
-                text-align: center;
-                padding: 13px 16px;
-            }
-
-            .event-card, .stats-box, .section {
-                padding: 18px 16px;
-                border-radius: 16px;
-            }
-
-            .event-card h1 {
-                font-size: 24px;
-            }
-
-            .badge {
-                font-size: 13px;
-            }
-
-            .info {
-                font-size: 15px;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-                gap: 12px;
-            }
-
-            .stat {
-                padding: 16px;
-            }
-
-            .stat h4 {
-                font-size: 24px;
-            }
-
-            .guest-item {
-                padding: 16px 14px;
-            }
-
-            .guest-name {
-                font-size: 18px;
-            }
-
-            .guest-buttons {
-                flex-direction: column;
-            }
-
-            .wa-btn,
-            .copy-btn,
-            form button,
-            .finish-btn {
-                width: 100%;
-            }
-
-            form input {
-                font-size: 16px;
-            }
-        }
-    </style>
-</head>
-<body>
-
-    <div class="container">
-        <div class="topbar">
-            <div class="topbar-actions">
-                <a href="/event/" class="back-btn">← Voltar aos eventos</a>
-                <a href="/create/" class="back-btn secondary-btn">➕ Criar evento</a>
+<div class="detail-wrapper">
+    <div class="hero-card">
+        <div class="hero-top">
+            <div>
+                <div class="hero-badge">📌 Detalhes do evento</div>
+                <h1 class="hero-title">{{ event.name }}</h1>
+                <p class="hero-subtitle">
+                    Gere os convidados, acompanhe confirmações e continue a partilha do convite de forma organizada.
+                </p>
             </div>
-        </div>
 
-        <div class="event-card">
-            <h1>{{ event.name }}</h1>
-            <div class="badge">{{ event.event_type_label }}</div>
-            <div class="info"><strong>Data:</strong> {{ event.date }}</div>
-            <div class="info"><strong>Local:</strong> {{ event.location }}</div>
-            <div class="info"><strong>Descrição:</strong> {{ event.description }}</div>
-        </div>
-
-        <div class="stats-box">
-            <h3>📊 Estatísticas do Evento</h3>
-            <div class="stats-grid">
-                <div class="stat">
-                    <h4>{{ total_guests }}</h4>
-                    <p>Total convidados</p>
-                </div>
-                <div class="stat">
-                    <h4>{{ confirmed_guests }}</h4>
-                    <p>Confirmados</p>
-                </div>
-                <div class="stat">
-                    <h4>{{ pending_guests }}</h4>
-                    <p>Pendentes</p>
-                </div>
-                <div class="stat">
-                    <h4>{{ declined_guests }}</h4>
-                    <p>Recusados</p>
-                </div>
-                <div class="stat">
-                    <h4>{{ percentage }}%</h4>
-                    <p>Presença</p>
-                </div>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>➕ Adicionar Convidado</h3>
-            <form method="POST">
-                {% csrf_token %}
-                <input type="text" name="full_name" placeholder="Nome completo" required>
-                <input type="text" name="phone" placeholder="Telefone">
-                <input type="email" name="email" placeholder="Email">
-                <button type="submit">Adicionar convidado</button>
-            </form>
-        </div>
-
-        <div class="section">
-            <h2>👥 Convidados</h2>
-
-            {% if guests %}
-                <ul class="guest-list">
-                    {% for guest in guests %}
-                        <li class="guest-item">
-                            <div class="guest-name">{{ guest.full_name }}</div>
-
-                            <div class="guest-buttons">
-                                <button class="wa-btn" onclick="enviarWhatsApp(
-                                    '{{ guest.full_name }}',
-                                    '{{ guest.event.name }}',
-                                    '{{ guest.event.date }}',
-                                    '{{ guest.event.location }}',
-                                    '{{ guest.phone }}',
-                                    '{{ guest.token }}'
-                                )">
-                                    📨 Enviar convite
-                                </button>
-
-                                <button class="copy-btn" onclick="navigator.clipboard.writeText('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
-                                    📋 Copiar link
-                                </button>
-                            </div>
-
-                            <div class="guest-actions">
-                                {% if guest.status == 'confirmado' %}
-                                    <div class="status confirmado">✅ Confirmado</div>
-                                {% elif guest.status == 'recusado' %}
-                                    <div class="status recusado">🚫 Recusado</div>
-                                {% else %}
-                                    <div class="status pendente">⏳ Pendente</div>
-                                {% endif %}
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p>Nenhum convidado ainda.</p>
-            {% endif %}
-
-            <div class="finish-box">
-                {% if event.owner %}
-                    <a href="/event/?created=1" class="finish-btn">✅ Concluir</a>
-                {% else %}
-                    <a href="/login/" class="finish-btn">✅ Concluir</a>
-                {% endif %}
+            <div class="hero-actions">
+                <a href="/event/" class="hero-btn secondary">← Voltar aos eventos</a>
+                <a href="/create/" class="hero-btn primary">➕ Criar evento</a>
             </div>
         </div>
     </div>
 
-    <script>
-        function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-            let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
+    <div class="detail-grid">
+        <div>
+            <div class="info-card">
+                <h2 class="section-title">Informações do evento</h2>
+                <div class="event-type-badge">{{ event.event_type_label }}</div>
 
-            let mensagem =
-            "Olá " + nome + ",\n\n" +
-            "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
-            "📅 Data: " + data + "\n" +
-            "📍 Local: " + local + "\n\n" +
-            "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <span class="meta-label">Data</span>
+                        <span>{{ event.date }}</span>
+                    </div>
 
-            let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
-            window.open(url, "_blank");
-        }
-    </script>
+                    <div class="meta-item">
+                        <span class="meta-label">Local</span>
+                        <span>{{ event.location }}</span>
+                    </div>
 
-</body>
-</html>
+                    <div class="meta-item">
+                        <span class="meta-label">Descrição</span>
+                        <span>{{ event.description|default:"Sem descrição adicionada." }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="form-card">
+                <h2 class="section-title">Adicionar convidado</h2>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="form-grid">
+                        <div class="form-group full">
+                            <label for="full_name">Nome completo</label>
+                            <input type="text" id="full_name" name="full_name" placeholder="Ex.: Ana Paula Gomes" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Telefone</label>
+                            <input type="text" id="phone" name="phone" placeholder="Ex.: 923 000 000">
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" name="email" placeholder="Ex.: exemplo@email.com">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Adicionar convidado</button>
+                </form>
+            </div>
+        </div>
+
+        <div>
+            <div class="stats-card">
+                <h2 class="section-title">Estatísticas</h2>
+
+                <div class="stats-grid">
+                    <div class="stat-box">
+                        <div class="stat-number">{{ total_guests }}</div>
+                        <div class="stat-label">Total convidados</div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">{{ confirmed_guests }}</div>
+                        <div class="stat-label">Confirmados</div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">{{ pending_guests }}</div>
+                        <div class="stat-label">Pendentes</div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">{{ declined_guests }}</div>
+                        <div class="stat-label">Recusados</div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">{{ percentage }}%</div>
+                        <div class="stat-label">Presença</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="guests-card">
+                <h2 class="section-title">Convidados</h2>
+
+                {% if guests %}
+                    <ul class="guest-list">
+                        {% for guest in guests %}
+                            <li class="guest-item">
+                                <div class="guest-top">
+                                    <div class="guest-name">{{ guest.full_name }}</div>
+
+                                    {% if guest.status == 'confirmado' %}
+                                        <div class="status confirmado">✅ Confirmado</div>
+                                    {% elif guest.status == 'recusado' %}
+                                        <div class="status recusado">🚫 Recusado</div>
+                                    {% else %}
+                                        <div class="status pendente">⏳ Pendente</div>
+                                    {% endif %}
+                                </div>
+
+<div class="guest-meta">
+    <div class="guest-meta-item"><strong>Telefone:</strong> {{ guest.phone|default:"Não informado" }}</div>
+    <div class="guest-meta-item"><strong>Email:</strong> {{ guest.email|default:"Não informado" }}</div>
+</div>
+
+                                <div class="guest-buttons">
+                                    <button class="guest-btn primary" onclick="enviarWhatsApp(
+                                        '{{ guest.full_name }}',
+                                        '{{ guest.event.name }}',
+                                        '{{ guest.event.date }}',
+                                        '{{ guest.event.location }}',
+                                        '{{ guest.phone }}',
+                                        '{{ guest.token }}'
+                                    )">
+                                        Enviar convite
+                                    </button>
+
+                                    <div id="copyToast" class="copy-toast">Link copiado com sucesso.</div><button class="guest-btn dark" onclick="navigator.clipboard.writeText('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
+                                        Copiar link
+                                    </button>
+                                </div>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <div class="empty-box">
+                        Ainda não existem convidados neste evento. Adiciona o primeiro convidado para começares a partilhar o convite.
+                    </div>
+                {% endif %}
+
+                <div class="finish-box">
+                    {% if event.owner %}
+                        <a href="/event/?created=1" class="finish-btn"> Concluir</a>
+                    {% else %}
+                        <a href="/login/" class="finish-btn"> Concluir</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+function copiarLink(link) {
+    navigator.clipboard.writeText(link).then(() => {
+        const toast = document.getElementById('copyToast');
+        toast.classList.add('show');
+
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 2200);
+    });
+}
+
+    function enviarWhatsApp(nome, evento, data, local, telefone, token) {
+        let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
+
+        let mensagem =
+        "Olá " + nome + ",\n\n" +
+        "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
+        "📅 Data: " + data + "\n" +
+        "📍 Local: " + local + "\n\n" +
+        "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
+
+        let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+        window.open(url, "_blank");
+    }
+
+<div id="copyToast" class="copy-toast">Link copiado com sucesso.</div>
+    
+</script>
+{% endblock %}

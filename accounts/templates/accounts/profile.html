@@ -1,0 +1,262 @@
+{% extends "base.html" %}
+
+{% block title %}Meu perfil{% endblock %}
+
+{% block content %}
+<style>
+    .profile-wrapper {
+        max-width: 720px;
+        margin: 28px auto;
+    }
+
+    .profile-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        color: white;
+        padding: 28px 30px;
+    }
+
+    .profile-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 30px;
+    }
+
+    .profile-header p {
+        margin: 0;
+        font-size: 15px;
+        opacity: 0.95;
+        line-height: 1.5;
+    }
+
+    .profile-body {
+        padding: 28px 30px 30px;
+    }
+
+    .success-box {
+        margin-bottom: 18px;
+        background: #ecfdf5;
+        color: #166534;
+        border: 1px solid #bbf7d0;
+        border-radius: 16px;
+        padding: 14px 16px;
+        font-weight: 700;
+    }
+
+    .info-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+        margin-bottom: 24px;
+    }
+
+    .info-box {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 18px;
+    }
+
+    .info-label {
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 700;
+        margin-bottom: 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.4px;
+    }
+
+    .info-value {
+        font-size: 18px;
+        color: #0f172a;
+        font-weight: 700;
+        word-break: break-word;
+    }
+
+    .section-title {
+        margin: 0 0 16px 0;
+        font-size: 22px;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+    .form-group input {
+        display: block;
+        width: 100%;
+        max-width: 100%;
+        padding: 14px 15px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        font-size: 15px;
+        background: #f8fafc;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-group input:focus {
+        border-color: #2563eb;
+        background: white;
+        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+    }
+
+    .field-help {
+        display: block;
+        margin-top: 6px;
+        color: #64748b;
+        font-size: 13px;
+        line-height: 1.4;
+    }
+
+    .actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 20px;
+    }
+
+    .save-btn,
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 14px 18px;
+        border-radius: 14px;
+        font-size: 15px;
+        font-weight: 700;
+        text-decoration: none;
+        box-sizing: border-box;
+    }
+
+    .save-btn {
+        border: none;
+        background: #2563eb;
+        color: white;
+        cursor: pointer;
+    }
+
+    .save-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .back-btn {
+        background: #0f172a;
+        color: white;
+    }
+
+    .back-btn:hover {
+        opacity: 0.95;
+    }
+
+    @media (max-width: 700px) {
+        .profile-wrapper {
+            margin: 14px auto;
+        }
+
+        .profile-header {
+            padding: 20px 18px;
+        }
+
+        .profile-header h1 {
+            font-size: 24px;
+        }
+
+        .profile-header p {
+            font-size: 14px;
+        }
+
+        .profile-body {
+            padding: 20px 18px 22px;
+        }
+
+        .info-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .info-value {
+            font-size: 16px;
+        }
+
+        .actions {
+            flex-direction: column;
+        }
+
+        .save-btn,
+        .back-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="profile-wrapper">
+    <div class="profile-card">
+        <div class="profile-header">
+            <h1>Meu perfil</h1>
+            <p>Consulta e atualiza os teus dados de acesso e contacto.</p>
+        </div>
+
+        <div class="profile-body">
+            {% if request.GET.updated %}
+                <div class="success-box">
+                    ✅ Perfil atualizado com sucesso.
+                </div>
+            {% endif %}
+
+            <div class="info-grid">
+                <div class="info-box">
+                    <div class="info-label">Nome de utilizador</div>
+                    <div class="info-value">{{ request.user.username }}</div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-label">Conta</div>
+                    <div class="info-value">Ativa</div>
+                </div>
+            </div>
+
+            <h2 class="section-title">Dados editáveis</h2>
+
+            <form method="POST">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" name="email" value="{{ request.user.email }}">
+                    <small class="field-help">Usa um email válido para facilitar o acesso à conta.</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="phone">Telefone</label>
+                    <input type="text" id="phone" name="phone" value="{{ profile.phone|default:'' }}">
+                    <small class="field-help">Este número pode ser usado para iniciar sessão.</small>
+                </div>
+
+            <div class="actions">
+    <button type="submit" class="save-btn">Guardar alterações</button>
+    <a href="/change-password/" class="back-btn">Alterar palavra-passe</a>
+    <a href="/" class="back-btn">Voltar ao painel</a>
+</div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
