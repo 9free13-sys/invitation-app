@@ -1,31 +1,43 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 from .models import Event
 from guests.models import Guest
 import uuid
-from django.contrib.auth.decorators import login_required
-from django.contrib import messages
-from django.shortcuts import get_object_or_404, redirect
 
-def delete_event(request, event_id):
-    event = get_object_or_404(Event, id=event_id)
 
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
+def create_event(request):
+    if request.method == 'POST':
+        name = request.POST.get('name')
+        event_type = request.POST.get('event_type')
+        custom_event_type = request.POST.get('custom_event_type')
+        date = request.POST.get('date')
+        location = request.POST.get('location')
+        description = request.POST.get('description')
 
-    if event.owner != request.user:
-        messages.error(request, "Não tens permissão para eliminar este evento.")
-        return redirect('event_list')
+        if event_type == 'outro' and custom_event_type:
+            event_type = custom_event_type
 
-    event.delete()
-    messages.success(request, "Evento eliminado com sucesso!")
+        event = Event.objects.create(
+            name=name,
+            event_type=event_type,
+            date=date,
+            location=location,
+            description=description,
+            owner=request.user if request.user.is_authenticated else None
+        )
 
-    return redirect('event_list')
+        if not request.user.is_authenticated:
+            request.session['pending_event_id'] = event.id
+
+        return redirect('event_detail', event_id=event.id)
+
+    return render(request, 'create_invite.html')
+
 
 def event_list(request):
     events = Event.objects.filter(owner=request.user).order_by('-date')
     return render(request, 'events/event_list.html', {'events': events})
-
 
 
 def event_detail(request, event_id):
@@ -76,4 +88,39 @@ def event_detail(request, event_id):
         'declined_guests': declined_guests,
         'percentage': percentage,
     })
-    
+
+
+def event_guests(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if not request.user.is_authenticated:
+        messages.error(request, "Precisas de iniciar sessão.")
+        return redirect('login')
+
+    if event.owner != request.user:
+        messages.error(request, "Não tens permissão para ver os convidados deste evento.")
+        return redirect('event_list')
+
+    guests = Guest.objects.filter(event=event).order_by('-id')
+
+    context = {
+        'event': event,
+        'guests': guests,
+    }
+    return render(request, 'events/event_guests.html', context)
+
+
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if not request.user.is_authenticated:
+        messages.error(request, "Precisas de iniciar sessão.")
+        return redirect('login')
+
+    if event.owner != request.user:
+        messages.error(request, "Não tens permissão para eliminar este evento.")
+        return redirect('event_list')
+
+    event.delete()
+    messages.success(request, "Evento eliminado com sucesso!")
+    return redirect('event_list')

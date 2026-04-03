@@ -453,9 +453,9 @@
                         </div>
                     </div>
 
-                   <div class="event-actions">
+             <div class="event-actions">
     <a href="/event/{{ event.id }}/" class="event-btn primary">Ver detalhes</a>
-    <a href="/event/{{ event.id }}/" class="event-btn light">Ver convidados</a>
+    <a href="{% url 'event_guests' event.id %}" class="event-btn light">Ver convidados</a>
     <a href="{% url 'delete_event' event.id %}"
        class="event-btn danger"
        onclick="return confirm('Tens a certeza que queres eliminar este evento?');">

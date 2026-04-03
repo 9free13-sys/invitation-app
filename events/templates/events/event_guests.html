@@ -1,0 +1,344 @@
+{% extends "base.html" %}
+
+{% block title %}Convidados | {{ event.name }} | InvitePro{% endblock %}
+
+{% block content %}
+<style>
+    .guests-wrapper {
+        max-width: 1120px;
+        margin: 6px auto 0;
+    }
+
+    .hero-card {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border: 1px solid #e2e8f0;
+        border-radius: 28px;
+        padding: 30px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        margin-bottom: 22px;
+    }
+
+    .hero-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 18px;
+        flex-wrap: wrap;
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .hero-title {
+        margin: 0 0 10px 0;
+        font-size: 36px;
+        line-height: 1.15;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .hero-subtitle {
+        margin: 0;
+        max-width: 720px;
+        font-size: 16px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    .hero-actions {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .hero-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 12px 18px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        transition: 0.2s ease;
+    }
+
+    .hero-btn.primary {
+        background: #2563eb;
+        color: white;
+        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+    }
+
+    .hero-btn.primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+    .hero-btn.secondary {
+        background: #0f172a;
+        color: white;
+    }
+
+    .hero-btn.secondary:hover {
+        opacity: 0.95;
+        transform: translateY(-1px);
+    }
+
+    .guests-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .section-title {
+        margin: 0 0 18px 0;
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .guest-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 14px;
+    }
+
+    .guest-item {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+    }
+
+    .guest-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .guest-name {
+        font-size: 18px;
+        font-weight: 800;
+        color: #0f172a;
+        word-break: break-word;
+    }
+
+    .guest-meta {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 14px;
+    }
+
+    .guest-meta-item {
+        font-size: 14px;
+        color: #475569;
+        line-height: 1.5;
+        word-break: break-word;
+    }
+
+    .guest-meta-item strong {
+        color: #0f172a;
+    }
+
+    .status {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 12px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+    }
+
+    .status.confirmado {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .status.pendente {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    .status.recusado {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .guest-buttons {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .guest-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 14px;
+        border-radius: 12px;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+        text-decoration: none;
+    }
+
+    .guest-btn.primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .guest-btn.primary:hover {
+        background: #1d4ed8;
+    }
+
+    .guest-btn.dark {
+        background: #334155;
+        color: white;
+    }
+
+    .guest-btn.dark:hover {
+        background: #475569;
+    }
+
+    .guest-btn.danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .guest-btn.danger:hover {
+        background: #b91c1c;
+    }
+
+    .empty-box {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border: 1px dashed #93c5fd;
+        border-radius: 18px;
+        padding: 24px;
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+        .hero-card,
+        .guests-card {
+            padding: 20px 18px;
+            border-radius: 20px;
+        }
+
+        .hero-title {
+            font-size: 28px;
+        }
+
+        .hero-subtitle {
+            font-size: 14px;
+        }
+
+        .hero-actions {
+            width: 100%;
+            flex-direction: column;
+        }
+
+        .hero-btn {
+            width: 100%;
+        }
+
+        .guest-top {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .guest-buttons {
+            flex-direction: column;
+        }
+
+        .guest-btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="guests-wrapper">
+    <div class="hero-card">
+        <div class="hero-top">
+            <div>
+                <div class="hero-badge">👥 Lista de convidados</div>
+                <h1 class="hero-title">{{ event.name }}</h1>
+                <p class="hero-subtitle">
+                    Consulta todos os convidados deste evento, acompanha os estados e gere a lista de forma organizada.
+                </p>
+            </div>
+
+            <div class="hero-actions">
+                <a href="{% url 'event_detail' event.id %}" class="hero-btn primary">Ver detalhes</a>
+                <a href="{% url 'event_list' %}" class="hero-btn secondary">← Voltar aos eventos</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="guests-card">
+        <h2 class="section-title">Convidados do evento</h2>
+
+        {% if guests %}
+            <ul class="guest-list">
+                {% for guest in guests %}
+                    <li class="guest-item">
+                        <div class="guest-top">
+                            <div class="guest-name">{{ guest.full_name }}</div>
+
+                            {% if guest.status == 'confirmado' %}
+                                <div class="status confirmado">✅ Confirmado</div>
+                            {% elif guest.status == 'recusado' %}
+                                <div class="status recusado">🚫 Recusado</div>
+                            {% else %}
+                                <div class="status pendente">⏳ Pendente</div>
+                            {% endif %}
+                        </div>
+
+                        <div class="guest-meta">
+                            <div class="guest-meta-item"><strong>Telefone:</strong> {{ guest.phone|default:"Não informado" }}</div>
+                            <div class="guest-meta-item"><strong>Email:</strong> {{ guest.email|default:"Não informado" }}</div>
+                        </div>
+
+                        <div class="guest-buttons">
+                            <a href="{% url 'delete_guest' guest.id %}"
+                               class="guest-btn danger"
+                               onclick="return confirm('Tens a certeza que queres eliminar este convidado?');">
+                                Eliminar
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-box">
+                Ainda não existem convidados neste evento.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
