@@ -118,17 +118,6 @@
         transition: 0.2s ease;
     }
 
-    .hero-btn.primary {
-        background: #2563eb;
-        color: white;
-        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
-    }
-
-    .hero-btn.primary:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-    }
-
     .hero-btn.secondary {
         background: #0f172a;
         color: white;
@@ -146,11 +135,7 @@
         margin-top: 22px;
     }
 
-    .left-stack {
-        display: grid;
-        gap: 20px;
-    }
-
+    .left-stack,
     .right-stack {
         display: grid;
         gap: 20px;
@@ -481,6 +466,110 @@
         transform: translateY(0);
     }
 
+    .share-modal {
+        position: fixed;
+        inset: 0;
+        background: rgba(15, 23, 42, 0.55);
+        display: none;
+        align-items: center;
+        justify-content: center;
+        z-index: 10000;
+        padding: 16px;
+    }
+
+    .share-modal.show {
+        display: flex;
+    }
+
+    .share-box {
+        width: 100%;
+        max-width: 460px;
+        background: white;
+        border-radius: 22px;
+        padding: 24px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.20);
+        position: relative;
+    }
+
+    .share-close {
+        position: absolute;
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
+        border: none;
+        border-radius: 50%;
+        background: #f1f5f9;
+        color: #0f172a;
+        font-size: 18px;
+        cursor: pointer;
+    }
+
+    .share-close:hover {
+        background: #e2e8f0;
+    }
+
+    .share-title {
+        font-size: 24px;
+        font-weight: 800;
+        color: #0f172a;
+        margin: 0 0 8px 0;
+    }
+
+    .share-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 18px;
+    }
+
+    .share-guest {
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 14px 16px;
+        margin-bottom: 18px;
+    }
+
+    .share-guest-name {
+        font-size: 17px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .share-guest-meta {
+        font-size: 13px;
+        color: #64748b;
+        line-height: 1.5;
+    }
+
+    .share-options {
+        display: grid;
+        gap: 10px;
+    }
+
+    .share-option {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #0f172a;
+        transition: 0.2s ease;
+    }
+
+    .share-option:hover {
+        transform: translateY(-1px);
+        background: #f8fafc;
+    }
+
     @media (max-width: 980px) {
         .detail-grid {
             grid-template-columns: 1fr;
@@ -505,7 +594,8 @@
         .info-card,
         .stats-card,
         .form-card,
-        .guests-card {
+        .guests-card,
+        .share-box {
             padding: 20px 18px;
             border-radius: 20px;
         }
@@ -529,10 +619,7 @@
             width: 100%;
         }
 
-        .stats-grid {
-            grid-template-columns: 1fr;
-        }
-
+        .stats-grid,
         .form-grid {
             grid-template-columns: 1fr;
         }
@@ -541,16 +628,14 @@
             grid-column: auto;
         }
 
-        .guest-top {
+        .guest-top,
+        .guest-buttons {
             flex-direction: column;
             align-items: flex-start;
         }
 
-        .guest-buttons {
-            flex-direction: column;
-        }
-
-        .guest-btn {
+        .guest-btn,
+        .share-option {
             width: 100%;
         }
 
@@ -578,7 +663,7 @@
             <div class="success-icon">✅</div>
             <div>
                 <div class="success-title">Convidado adicionado com sucesso</div>
-                <div class="success-text">Já podes enviar o convite por WhatsApp ou copiar o link de resposta.</div>
+                <div class="success-text">Já podes enviar o convite por WhatsApp, SMS, email ou copiar o link.</div>
             </div>
         </div>
     {% endif %}
@@ -635,7 +720,6 @@
 
                 <form method="POST">
                     {% csrf_token %}
-
                     <div class="form-grid">
                         <div class="form-group full">
                             <label for="full_name">Nome completo</label>
@@ -717,18 +801,22 @@
                         </div>
 
                         <div class="guest-buttons">
-                            <button class="guest-btn primary" onclick="enviarWhatsApp(
-                                '{{ guest.full_name }}',
-                                '{{ guest.event.name }}',
-                                '{{ guest.event.date }}',
-                                '{{ guest.event.location }}',
-                                '{{ guest.phone }}',
-                                '{{ guest.token }}'
-                            )">
+                            <button class="guest-btn primary"
+                                    onclick="abrirPartilha(
+                                        '{{ guest.full_name|escapejs }}',
+                                        '{{ guest.event.name|escapejs }}',
+                                        '{{ guest.event.date|escapejs }}',
+                                        '{{ guest.event.location|escapejs }}',
+                                        '{{ guest.phone|default:''|escapejs }}',
+                                        '{{ guest.email|default:''|escapejs }}',
+                                        '{{ guest.token }}'
+                                    )">
                                 Enviar convite
                             </button>
 
-                           <button class="guest-btn dark" onclick="copiarLink(window.location.origin + '/invite/{{ guest.token }}/')">
+                            <button class="guest-btn dark" onclick="copiarLink(window.location.origin + '/invite/{{ guest.token }}/')">
+                                Copiar link
+                            </button>
 
                             <a href="{% url 'delete_guest' guest.id %}"
                                class="guest-btn danger"
@@ -757,7 +845,38 @@
 
 <div id="copyToast" class="copy-toast">Link copiado com sucesso.</div>
 
+<div id="shareModal" class="share-modal">
+    <div class="share-box">
+        <button class="share-close" onclick="fecharPartilha()">✕</button>
+        <h3 class="share-title">Enviar convite</h3>
+        <p class="share-subtitle">Escolhe a via pela qual queres enviar este convite.</p>
+
+        <div class="share-guest">
+            <div id="shareGuestName" class="share-guest-name"></div>
+            <div id="shareGuestMeta" class="share-guest-meta"></div>
+        </div>
+
+        <div class="share-options">
+            <button class="share-option" onclick="partilharWhatsApp()">WhatsApp</button>
+            <button class="share-option" onclick="partilharSMS()">SMS</button>
+            <button class="share-option" onclick="partilharEmail()">Email</button>
+            <button class="share-option" onclick="copiarLink(shareData.link)">Copiar link</button>
+        </div>
+    </div>
+</div>
+
 <script>
+    let shareData = {
+        nome: '',
+        evento: '',
+        data: '',
+        local: '',
+        telefone: '',
+        email: '',
+        token: '',
+        link: ''
+    };
+
     function copiarLink(link) {
         const toast = document.getElementById('copyToast');
 
@@ -783,20 +902,75 @@
         }
     }
 
-    function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-        let baseUrl = window.location.origin;
-        let inviteLink = baseUrl + "/invite/" + token + "/";
+    function abrirPartilha(nome, evento, data, local, telefone, email, token) {
+        shareData = {
+            nome: nome,
+            evento: evento,
+            data: data,
+            local: local,
+            telefone: telefone,
+            email: email,
+            token: token,
+            link: window.location.origin + "/invite/" + token + "/"
+        };
 
-        let mensagem =
-        "Olá " + nome + ",\n\n" +
-        "Você foi convidado para o evento *" + evento + "* 🎉\n\n" +
-        "📅 Data: " + data + "\n" +
-        "📍 Local: " + local + "\n\n" +
-        "Para responder ao convite, clique no link abaixo:\n" + inviteLink;
+        document.getElementById('shareGuestName').textContent = nome;
+        document.getElementById('shareGuestMeta').textContent =
+            "Telefone: " + (telefone || "Não informado") + " | Email: " + (email || "Não informado");
 
-        let url = "https://wa.me/" + telefone + "?text=" + encodeURIComponent(mensagem);
+        document.getElementById('shareModal').classList.add('show');
+    }
+
+    function fecharPartilha() {
+        document.getElementById('shareModal').classList.remove('show');
+    }
+
+    function mensagemConvite() {
+        return "Olá " + shareData.nome + ",\n\n" +
+               "Você foi convidado para o evento *" + shareData.evento + "* 🎉\n\n" +
+               "📅 Data: " + shareData.data + "\n" +
+               "📍 Local: " + shareData.local + "\n\n" +
+               "Para responder ao convite, clique no link abaixo:\n" + shareData.link;
+    }
+
+    function partilharWhatsApp() {
+        if (!shareData.telefone) {
+            alert("Este convidado não tem telefone informado.");
+            return;
+        }
+
+        let url = "https://wa.me/" + shareData.telefone + "?text=" + encodeURIComponent(mensagemConvite());
         window.open(url, "_blank");
     }
+
+    function partilharSMS() {
+        if (!shareData.telefone) {
+            alert("Este convidado não tem telefone informado.");
+            return;
+        }
+
+        let url = "sms:" + shareData.telefone + "?body=" + encodeURIComponent(mensagemConvite());
+        window.location.href = url;
+    }
+
+    function partilharEmail() {
+        if (!shareData.email) {
+            alert("Este convidado não tem email informado.");
+            return;
+        }
+
+        let assunto = "Convite para " + shareData.evento;
+        let corpo = mensagemConvite();
+        let url = "mailto:" + shareData.email + "?subject=" + encodeURIComponent(assunto) + "&body=" + encodeURIComponent(corpo);
+        window.location.href = url;
+    }
+
+    window.addEventListener('click', function (e) {
+        const modal = document.getElementById('shareModal');
+        if (e.target === modal) {
+            fecharPartilha();
+        }
+    });
 
     window.addEventListener('load', function () {
         const successBanner = document.getElementById('guestSuccessBanner');

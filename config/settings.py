@@ -127,3 +127,5 @@ AUTHENTICATION_BACKENDS = [
     'accounts.backends.EmailOrPhoneOrUsernameBackend',
     'django.contrib.auth.backends.ModelBackend',
 ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

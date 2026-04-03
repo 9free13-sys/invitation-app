@@ -35,7 +35,7 @@
     }
 
     .response-wrapper {
-        max-width: 700px;
+        max-width: 760px;
         margin: 20px auto 0;
     }
 
@@ -158,9 +158,44 @@
         color: #374151;
     }
 
+    .qr-box {
+        margin-top: 24px;
+        padding: 22px;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 20px;
+        text-align: center;
+    }
+
+    .qr-title {
+        font-size: 22px;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 8px;
+    }
+
+    .qr-subtitle {
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 18px;
+    }
+
+    .qr-image {
+        max-width: 240px;
+        width: 100%;
+        height: auto;
+        background: white;
+        padding: 10px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+        box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+    }
+
     .actions {
         display: flex;
         justify-content: center;
+        margin-top: 24px;
     }
 
     .btn {
@@ -253,6 +288,16 @@
                         <span class="status status-pending">⏳ Pendente</span>
                     {% endif %}
                 </div>
+
+                {% if action == 'confirm' and guest.qr_code %}
+                    <div class="qr-box">
+                        <div class="qr-title">QR Code de acesso</div>
+                        <div class="qr-subtitle">
+                            Guarde este código e apresente-o no acesso ao evento.
+                        </div>
+                        <img src="{{ guest.qr_code.url }}" alt="QR Code" class="qr-image">
+                    </div>
+                {% endif %}
 
                 <div class="actions">
                     <a href="/" class="btn">Voltar ao início</a>
