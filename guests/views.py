@@ -3,6 +3,10 @@ from .models import Guest
 from events.models import Event
 from guests.models import Guest
 from django.contrib.auth.decorators import login_required
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
+from .models import Guest
+
 def create_invite(request):
     if request.method == 'POST':
         event = Event.objects.create(
@@ -57,3 +61,20 @@ def invite_response(request, token, action):
         'guest': guest,
         'action': action
     })
+
+
+def delete_guest(request, guest_id):
+    guest = get_object_or_404(Guest, id=guest_id)
+    event = guest.event
+
+    if not request.user.is_authenticated:
+        messages.error(request, "Precisas de iniciar sessão para eliminar convidados.")
+        return redirect('login')
+
+    if event.owner != request.user:
+        messages.error(request, "Não tens permissão para eliminar este convidado.")
+        return redirect('event_detail', event_id=event.id)
+
+    guest.delete()
+    messages.success(request, "Convidado eliminado com sucesso!")
+    return redirect('event_detail', event_id=event.id)

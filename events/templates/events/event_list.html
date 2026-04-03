@@ -247,6 +247,15 @@
         background: white;
     }
 
+    .event-btn.danger {
+        background: #dc2626;
+        color: white;
+    }
+
+    .event-btn.danger:hover {
+        background: #b91c1c;
+    }
+
     .empty-card {
         background: linear-gradient(135deg, #ffffff, #f8fbff);
         border: 1px dashed #93c5fd;
@@ -406,7 +415,7 @@
     <div class="hero-card">
         <div class="hero-top">
             <div>
-                <div class="hero-badge">📅 Gestão de eventos</div>
+                <div class="hero-badge"> Gestão de eventos</div>
                 <h1 class="hero-title">Os teus eventos</h1>
                 <p class="hero-subtitle">
                     Consulta todos os eventos que criaste, abre os detalhes de cada um e continua a gestão dos convidados e confirmações.
@@ -414,8 +423,8 @@
             </div>
 
             <div class="hero-actions">
-                <a href="/create/" class="hero-btn primary">➕ Criar novo evento</a>
-                <a href="/" class="hero-btn secondary">← Voltar ao painel</a>
+                <a href="/create/" class="hero-btn primary"> Criar novo evento</a>
+                <a href="/" class="hero-btn secondary"> Voltar ao painel</a>
             </div>
         </div>
     </div>
@@ -444,10 +453,15 @@
                         </div>
                     </div>
 
-                    <div class="event-actions">
-                        <a href="/event/{{ event.id }}/" class="event-btn primary">Ver detalhes</a>
-                        <a href="/guests/" class="event-btn light">Ver convidados</a>
-                    </div>
+                   <div class="event-actions">
+    <a href="/event/{{ event.id }}/" class="event-btn primary">Ver detalhes</a>
+    <a href="/event/{{ event.id }}/" class="event-btn light">Ver convidados</a>
+    <a href="{% url 'delete_event' event.id %}"
+       class="event-btn danger"
+       onclick="return confirm('Tens a certeza que queres eliminar este evento?');">
+        Eliminar evento
+    </a>
+</div>
                 </div>
             {% endfor %}
         </div>

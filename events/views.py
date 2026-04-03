@@ -3,7 +3,24 @@ from .models import Event
 from guests.models import Guest
 import uuid
 from django.contrib.auth.decorators import login_required
+from django.contrib import messages
+from django.shortcuts import get_object_or_404, redirect
 
+def delete_event(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if not request.user.is_authenticated:
+        messages.error(request, "Precisas de iniciar sessão.")
+        return redirect('login')
+
+    if event.owner != request.user:
+        messages.error(request, "Não tens permissão para eliminar este evento.")
+        return redirect('event_list')
+
+    event.delete()
+    messages.success(request, "Evento eliminado com sucesso!")
+
+    return redirect('event_list')
 
 def event_list(request):
     events = Event.objects.filter(owner=request.user).order_by('-date')
@@ -36,7 +53,7 @@ def event_detail(request, event_id):
             token=uuid.uuid4()
         )
 
-        return redirect('event_detail', event_id=event.id)
+        return redirect(f'/event/{event.id}/?guest_added=1')
 
     guests = Guest.objects.filter(event=event)
 
