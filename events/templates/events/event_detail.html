@@ -622,21 +622,21 @@
 </div>
 
                                 <div class="guest-buttons">
-                                    <button class="guest-btn primary" onclick="enviarWhatsApp(
-                                        '{{ guest.full_name }}',
-                                        '{{ guest.event.name }}',
-                                        '{{ guest.event.date }}',
-                                        '{{ guest.event.location }}',
-                                        '{{ guest.phone }}',
-                                        '{{ guest.token }}'
-                                    )">
-                                        Enviar convite
-                                    </button>
+    <button class="guest-btn primary" onclick="enviarWhatsApp(
+        '{{ guest.full_name }}',
+        '{{ guest.event.name }}',
+        '{{ guest.event.date }}',
+        '{{ guest.event.location }}',
+        '{{ guest.phone }}',
+        '{{ guest.token }}'
+    )">
+        Enviar convite
+    </button>
 
-                                    <div id="copyToast" class="copy-toast">Link copiado com sucesso.</div><button class="guest-btn dark" onclick="navigator.clipboard.writeText('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
-                                        Copiar link
-                                    </button>
-                                </div>
+    <button class="guest-btn dark" onclick="copiarLink('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
+        Copiar link
+    </button>
+</div>
                             </li>
                         {% endfor %}
                     </ul>
@@ -657,6 +657,9 @@
         </div>
     </div>
 </div>
+
+<div id="copyToast" class="copy-toast">Link copiado com sucesso.</div>
+
 
 <script>
 
@@ -685,7 +688,6 @@ function copiarLink(link) {
         window.open(url, "_blank");
     }
 
-<div id="copyToast" class="copy-toast">Link copiado com sucesso.</div>
     
 </script>
 {% endblock %}
