@@ -146,6 +146,17 @@
         margin-top: 22px;
     }
 
+    .left-stack {
+        display: grid;
+        gap: 20px;
+    }
+
+    .right-stack {
+        display: grid;
+        gap: 20px;
+        align-content: start;
+    }
+
     .info-card,
     .stats-card,
     .form-card,
@@ -155,6 +166,10 @@
         border-radius: 24px;
         padding: 24px;
         box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+    }
+
+    .guests-card.full-width {
+        margin-top: 22px;
     }
 
     .section-title {
@@ -579,21 +594,20 @@
             </div>
 
             <div class="hero-actions">
-    <a href="/event/" class="hero-btn secondary"> Voltar aos eventos</a>
-    <a href="/create/" class="hero-btn primary"> Criar evento</a>
+                <a href="/event/" class="hero-btn secondary">Voltar aos eventos</a>
 
-    <a href="{% url 'delete_event' event.id %}"
-       class="hero-btn"
-       style="background:#dc2626; color:white;"
-       onclick="return confirm('Tens a certeza que queres eliminar este evento?');">
-         Eliminar evento
-    </a>
-</div>
+                <a href="{% url 'delete_event' event.id %}"
+                   class="hero-btn"
+                   style="background:#dc2626; color:white;"
+                   onclick="return confirm('Tens a certeza que queres eliminar este evento?');">
+                    Eliminar evento
+                </a>
+            </div>
         </div>
     </div>
 
     <div class="detail-grid">
-        <div>
+        <div class="left-stack">
             <div class="info-card">
                 <h2 class="section-title">Informações do evento</h2>
                 <div class="event-type-badge">{{ event.event_type_label }}</div>
@@ -644,7 +658,7 @@
             </div>
         </div>
 
-        <div>
+        <div class="right-stack">
             <div class="stats-card">
                 <h2 class="section-title">Estatísticas</h2>
 
@@ -675,70 +689,68 @@
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
 
-            <div class="guests-card">
-                <h2 class="section-title">Convidados</h2>
+    <div class="guests-card full-width">
+        <h2 class="section-title">Convidados</h2>
 
-                {% if guests %}
-                    <ul class="guest-list">
-                        {% for guest in guests %}
-                            <li class="guest-item">
-                                <div class="guest-top">
-                                    <div class="guest-name">{{ guest.full_name }}</div>
+        {% if guests %}
+            <ul class="guest-list">
+                {% for guest in guests %}
+                    <li class="guest-item">
+                        <div class="guest-top">
+                            <div class="guest-name">{{ guest.full_name }}</div>
 
-                                    {% if guest.status == 'confirmado' %}
-                                        <div class="status confirmado">✅ Confirmado</div>
-                                    {% elif guest.status == 'recusado' %}
-                                        <div class="status recusado">🚫 Recusado</div>
-                                    {% else %}
-                                        <div class="status pendente">⏳ Pendente</div>
-                                    {% endif %}
-                                </div>
+                            {% if guest.status == 'confirmado' %}
+                                <div class="status confirmado">✅ Confirmado</div>
+                            {% elif guest.status == 'recusado' %}
+                                <div class="status recusado">🚫 Recusado</div>
+                            {% else %}
+                                <div class="status pendente">⏳ Pendente</div>
+                            {% endif %}
+                        </div>
 
-                                <div class="guest-meta">
-                                    <div class="guest-meta-item"><strong>Telefone:</strong> {{ guest.phone|default:"Não informado" }}</div>
-                                    <div class="guest-meta-item"><strong>Email:</strong> {{ guest.email|default:"Não informado" }}</div>
-                                </div>
+                        <div class="guest-meta">
+                            <div class="guest-meta-item"><strong>Telefone:</strong> {{ guest.phone|default:"Não informado" }}</div>
+                            <div class="guest-meta-item"><strong>Email:</strong> {{ guest.email|default:"Não informado" }}</div>
+                        </div>
 
-                                <div class="guest-buttons">
-                                    <button class="guest-btn primary" onclick="enviarWhatsApp(
-                                        '{{ guest.full_name }}',
-                                        '{{ guest.event.name }}',
-                                        '{{ guest.event.date }}',
-                                        '{{ guest.event.location }}',
-                                        '{{ guest.phone }}',
-                                        '{{ guest.token }}'
-                                    )">
-                                        Enviar convite
-                                    </button>
+                        <div class="guest-buttons">
+                            <button class="guest-btn primary" onclick="enviarWhatsApp(
+                                '{{ guest.full_name }}',
+                                '{{ guest.event.name }}',
+                                '{{ guest.event.date }}',
+                                '{{ guest.event.location }}',
+                                '{{ guest.phone }}',
+                                '{{ guest.token }}'
+                            )">
+                                Enviar convite
+                            </button>
 
-                                    <button class="guest-btn dark" onclick="copiarLink('https://invitation-app-auto.onrender.com/invite/{{ guest.token }}/')">
-                                        Copiar link
-                                    </button>
+                           <button class="guest-btn dark" onclick="copiarLink(window.location.origin + '/invite/{{ guest.token }}/')">
 
-                                    <a href="{% url 'delete_guest' guest.id %}"
-                                       class="guest-btn danger"
-                                       onclick="return confirm('Tens a certeza que queres eliminar este convidado?');">
-                                        Eliminar
-                                    </a>
-                                </div>
-                            </li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <div class="empty-box">
-                        Ainda não existem convidados neste evento. Adiciona o primeiro convidado para começares a partilhar o convite.
-                    </div>
-                {% endif %}
-
-                <div class="finish-box">
-                    {% if event.owner %}
-                        <a href="/event/?created=1" class="finish-btn">Concluir</a>
-                    {% else %}
-                        <a href="/login/" class="finish-btn">Concluir</a>
-                    {% endif %}
-                </div>
+                            <a href="{% url 'delete_guest' guest.id %}"
+                               class="guest-btn danger"
+                               onclick="return confirm('Tens a certeza que queres eliminar este convidado?');">
+                                Eliminar
+                            </a>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="empty-box">
+                Ainda não existem convidados neste evento. Adiciona o primeiro convidado para começares a partilhar o convite.
             </div>
+        {% endif %}
+
+        <div class="finish-box">
+            {% if event.owner %}
+                <a href="/event/?created=1" class="finish-btn">Concluir</a>
+            {% else %}
+                <a href="/login/" class="finish-btn">Concluir</a>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -772,7 +784,8 @@
     }
 
     function enviarWhatsApp(nome, evento, data, local, telefone, token) {
-        let inviteLink = "https://invitation-app-auto.onrender.com/invite/" + token + "/";
+        let baseUrl = window.location.origin;
+        let inviteLink = baseUrl + "/invite/" + token + "/";
 
         let mensagem =
         "Olá " + nome + ",\n\n" +
