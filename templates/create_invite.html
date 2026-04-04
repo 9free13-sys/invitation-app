@@ -1,44 +1,59 @@
 {% extends "base.html" %}
 
-{% block title %}Criar Convite{% endblock %}
+{% block title %}Criar Convite | InvitePro{% endblock %}
 
 {% block content %}
 <style>
-    .form-page {
-        max-width: 820px;
-        margin: 40px auto;
-        padding: 0 16px;
+    .create-wrapper {
+        max-width: 900px;
+        margin: 10px auto 0;
     }
 
-    .form-card {
-        background: white;
-        border-radius: 24px;
-        box-shadow: 0 16px 40px rgba(0,0,0,0.08);
-        overflow: hidden;
+    .create-card {
+        background: #ffffff;
         border: 1px solid #e2e8f0;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 18px 44px rgba(15, 23, 42, 0.08);
     }
 
-    .form-header {
+    .create-header {
         background: linear-gradient(135deg, #2563eb, #1d4ed8);
+        padding: 28px 30px 24px;
         color: white;
-        padding: 28px 32px;
     }
 
-    .form-header h1 {
+    .create-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255,255,255,0.16);
+        border: 1px solid rgba(255,255,255,0.18);
+        color: white;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .create-title {
         margin: 0 0 8px 0;
-        font-size: 30px;
-        line-height: 1.2;
+        font-size: 36px;
+        line-height: 1.1;
+        font-weight: 800;
     }
 
-    .form-header p {
+    .create-subtitle {
         margin: 0;
         font-size: 15px;
-        line-height: 1.5;
-        opacity: 0.95;
+        line-height: 1.6;
+        color: rgba(255,255,255,0.92);
+        max-width: 620px;
     }
 
-    .form-body {
-        padding: 30px 32px;
+    .create-body {
+        padding: 28px 30px 30px;
     }
 
     .form-grid {
@@ -50,216 +65,162 @@
     .form-group {
         display: flex;
         flex-direction: column;
-        width: 100%;
+        gap: 8px;
     }
 
     .form-group.full {
         grid-column: 1 / -1;
     }
 
-    .form-group label {
+    .form-label {
         font-size: 14px;
         font-weight: 700;
-        color: #334155;
-        margin-bottom: 8px;
+        color: #0f172a;
     }
 
-    .form-group input,
-    .form-group select,
-    .form-group textarea {
-        display: block;
+    .form-input,
+    .form-select,
+    .form-textarea {
         width: 100%;
-        max-width: 100%;
-        padding: 14px 16px;
+        padding: 14px 15px;
         border: 1px solid #cbd5e1;
         border-radius: 14px;
-        font-size: 15px;
         background: #f8fafc;
+        color: #0f172a;
+        font-size: 15px;
+        box-sizing: border-box;
         outline: none;
         transition: 0.2s ease;
-        box-sizing: border-box;
     }
 
-    .form-group textarea {
-        min-height: 110px;
-        resize: vertical;
-        font-family: "Segoe UI", sans-serif;
-    }
-
-    .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
         border-color: #2563eb;
         background: white;
-        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-textarea {
+        min-height: 120px;
+        resize: vertical;
     }
 
     .field-help {
-        margin-top: 6px;
+        margin-top: -2px;
         font-size: 13px;
         color: #64748b;
-        line-height: 1.4;
+        line-height: 1.5;
     }
 
-    .helper-box {
-        width: 100%;
+    .info-box {
         margin-top: 22px;
-        background: #eff6ff;
+        background: linear-gradient(135deg, #eff6ff, #f8fbff);
         border: 1px solid #bfdbfe;
-        color: #1e40af;
         border-radius: 16px;
         padding: 16px 18px;
+        color: #1d4ed8;
         font-size: 14px;
-        line-height: 1.5;
-        box-sizing: border-box;
+        line-height: 1.6;
     }
 
     .actions {
-        width: 100%;
-        margin-top: 22px;
-        display: flex;
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 14px;
-        flex-wrap: wrap;
     }
 
-    .submit-btn,
-    .back-link {
-        flex: 1;
-        min-width: 220px;
-        padding: 15px 18px;
+    .btn-main,
+    .btn-secondary {
+        min-height: 52px;
         border-radius: 14px;
-        font-weight: 700;
-        font-size: 16px;
-        text-align: center;
-        box-sizing: border-box;
+        border: none;
+        font-size: 15px;
+        font-weight: 800;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        transition: 0.2s ease;
+        cursor: pointer;
     }
 
-    .submit-btn {
+    .btn-main {
         background: #2563eb;
         color: white;
-        border: none;
-        cursor: pointer;
-        transition: 0.2s ease;
+        box-shadow: 0 12px 26px rgba(37, 99, 235, 0.18);
     }
 
-    .submit-btn:hover {
+    .btn-main:hover {
         background: #1d4ed8;
         transform: translateY(-1px);
     }
 
-    .back-link {
-        text-decoration: none;
+    .btn-secondary {
         background: #0f172a;
         color: white;
-        transition: 0.2s ease;
     }
 
-    .back-link:hover {
-        opacity: 0.95;
+    .btn-secondary:hover {
+        opacity: 0.96;
         transform: translateY(-1px);
     }
 
-    @media (max-width: 700px) {
-        .form-page {
-            max-width: 100%;
-            margin: 14px auto;
-            padding: 0 12px;
+    @media (max-width: 768px) {
+        .create-wrapper {
+            margin-top: 0;
         }
 
-        .form-card {
-            width: 100%;
-            margin: 0 auto;
-            border-radius: 18px;
+        .create-header {
+            padding: 22px 18px 20px;
         }
 
-        .form-header {
-            padding: 18px 16px;
+        .create-title {
+            font-size: 28px;
         }
 
-        .form-body {
-            padding: 18px 16px 20px;
+        .create-subtitle {
+            font-size: 14px;
         }
 
-        .form-header h1 {
-            font-size: 24px;
-            margin-bottom: 6px;
+        .create-body {
+            padding: 20px 18px 22px;
         }
 
-        .form-header p {
-            font-size: 13px;
-        }
-
-        .form-grid {
+        .form-grid,
+        .actions {
             grid-template-columns: 1fr;
-            gap: 14px;
         }
 
         .form-group.full {
             grid-column: auto;
         }
-
-        .form-group label {
-            font-size: 13px;
-            margin-bottom: 6px;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            padding: 12px 14px;
-            font-size: 15px;
-            border-radius: 12px;
-        }
-
-        .form-group textarea {
-            min-height: 96px;
-        }
-
-        .helper-box {
-            margin-top: 16px;
-            padding: 13px 14px;
-            font-size: 12px;
-            border-radius: 12px;
-        }
-
-        .actions {
-            margin-top: 16px;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .submit-btn,
-        .back-link {
-            display: block;
-            width: 100%;
-            min-width: 0;
-            padding: 14px 16px;
-            font-size: 15px;
-            border-radius: 12px;
-        }
     }
 </style>
 
-<div class="form-page">
-    <div class="form-card">
-        <div class="form-header">
-            <h1>✨ Criar Convite</h1>
-            <p>Preencha os dados do evento para gerar o seu convite digital.</p>
+<div class="create-wrapper">
+    <div class="create-card">
+        <div class="create-header">
+            <h1 class="create-title">Criar Convite</h1>
+            <p class="create-subtitle">
+                Preencha os dados do evento para gerar o seu convite digital com um visual profissional e pronto para partilha.
+            </p>
         </div>
 
-        <div class="form-body">
-            <form method="POST">
+        <div class="create-body">
+            <form method="POST" action="{% url 'create_event' %}">
                 {% csrf_token %}
 
                 <div class="form-grid">
                     <div class="form-group full">
-                        <label for="event_name">Nome do evento</label>
-                        <input type="text" id="event_name" name="event_name" placeholder="Ex.: Casamento da Ana e Pedro" required>
+                        <label for="name" class="form-label">Nome do evento</label>
+                        <input type="text" id="name" name="name" class="form-input" placeholder="Ex.: Casamento da Ana e Pedro" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="event_type">Tipo de evento</label>
-                        <select id="event_type" name="event_type" required>
+                        <label for="event_type" class="form-label">Tipo de evento</label>
+                        <select id="event_type" name="event_type" class="form-select" required onchange="toggleCustomEventType()">
                             <option value="">Selecione uma opção</option>
                             {% for value, label in event_types %}
                                 <option value="{{ value }}">{{ label }}</option>
@@ -268,34 +229,44 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="event_date">Data do evento</label>
-                        <input type="date" id="event_date" name="event_date" required>
+                        <label for="date" class="form-label">Data do evento</label>
+                        <input type="date" id="date" name="date" class="form-input" required>
                     </div>
 
                     <div class="form-group full" id="custom-event-type-group" style="display:none;">
-                        <label for="custom_event_type">Especifique o tipo de evento</label>
-                        <input type="text" id="custom_event_type" name="custom_event_type" placeholder="Ex.: Chá de panela, jantar empresarial, lançamento...">
+                        <label for="custom_event_type" class="form-label">Especificar tipo de evento</label>
+                        <input type="text" id="custom_event_type" name="custom_event_type" class="form-input" placeholder="Escreva o tipo de evento">
                     </div>
 
                     <div class="form-group full">
-                        <label for="location">Localização</label>
-                        <input type="text" id="location" name="location" placeholder="Ex.: Luanda, Talatona, Salão X" required>
-                        <small class="field-help">Indique o local do evento de forma clara para facilitar a chegada dos convidados.</small>
+                        <label for="location" class="form-label">Localização</label>
+                        <input type="text" id="location" name="location" class="form-input" placeholder="Ex.: Luanda, Talatona, Salão X" required>
+                        <div class="field-help">Indique o local do evento de forma clara para facilitar a chegada dos convidados.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="allowed_companions" class="form-label">Acompanhantes permitidos por convite</label>
+                        <input type="number" id="allowed_companions" name="allowed_companions" class="form-input" min="0" value="0" required>
+                        <div class="field-help">Este número será igual para todos os convidados deste evento.</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Regra de acompanhantes</label>
+                        <div class="info-box" style="margin-top:0;">
+                            Se colocares <strong>0</strong>, nenhum convidado poderá levar acompanhante.  
+                            Se colocares <strong>1</strong> ou mais, o convidado poderá informar o nome do acompanhante no momento da confirmação.
+                        </div>
                     </div>
 
                     <div class="form-group full">
-                        <label for="description">Descrição</label>
-                        <textarea id="description" name="description" placeholder="Ex.: Traje formal, entrada às 18h, mesa reservada..."></textarea>
+                        <label for="description" class="form-label">Descrição</label>
+                        <textarea id="description" name="description" class="form-textarea" placeholder="Ex.: Traje formal, entrada às 18h, mesa reservada..."></textarea>
                     </div>
-                </div>
-
-                <div class="helper-box">
-                    Depois de criar o evento, poderás adicionar convidados e partilhar o convite por link ou WhatsApp.
                 </div>
 
                 <div class="actions">
-                    <button type="submit" class="submit-btn">Criar convite</button>
-                    <a href="/" class="back-link">Voltar ao painel</a>
+                    <button type="submit" class="btn-main">Criar convite</button>
+                    <a href="{% url 'home' %}" class="btn-secondary">Voltar ao painel</a>
                 </div>
             </form>
         </div>
@@ -303,23 +274,20 @@
 </div>
 
 <script>
-    const eventTypeSelect = document.getElementById('event_type');
-    const customEventGroup = document.getElementById('custom-event-type-group');
-    const customEventInput = document.getElementById('custom_event_type');
-
     function toggleCustomEventType() {
-        if (eventTypeSelect.value === 'outro') {
-            customEventGroup.style.display = 'flex';
-            customEventInput.required = true;
+        const eventType = document.getElementById('event_type').value;
+        const customGroup = document.getElementById('custom-event-type-group');
+
+        if (eventType === 'outro') {
+            customGroup.style.display = 'flex';
         } else {
-            customEventGroup.style.display = 'none';
-            customEventInput.required = false;
-            customEventInput.value = '';
+            customGroup.style.display = 'none';
+            document.getElementById('custom_event_type').value = '';
         }
     }
 
-    eventTypeSelect.addEventListener('change', toggleCustomEventType);
-    toggleCustomEventType();
+    document.addEventListener('DOMContentLoaded', function () {
+        toggleCustomEventType();
+    });
 </script>
-
 {% endblock %}

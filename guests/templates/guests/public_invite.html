@@ -4,7 +4,6 @@
 
 {% block content %}
 <style>
-
 .invite-page-bg {
     position: relative;
 }
@@ -35,12 +34,12 @@
     pointer-events: none;
 }
 
-    .invite-wrapper {
-        max-width: 760px;
-        margin: 12px auto 0;
-    }
+.invite-wrapper {
+    max-width: 760px;
+    margin: 12px auto 0;
+}
 
-    .invite-shell {
+.invite-shell {
     background: rgba(255, 255, 255, 0.92);
     border: 1px solid #e2e8f0;
     border-radius: 24px;
@@ -49,281 +48,313 @@
     backdrop-filter: blur(8px);
 }
 
-    .invite-header {
+.invite-header {
     padding: 30px 28px 22px;
     text-align: center;
     border-bottom: 1px solid #eef2f7;
     background: linear-gradient(135deg, #ffffff, #eff6ff);
 }
 
-    .invite-badge {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        background: #eff6ff;
-        color: #1d4ed8;
-        border-radius: 999px;
-        padding: 7px 12px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 14px;
+.invite-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #eff6ff;
+    color: #1d4ed8;
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.invite-title {
+    margin: 0 0 8px 0;
+    font-size: 30px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.2;
+}
+
+.invite-subtitle {
+    margin: 0;
+    font-size: 15px;
+    color: #64748b;
+    line-height: 1.5;
+}
+
+.invite-body {
+    padding: 24px 28px 28px;
+}
+
+.guest-block {
+    text-align: center;
+    margin-bottom: 22px;
+}
+
+.guest-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.guest-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+    word-break: break-word;
+}
+
+.event-card {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 22px;
+    margin-bottom: 20px;
+}
+
+.event-type {
+    display: inline-block;
+    background: #dbeafe;
+    color: #1d4ed8;
+    padding: 7px 11px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.event-name {
+    font-size: 24px;
+    font-weight: 800;
+    color: #0f172a;
+    line-height: 1.3;
+    margin-bottom: 18px;
+    word-break: break-word;
+}
+
+.event-meta {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.meta-box {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 14px 16px;
+}
+
+.meta-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    margin-bottom: 6px;
+}
+
+.meta-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #0f172a;
+    line-height: 1.5;
+    word-break: break-word;
+}
+
+.invite-note {
+    text-align: center;
+    font-size: 14px;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 18px;
+}
+
+.form-group {
+    margin-bottom: 18px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #334155;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 14px;
+    font-size: 15px;
+    background: #fff;
+    box-sizing: border-box;
+}
+
+.actions {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+    padding: 13px 16px;
+    border-radius: 14px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 800;
+    transition: 0.2s ease;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+
+.btn-confirm {
+    background: #2563eb;
+    color: white;
+    box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
+}
+
+.btn-confirm:hover {
+    background: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+.btn-decline {
+    background: white;
+    color: #334155;
+    border-color: #cbd5e1;
+}
+
+.btn-decline:hover {
+    background: #f8fafc;
+}
+
+@media (max-width: 700px) {
+    .invite-wrapper {
+        margin-top: 0;
     }
 
-    .invite-title {
-        margin: 0 0 8px 0;
-        font-size: 30px;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.2;
-    }
-
-    .invite-subtitle {
-        margin: 0;
-        font-size: 15px;
-        color: #64748b;
-        line-height: 1.5;
+    .invite-header {
+        padding: 22px 18px 18px;
     }
 
     .invite-body {
-        padding: 24px 28px 28px;
+        padding: 18px 18px 22px;
     }
 
-    .guest-block {
-        text-align: center;
-        margin-bottom: 22px;
+    .invite-title {
+        font-size: 24px;
     }
 
-    .guest-label {
-        font-size: 13px;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 8px;
+    .invite-subtitle {
+        font-size: 14px;
     }
 
     .guest-name {
-        font-size: 24px;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.3;
-        word-break: break-word;
+        font-size: 21px;
     }
 
     .event-card {
-        background: #f8fafc;
-        border: 1px solid #e2e8f0;
-        border-radius: 20px;
-        padding: 22px;
-        margin-bottom: 20px;
-    }
-
-    .event-type {
-        display: inline-block;
-        background: #dbeafe;
-        color: #1d4ed8;
-        padding: 7px 11px;
-        border-radius: 999px;
-        font-size: 12px;
-        font-weight: 700;
-        margin-bottom: 14px;
+        padding: 18px;
+        border-radius: 18px;
     }
 
     .event-name {
-        font-size: 24px;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.3;
-        margin-bottom: 18px;
-        word-break: break-word;
+        font-size: 21px;
+        margin-bottom: 14px;
     }
 
     .event-meta {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: 1fr;
     }
 
     .meta-box {
-        background: white;
-        border: 1px solid #e2e8f0;
-        border-radius: 16px;
-        padding: 14px 16px;
-    }
-
-    .meta-label {
-        font-size: 11px;
-        font-weight: 700;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.6px;
-        margin-bottom: 6px;
+        padding: 13px 14px;
     }
 
     .meta-value {
-        font-size: 15px;
-        font-weight: 700;
-        color: #0f172a;
-        line-height: 1.5;
-        word-break: break-word;
+        font-size: 14px;
     }
 
     .invite-note {
-        text-align: center;
-        font-size: 14px;
-        color: #64748b;
-        line-height: 1.5;
-        margin-bottom: 18px;
+        font-size: 13px;
     }
 
     .actions {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        grid-template-columns: 1fr;
     }
 
     .btn {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 50px;
-        padding: 13px 16px;
-        border-radius: 14px;
-        text-decoration: none;
+        width: 100%;
+        min-height: 48px;
         font-size: 15px;
-        font-weight: 800;
-        transition: 0.2s ease;
-        border: 1px solid transparent;
     }
-
-    .btn-confirm {
-        background: #2563eb;
-        color: white;
-        box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
-    }
-
-    .btn-confirm:hover {
-        background: #1d4ed8;
-        transform: translateY(-1px);
-    }
-
-    .btn-decline {
-        background: white;
-        color: #334155;
-        border-color: #cbd5e1;
-    }
-
-    .btn-decline:hover {
-        background: #f8fafc;
-    }
-
-    @media (max-width: 700px) {
-        .invite-wrapper {
-            margin-top: 0;
-        }
-
-        .invite-header {
-            padding: 22px 18px 18px;
-        }
-
-        .invite-body {
-            padding: 18px 18px 22px;
-        }
-
-        .invite-title {
-            font-size: 24px;
-        }
-
-        .invite-subtitle {
-            font-size: 14px;
-        }
-
-        .guest-name {
-            font-size: 21px;
-        }
-
-        .event-card {
-            padding: 18px;
-            border-radius: 18px;
-        }
-
-        .event-name {
-            font-size: 21px;
-            margin-bottom: 14px;
-        }
-
-        .event-meta {
-            grid-template-columns: 1fr;
-        }
-
-        .meta-box {
-            padding: 13px 14px;
-        }
-
-        .meta-value {
-            font-size: 14px;
-        }
-
-        .invite-note {
-            font-size: 13px;
-        }
-
-        .actions {
-            grid-template-columns: 1fr;
-        }
-
-        .btn {
-            width: 100%;
-            min-height: 48px;
-            font-size: 15px;
-        }
-    }
+}
 </style>
-
-
 
 <div class="invite-page-bg">
     <div class="invite-wrapper">
         <div class="invite-shell">
-        <div class="invite-header">
-            <div class="invite-badge">Convite digital</div>
-            <p class="invite-subtitle">Responda ao convite de forma simples e rápida.</p>
-        </div>
-
-        <div class="invite-body">
-            <div class="guest-block">
-                <div class="guest-label">Convidado</div>
-                <div class="guest-name">{{ guest.full_name }}</div>
+            <div class="invite-header">
+                <div class="invite-badge">Convite digital</div>
+                <p class="invite-subtitle">Responda ao convite de forma simples e rápida.</p>
             </div>
 
-            <div class="event-card">
-                <div class="event-type">{{ guest.event.event_type_label }}</div>
-                <div class="event-name">{{ guest.event.name }}</div>
+            <div class="invite-body">
+                <div class="guest-block">
+                    <div class="guest-label">Convidado</div>
+                    <div class="guest-name">{{ guest.full_name }}</div>
+                </div>
 
-                <div class="event-meta">
-                    <div class="meta-box">
-                        <div class="meta-label">Data</div>
-                        <div class="meta-value">{{ guest.event.date|date:"d/m/Y" }}</div>
-                    </div>
+                <div class="event-card">
+                    <div class="event-type">{{ guest.event.event_type_label }}</div>
+                    <div class="event-name">{{ guest.event.name }}</div>
 
-                    <div class="meta-box">
-                        <div class="meta-label">Local</div>
-                        <div class="meta-value">{{ guest.event.location }}</div>
+                    <div class="event-meta">
+                        <div class="meta-box">
+                            <div class="meta-label">Data</div>
+                            <div class="meta-value">{{ guest.event.date|date:"d/m/Y" }}</div>
+                        </div>
+
+                        <div class="meta-box">
+                            <div class="meta-label">Local</div>
+                            <div class="meta-value">{{ guest.event.location }}</div>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="invite-note">
-                Escolha uma das opções abaixo para responder ao convite.
-            </div>
+                <div class="invite-note">
+                    Escolha uma das opções abaixo para responder ao convite.
+                </div>
 
-            <div class="actions">
-                <a href="/invite/{{ guest.token }}/confirm/" class="btn btn-confirm">Confirmar presença</a>
-                <a href="/invite/{{ guest.token }}/decline/" class="btn btn-decline">Recusar</a>
+                <form method="POST" action="{% url 'invite_response' guest.token 'confirm' %}">
+                    {% csrf_token %}
+
+                    {% if guest.event.allowed_companions > 0 %}
+                        <div class="form-group">
+                            <label for="companion_name">
+                                Nome do acompanhante (opcional)
+                            </label>
+                            <input type="text" id="companion_name" name="companion_name" placeholder="Escreva o nome do acompanhante">
+                        </div>
+                    {% endif %}
+
+                    <div class="actions">
+                        <button type="submit" class="btn btn-confirm">Confirmar presença</button>
+                        <a href="{% url 'invite_response' guest.token 'decline' %}" class="btn btn-decline">Recusar</a>
+                    </div>
+                </form>
             </div>
-        </div>
-    </div>
-</div>
         </div>
     </div>
 </div>

@@ -1,8 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+
 class Event(models.Model):
-    EVENT_TYPES = [
+    EVENT_TYPE_CHOICES = [
         ('aniversario', 'Aniversário'),
         ('casamento', 'Casamento'),
         ('noivado', 'Noivado'),
@@ -14,19 +15,21 @@ class Event(models.Model):
         ('evento_corporativo', 'Evento corporativo'),
         ('outro', 'Outro'),
     ]
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    name = models.CharField(max_length=200)
-    event_type = models.CharField(max_length=30, choices=EVENT_TYPES)
-    custom_event_type = models.CharField(max_length=100, blank=True)
-    date = models.DateField()
-    location = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
 
-    def event_type_label(self):
-        if self.event_type == 'outro' and self.custom_event_type:
-            return self.custom_event_type
-        return self.get_event_type_display()
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    name = models.CharField(max_length=255)
+    event_type = models.CharField(max_length=50, choices=EVENT_TYPE_CHOICES, default='outro')
+    date = models.DateField()
+    location = models.CharField(max_length=255, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+
+    # novo campo: regra global do evento
+    allowed_companions = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
+
+    @property
+    def event_type_label(self):
+        event_type_map = dict(self.EVENT_TYPE_CHOICES)
+        return event_type_map.get(self.event_type, self.event_type)

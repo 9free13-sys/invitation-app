@@ -712,6 +712,17 @@
                         <span class="meta-label">Descrição</span>
                         <span>{{ event.description|default:"Sem descrição adicionada." }}</span>
                     </div>
+
+                    <div class="meta-item">
+                        <span class="meta-label">Acompanhantes</span>
+                        <span>
+                            {% if event.allowed_companions > 0 %}
+                                Permitidos até {{ event.allowed_companions }}
+                            {% else %}
+                                Não permitidos
+                            {% endif %}
+                        </span>
+                    </div>
                 </div>
             </div>
 
@@ -798,6 +809,10 @@
                         <div class="guest-meta">
                             <div class="guest-meta-item"><strong>Telefone:</strong> {{ guest.phone|default:"Não informado" }}</div>
                             <div class="guest-meta-item"><strong>Email:</strong> {{ guest.email|default:"Não informado" }}</div>
+
+                            {% if event.allowed_companions > 0 and guest.companion_name %}
+                                <div class="guest-meta-item"><strong>Acompanhante:</strong> {{ guest.companion_name }}</div>
+                            {% endif %}
                         </div>
 
                         <div class="guest-buttons">
@@ -834,11 +849,7 @@
         {% endif %}
 
         <div class="finish-box">
-            {% if event.owner %}
-                <a href="/event/?created=1" class="finish-btn">Concluir</a>
-            {% else %}
-                <a href="/login/" class="finish-btn">Concluir</a>
-            {% endif %}
+            <a href="{% url 'event_guests' event.id %}" class="finish-btn">Ver lista completa</a>
         </div>
     </div>
 </div>

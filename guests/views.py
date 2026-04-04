@@ -41,6 +41,8 @@ def generate_qr_for_guest(guest):
         qr.save(temp_file, format='PNG')
         temp_file.seek(0)
         guest.qr_code.save(f'guest_{guest.id}_qr.png', File(temp_file), save=True)
+
+
 def confirm_guest(request, token):
     guest = get_object_or_404(Guest, token=token)
     guest.status = 'confirmado'
@@ -76,10 +78,18 @@ def invite_response(request, token, action):
 
     if action == 'confirm':
         guest.status = 'confirmado'
+
+        if guest.event.allowed_companions > 0:
+            companion_name = request.POST.get('companion_name')
+            if companion_name:
+                guest.companion_name = companion_name
+
         guest.save()
 
         if not guest.qr_code:
             generate_qr_for_guest(guest)
+
+        guest.refresh_from_db()
 
     elif action == 'decline':
         guest.status = 'recusado'
