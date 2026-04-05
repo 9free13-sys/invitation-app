@@ -1,6 +1,7 @@
+from django.conf import settings
 from django.core.management.base import BaseCommand
-from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
+from django.utils import timezone
 from notifications.models import Notification
 from events.models import Event
 from guests.models import Guest
@@ -15,6 +16,8 @@ class Command(BaseCommand):
 
         organizer_reminder_days = [7, 3, 1, 0]
         guest_reminder_days = [60, 30, 15, 7, 3, 1, 0]
+
+        site_url = settings.SITE_URL.rstrip('/')
 
         events = Event.objects.exclude(owner__isnull=True)
 
@@ -62,13 +65,16 @@ class Command(BaseCommand):
                     created_count += 1
 
                     if owner.email:
+                        event_link = f"{site_url}/event/{event.id}/"
+
                         subject = owner_title
                         body = (
                             f"Olá {owner.username},\n\n"
                             f"{owner_message}\n\n"
                             f"Evento: {event.name}\n"
                             f"Data: {event.date}\n"
-                            f"Local: {event.location or 'Não informado'}\n\n"
+                            f"Local: {event.location or 'Não informado'}\n"
+                            f"Link do evento: {event_link}\n\n"
                             f"Kixanu"
                         )
 
@@ -119,7 +125,7 @@ class Command(BaseCommand):
 
                     created_count += 1
 
-                    invite_link = f"/invite/{guest.token}/"
+                    invite_link = f"{site_url}/invite/{guest.token}/"
 
                     body = (
                         f"Olá {guest.full_name},\n\n"
