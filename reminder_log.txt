@@ -1,6 +1,6 @@
 ============================== 
-INICIO: 05/04/2026 14:49:01,30 
+INICIO: 05/04/2026 17:11:53,29 
 PASTA ATUAL: C:\Users\Admin\Desktop\convite_app 
-Notificações criadas: 0 | Emails enviados: 0
-FIM: 05/04/2026 14:49:02,49 
+Notificações criadas: 1 | Emails enviados: 1
+FIM: 05/04/2026 17:11:58,84 
 ============================== 

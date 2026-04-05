@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.http import HttpResponse
 from django.core.mail import EmailMultiAlternatives
+from django.contrib.auth.decorators import login_required
 from openpyxl import Workbook
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -43,6 +44,7 @@ def create_event(request):
     return render(request, 'create_invite.html')
 
 
+@login_required
 def event_list(request):
     events = Event.objects.filter(owner=request.user).order_by('-date')
     return render(request, 'events/event_list.html', {'events': events})
@@ -107,11 +109,18 @@ def _get_filtered_guests(request, event):
     if companion_filter == 'with':
         guests = guests.exclude(companion_name__isnull=True).exclude(companion_name__exact='')
     elif companion_filter == 'without':
-        guests = guests.filter(companion_name__isnull=True) | guests.filter(companion_name__exact='')
+        guests = guests.filter(companion_name__isnull=True) | Guest.objects.filter(
+            event=event,
+            companion_name__exact=''
+        )
+
         if status_filter in ['confirmado', 'pendente', 'recusado']:
             guests = guests.filter(status=status_filter)
 
-    if search_query:
+        if search_query:
+            guests = guests.filter(full_name__icontains=search_query)
+
+    if search_query and companion_filter != 'without':
         guests = guests.filter(full_name__icontains=search_query)
 
     guests = guests.order_by('full_name').distinct()
@@ -119,12 +128,9 @@ def _get_filtered_guests(request, event):
     return guests, status_filter, companion_filter, search_query
 
 
+@login_required
 def event_guests(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
 
     if event.owner != request.user:
         messages.error(request, "Não tens permissão para ver os convidados deste evento.")
@@ -142,12 +148,9 @@ def event_guests(request, event_id):
     return render(request, 'events/event_guests.html', context)
 
 
+@login_required
 def export_guests_excel(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
 
     if event.owner != request.user:
         messages.error(request, "Não tens permissão para exportar esta lista.")
@@ -184,12 +187,9 @@ def export_guests_excel(request, event_id):
     return response
 
 
+@login_required
 def export_guests_pdf(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
 
     if event.owner != request.user:
         messages.error(request, "Não tens permissão para exportar esta lista.")
@@ -298,18 +298,15 @@ def export_guests_pdf(request, event_id):
     return response
 
 
+@login_required
 def send_invites_email(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
 
     if event.owner != request.user:
         messages.error(request, "Não tens permissão para enviar estes convites.")
         return redirect('event_list')
 
-    guests, status_filter, companion_filter, search_query = _get_filtered_guests(request, event)
+    guests, _, _, _ = _get_filtered_guests(request, event)
 
     sent_count = 0
     ignored_count = 0
@@ -373,12 +370,9 @@ def send_invites_email(request, event_id):
     return redirect(redirect_url)
 
 
+@login_required
 def delete_event(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
-    if not request.user.is_authenticated:
-        messages.error(request, "Precisas de iniciar sessão.")
-        return redirect('login')
 
     if event.owner != request.user:
         messages.error(request, "Não tens permissão para eliminar este evento.")

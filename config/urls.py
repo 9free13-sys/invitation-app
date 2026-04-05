@@ -5,9 +5,13 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+
     path('', include('dashboard.urls')),
     path('event/', include('events.urls')),
-    path('guests/', include('guests.urls')),
+
+    # manter rotas dos convidados na raiz para o convite público funcionar
+    path('', include('guests.urls')),
+
     path('', include('accounts.urls')),
     path('notifications/', include('notifications.urls')),
 ]

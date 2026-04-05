@@ -33,7 +33,7 @@ def guest_list(request):
 
 
 def generate_qr_for_guest(guest):
-    qr_data = f"InvitePro|event:{guest.event.id}|guest:{guest.id}|token:{guest.token}|status:{guest.status}"
+    qr_data = f"Kixanu|event:{guest.event.id}|guest:{guest.id}|token:{guest.token}|status:{guest.status}"
 
     qr = qrcode.make(qr_data)
 
