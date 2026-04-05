@@ -1,0 +1,234 @@
+{% extends "base.html" %}
+
+{% block title %}Notificações | InvitePro{% endblock %}
+
+{% block content %}
+<style>
+    .notifications-wrapper {
+        max-width: 980px;
+        margin: 8px auto 0;
+    }
+
+    .page-card,
+    .list-card {
+        background: white;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 24px;
+        box-shadow: 0 14px 32px rgba(15, 23, 42, 0.06);
+        margin-bottom: 22px;
+    }
+
+    .page-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .page-badge {
+        display: inline-flex;
+        align-items: center;
+        background: #dbeafe;
+        color: #1d4ed8;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .page-title {
+        margin: 0 0 8px 0;
+        font-size: 34px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .page-subtitle {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #64748b;
+    }
+
+    .top-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 44px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .btn.primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn.primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn.dark {
+        background: #0f172a;
+        color: white;
+    }
+
+    .btn.dark:hover {
+        opacity: 0.95;
+    }
+
+    .notification-list {
+        display: grid;
+        gap: 14px;
+    }
+
+    .notification-item {
+        border: 1px solid #e2e8f0;
+        border-radius: 18px;
+        padding: 18px;
+        background: #f8fafc;
+    }
+
+    .notification-item.unread {
+        border-color: #93c5fd;
+        background: #eff6ff;
+    }
+
+    .notification-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin-bottom: 10px;
+    }
+
+    .notification-title {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .notification-date {
+        font-size: 13px;
+        color: #64748b;
+        white-space: nowrap;
+    }
+
+    .notification-message {
+        margin: 0 0 14px 0;
+        font-size: 15px;
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    .notification-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .empty-box {
+        background: linear-gradient(135deg, #ffffff, #f8fbff);
+        border: 1px dashed #93c5fd;
+        border-radius: 18px;
+        padding: 24px;
+        text-align: center;
+        color: #64748b;
+        font-size: 15px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 700px) {
+        .page-card,
+        .list-card {
+            padding: 20px 18px;
+            border-radius: 20px;
+        }
+
+        .page-title {
+            font-size: 28px;
+        }
+
+        .page-subtitle,
+        .notification-message {
+            font-size: 14px;
+        }
+
+        .top-actions,
+        .notification-actions {
+            flex-direction: column;
+        }
+
+        .btn {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="notifications-wrapper">
+    <div class="page-card">
+        <div class="page-top">
+            <div>
+                <div class="page-badge">Notificações</div>
+                <h1 class="page-title">Lembretes do sistema</h1>
+                <p class="page-subtitle">
+                    Acompanhe os avisos sobre os seus eventos e marque as notificações como lidas.
+                </p>
+            </div>
+
+            <div class="top-actions">
+                <a href="{% url 'mark_all_notifications_read' %}" class="btn primary">Marcar todas como lidas</a>
+                <a href="{% url 'home' %}" class="btn dark">Voltar ao painel</a>
+            </div>
+        </div>
+    </div>
+
+    <div class="list-card">
+        {% if notifications %}
+            <div class="notification-list">
+                {% for notification in notifications %}
+                    <div class="notification-item {% if not notification.is_read %}unread{% endif %}">
+                        <div class="notification-top">
+                            <h2 class="notification-title">{{ notification.title }}</h2>
+                            <div class="notification-date">{{ notification.created_at|date:"d/m/Y H:i" }}</div>
+                        </div>
+
+                        <p class="notification-message">{{ notification.message }}</p>
+
+                        <div class="notification-actions">
+                            {% if not notification.is_read %}
+                                <a href="{% url 'mark_notification_read' notification.id %}" class="btn primary">Marcar como lida</a>
+                            {% endif %}
+
+                            {% if notification.event %}
+                                <a href="{% url 'event_detail' notification.event.id %}" class="btn dark">Ver evento</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-box">
+                Ainda não tens notificações.
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

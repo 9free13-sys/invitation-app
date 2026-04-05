@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.http import HttpResponse
+from django.core.mail import EmailMultiAlternatives
 from openpyxl import Workbook
 from reportlab.lib.pagesizes import A4
 from reportlab.lib import colors
@@ -49,7 +50,6 @@ def event_list(request):
 
 def event_detail(request, event_id):
     event = get_object_or_404(Event, id=event_id)
-
     pending_event_id = request.session.get('pending_event_id')
 
     if event.owner:
@@ -81,10 +81,7 @@ def event_detail(request, event_id):
     pending_guests = guests.filter(status='pendente').count()
     declined_guests = guests.filter(status='recusado').count()
 
-    if total_guests > 0:
-        percentage = round((confirmed_guests / total_guests) * 100, 1)
-    else:
-        percentage = 0
+    percentage = round((confirmed_guests / total_guests) * 100, 1) if total_guests > 0 else 0
 
     return render(request, 'events/event_detail.html', {
         'event': event,
@@ -111,11 +108,13 @@ def _get_filtered_guests(request, event):
         guests = guests.exclude(companion_name__isnull=True).exclude(companion_name__exact='')
     elif companion_filter == 'without':
         guests = guests.filter(companion_name__isnull=True) | guests.filter(companion_name__exact='')
+        if status_filter in ['confirmado', 'pendente', 'recusado']:
+            guests = guests.filter(status=status_filter)
 
     if search_query:
         guests = guests.filter(full_name__icontains=search_query)
 
-    guests = guests.order_by('full_name')
+    guests = guests.order_by('full_name').distinct()
 
     return guests, status_filter, companion_filter, search_query
 
@@ -154,7 +153,7 @@ def export_guests_excel(request, event_id):
         messages.error(request, "Não tens permissão para exportar esta lista.")
         return redirect('event_list')
 
-    guests, status_filter, companion_filter, search_query = _get_filtered_guests(request, event)
+    guests, _, _, _ = _get_filtered_guests(request, event)
 
     wb = Workbook()
     ws = wb.active
@@ -181,7 +180,6 @@ def export_guests_excel(request, event_id):
         content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
     )
     response["Content-Disposition"] = f'attachment; filename="convidados_evento_{event.id}.xlsx"'
-
     wb.save(response)
     return response
 
@@ -288,18 +286,91 @@ def export_guests_pdf(request, event_id):
     pending_guests = guests.filter(status='pendente').count()
     declined_guests = guests.filter(status='recusado').count()
 
-    summary = [
+    for line in [
         f"Total de convidados na lista filtrada: {total_guests}",
         f"Confirmados: {confirmed_guests}",
         f"Pendentes: {pending_guests}",
         f"Recusados: {declined_guests}",
-    ]
-
-    for line in summary:
+    ]:
         elements.append(Paragraph(line, styles["Normal"]))
 
     doc.build(elements)
     return response
+
+
+def send_invites_email(request, event_id):
+    event = get_object_or_404(Event, id=event_id)
+
+    if not request.user.is_authenticated:
+        messages.error(request, "Precisas de iniciar sessão.")
+        return redirect('login')
+
+    if event.owner != request.user:
+        messages.error(request, "Não tens permissão para enviar estes convites.")
+        return redirect('event_list')
+
+    guests, status_filter, companion_filter, search_query = _get_filtered_guests(request, event)
+
+    sent_count = 0
+    ignored_count = 0
+
+    for guest in guests:
+        if not guest.email:
+            ignored_count += 1
+            continue
+
+        invite_link = request.build_absolute_uri(f"/invite/{guest.token}/")
+
+        subject = f"Convite para {event.name}"
+        body = (
+            f"Olá {guest.full_name},\n\n"
+            f"Está convidado(a) para o evento {event.name}.\n\n"
+            f"Data: {event.date}\n"
+            f"Local: {event.location or 'Não informado'}\n"
+        )
+
+        if event.description:
+            body += f"Descrição: {event.description}\n"
+
+        if event.allowed_companions > 0:
+            body += "\nEste convite permite acompanhante.\n"
+
+        body += (
+            f"\nPara responder ao convite, use o link abaixo:\n"
+            f"{invite_link}\n\n"
+            f"InvitePro"
+        )
+
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=body,
+            to=[guest.email]
+        )
+        email.send()
+        sent_count += 1
+
+    if sent_count > 0 and ignored_count > 0:
+        messages.success(
+            request,
+            f"Foram enviados {sent_count} convites por email. {ignored_count} convidados foram ignorados porque não têm email."
+        )
+    elif sent_count > 0:
+        messages.success(
+            request,
+            f"Foram enviados {sent_count} convites por email com sucesso."
+        )
+    else:
+        messages.warning(
+            request,
+            "Nenhum email foi enviado. Verifica se os convidados têm email preenchido."
+        )
+
+    query = request.GET.urlencode()
+    redirect_url = f"/event/{event.id}/guests/"
+    if query:
+        redirect_url = f"{redirect_url}?{query}"
+
+    return redirect(redirect_url)
 
 
 def delete_event(request, event_id):

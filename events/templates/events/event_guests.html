@@ -30,7 +30,6 @@
     .hero-badge {
         display: inline-flex;
         align-items: center;
-        gap: 8px;
         background: #dbeafe;
         color: #1d4ed8;
         border-radius: 999px;
@@ -57,7 +56,6 @@
     }
 
     .hero-actions,
-    .table-actions,
     .filter-grid {
         display: flex;
         gap: 10px;
@@ -78,7 +76,7 @@
     }
 
     .filter-group.small {
-        min-width: 150px;
+        min-width: 160px;
         flex: 0 0 180px;
     }
 
@@ -159,10 +157,6 @@
 
     .btn.danger:hover {
         background: #b91c1c;
-    }
-
-    .btn.export {
-        position: relative;
     }
 
     .export-menu-wrap {
@@ -335,7 +329,6 @@
         }
 
         .hero-actions,
-        .table-actions,
         .filter-grid {
             width: 100%;
             flex-direction: column;
@@ -363,7 +356,7 @@
                 <div class="hero-badge">Lista de convidados</div>
                 <h1 class="hero-title">{{ event.name }}</h1>
                 <p class="hero-subtitle">
-                    Consulta os convidados deste evento, aplica filtros e exporta apenas a lista que desejares.
+                    Consulta os convidados deste evento, aplica filtros e envia ou exporta apenas a lista que desejares.
                 </p>
             </div>
 
@@ -405,12 +398,21 @@
             <div class="filter-group small">
                 <label class="filter-label">&nbsp;</label>
                 <div class="export-menu-wrap">
-                    <button type="button" class="btn dark export" onclick="toggleExportMenu()">Exportar</button>
+                    <button type="button" class="btn dark" onclick="toggleExportMenu()">Exportar</button>
                     <div id="exportMenu" class="export-menu">
                         <a class="export-link" href="{% url 'export_guests_excel' event.id %}?q={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&companion={{ companion_filter|urlencode }}">Exportar Excel</a>
                         <a class="export-link" href="{% url 'export_guests_pdf' event.id %}?q={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&companion={{ companion_filter|urlencode }}">Exportar PDF</a>
                     </div>
                 </div>
+            </div>
+
+            <div class="filter-group small">
+                <label class="filter-label">&nbsp;</label>
+                <a href="{% url 'send_invites_email' event.id %}?q={{ search_query|urlencode }}&status={{ status_filter|urlencode }}&companion={{ companion_filter|urlencode }}"
+                   class="btn primary"
+                   onclick="return confirm('Pretendes enviar os convites por email para todos os convidados desta lista?');">
+                    Enviar emails
+                </a>
             </div>
         </form>
 
@@ -426,7 +428,7 @@
                             <th class="center">
                                 <span class="select-header">
                                     <input type="checkbox" id="masterCheckbox" class="select-master" onclick="toggleAllSelection(this)">
-                                    <span>Sel.</span>
+                                    
                                 </span>
                             </th>
                             <th>Convidado</th>
@@ -501,7 +503,7 @@
 
     window.addEventListener('click', function (e) {
         const menu = document.getElementById('exportMenu');
-        const button = document.querySelector('.btn.export');
+        const button = document.querySelector('.export-menu-wrap button');
 
         if (menu && button && !menu.contains(e.target) && !button.contains(e.target)) {
             menu.classList.remove('show');
