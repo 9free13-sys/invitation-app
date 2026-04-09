@@ -15,9 +15,9 @@ from .models import UserProfile
 
 
 def send_verification_email(request, user, profile):
-    if not profile.email_verification_token:
-        profile.email_verification_token = uuid.uuid4()
-        profile.save()
+    profile.email_verification_token = uuid.uuid4()
+    profile.email_verified = False
+    profile.save()
 
     site_url = settings.SITE_URL.rstrip('/')
     verification_link = f"{site_url}/verify-email/{profile.email_verification_token}/"
@@ -25,11 +25,9 @@ def send_verification_email(request, user, profile):
     subject = 'Verifica o teu email no Kixanu'
     body = (
         f"Olá {user.username},\n\n"
-        f"Verifica o teu email neste link:\n{verification_link}\n"
+        f"Verifica o teu email neste link:\n{verification_link}\n\n"
+        f"Se não foste tu, ignora este email.\n"
     )
-
-    print("EMAIL:", user.email)
-    print("LINK:", verification_link)
 
     email = EmailMultiAlternatives(
         subject=subject,
@@ -61,10 +59,6 @@ def register_view(request):
                 }
             )
 
-            profile.email_verified = False
-            profile.email_verification_token = uuid.uuid4()
-            profile.save()
-
             try:
                 send_verification_email(request, user, profile)
                 messages.success(request, 'Conta criada com sucesso. Verifica o teu email.')
@@ -90,7 +84,8 @@ def verify_email(request, token):
         messages.success(request, 'Email verificado com sucesso. Já podes iniciar sessão.')
         return redirect('login')
     except UserProfile.DoesNotExist:
-        return HttpResponse("Link inválido.")
+        messages.error(request, 'Link de verificação inválido ou expirado.')
+        return redirect('resend_verification')
 
 
 def resend_verification_email_view(request):
@@ -112,9 +107,6 @@ def resend_verification_email_view(request):
             if profile.email_verified:
                 messages.info(request, 'Este email já está verificado. Já podes iniciar sessão.')
                 return redirect('login')
-
-            profile.email_verification_token = uuid.uuid4()
-            profile.save()
 
             try:
                 send_verification_email(request, user, profile)
@@ -203,9 +195,6 @@ def profile_view(request):
         profile.phone = phone if phone else None
 
         if email_changed:
-            profile.email_verified = False
-            profile.email_verification_token = uuid.uuid4()
-            profile.save()
             try:
                 send_verification_email(request, request.user, profile)
                 messages.success(
