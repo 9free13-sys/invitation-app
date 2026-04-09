@@ -6,18 +6,14 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
 
-    # dashboard como homepage
     path('', include('dashboard.urls')),
-
-    # apps com prefixo claro
     path('event/', include('events.urls')),
-    path('notifications/', include('notifications.urls')),
 
-    # convidados (mantém na raiz se for necessário para links públicos)
-    path('invite/', include('guests.urls')),
+    # convidados na raiz para os links públicos funcionarem
+    path('', include('guests.urls')),
 
-    # contas (login, register, etc.)
     path('', include('accounts.urls')),
+    path('notifications/', include('notifications.urls')),
 ]
 
 if settings.DEBUG:
