@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}Verifica o teu email | Kixanu{% endblock %}
+
+{% block content %}
+<style>
+    .auth-page {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 500px;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 28px;
+        padding: 34px 28px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
+    }
+
+    .auth-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 18px;
+        border-radius: 18px;
+        background: #eff6ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+    }
+
+    .auth-title {
+        margin: 0;
+        text-align: center;
+        font-size: 36px;
+        line-height: 1.1;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .auth-subtitle {
+        margin: 12px 0 26px;
+        text-align: center;
+        font-size: 15px;
+        line-height: 1.7;
+        color: #64748b;
+    }
+
+    .messages-box {
+        margin-bottom: 18px;
+    }
+
+    .message-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .message-item.error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+    }
+
+    .message-item.success {
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    .message-item.info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    .form-group {
+        margin-bottom: 18px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .form-input {
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        background: #f8fafc;
+        color: #0f172a;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-input:focus {
+        border-color: #2563eb;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .btn-submit {
+        width: 100%;
+        min-height: 50px;
+        border: none;
+        border-radius: 14px;
+        background: #2563eb;
+        color: white;
+        font-size: 15px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .btn-submit:hover {
+        background: #1d4ed8;
+    }
+
+    .auth-footer {
+        margin-top: 18px;
+        text-align: center;
+        font-size: 14px;
+        color: #64748b;
+    }
+
+    .auth-footer a {
+        color: #2563eb;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+        .auth-card {
+            padding: 28px 20px;
+            border-radius: 22px;
+        }
+
+        .auth-title {
+            font-size: 30px;
+        }
+    }
+</style>
+
+<div class="auth-page">
+    <div class="auth-card">
+        <div class="auth-icon">✉️</div>
+        <h1 class="auth-title">Verifica o teu email</h1>
+        <p class="auth-subtitle">
+            Enviámos um link de verificação para o teu email. Abre a tua caixa de entrada e confirma a conta antes de entrares.
+        </p>
+
+        {% if messages %}
+            <div class="messages-box">
+                {% for message in messages %}
+                    <div class="message-item {{ message.tags|default:'info' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    class="form-input"
+                    placeholder="Digite o teu email"
+                    value="{{ email|default:'' }}"
+                    required
+                >
+            </div>
+
+            <button type="submit" class="btn-submit">Reenviar verificação de email</button>
+        </form>
+
+        <div class="auth-footer">
+            Já verificaste?
+            <a href="{% url 'login' %}">Entrar</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

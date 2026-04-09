@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}InvitePro{% endblock %}</title>
+
+    <title>{% block title %}Kixanu{% endblock %}</title>
 
     <style>
         :root {
@@ -96,18 +97,15 @@
             transition: 0.2s ease;
             white-space: nowrap;
             border: 1px solid transparent;
-            box-shadow: none;
         }
 
         .cta-btn {
             background: white;
             color: var(--primary);
-            box-shadow: 0 8px 18px rgba(255,255,255,0.12);
         }
 
         .cta-btn:hover {
             background: #eff6ff;
-            transform: translateY(-1px);
         }
 
         .ghost-btn {
@@ -118,98 +116,12 @@
 
         .ghost-btn:hover {
             background: rgba(255,255,255,0.14);
-            transform: translateY(-1px);
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 28px 20px 40px;
-        }
-
-        .app-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            box-shadow: var(--shadow);
-        }
-
-        .app-section-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: var(--dark);
-            margin: 0 0 10px 0;
-            letter-spacing: -0.4px;
-        }
-
-        .app-section-subtitle {
-            font-size: 16px;
-            color: var(--muted);
-            line-height: 1.5;
-            margin: 0;
-        }
-
-        .btn-primary,
-        .btn-dark,
-        .btn-light,
-        .btn-soft {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 46px;
-            padding: 12px 18px;
-            border-radius: 12px;
-            text-decoration: none;
-            font-weight: 700;
-            font-size: 15px;
-            line-height: 1;
-            transition: 0.2s ease;
-            border: 1px solid transparent;
-            cursor: pointer;
-            box-shadow: none;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.18);
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-        .btn-dark {
-            background: var(--dark);
-            color: white;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .btn-dark:hover {
-            background: var(--dark-soft);
-            transform: translateY(-1px);
-        }
-
-        .btn-light {
-            background: white;
-            color: var(--text);
-            border-color: var(--border);
-        }
-
-        .btn-light:hover {
-            background: #f8fafc;
-            transform: translateY(-1px);
-        }
-
-        .btn-soft {
-            background: var(--primary-soft);
-            color: var(--primary-dark);
-        }
-
-        .btn-soft:hover {
-            background: #bfdbfe;
-            transform: translateY(-1px);
         }
 
         input, select, textarea, button {
@@ -236,27 +148,8 @@
                 width: 100%;
             }
 
-            .logo {
-                font-size: 17px;
-            }
-
             .container {
                 padding: 18px 12px 28px;
-            }
-
-            .app-section-title {
-                font-size: 24px;
-            }
-
-            .app-section-subtitle {
-                font-size: 14px;
-            }
-
-            .btn-primary,
-            .btn-dark,
-            .btn-light,
-            .btn-soft {
-                width: 100%;
             }
         }
     </style>
@@ -269,22 +162,22 @@
         <div class="nav-container">
             <a href="/" class="logo">
                 <span class="logo-mark">🎉</span>
-                <span>InvitePro</span>
+                <span>kixanu</span>
             </a>
 
             <div class="nav-links">
-                <a href="/create/" class="nav-link-btn cta-btn">Criar meu convite agora</a>
+                <a href="/create/" class="nav-link-btn cta-btn">Criar convite</a>
 
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'notification_list' %}" style="position:relative; text-decoration:none; background:rgba(255,255,255,0.12); color:white; padding:10px 16px; border-radius:999px; font-weight:700; border:1px solid rgba(255,255,255,0.18);">
+                    <a href="{% url 'notification_list' %}" style="position:relative;">
                         Notificações
                         {% if unread_notifications_count > 0 %}
-                            <span style="position:absolute; top:-6px; right:-6px; min-width:22px; height:22px; padding:0 6px; border-radius:999px; background:#dc2626; color:white; font-size:12px; display:flex; align-items:center; justify-content:center; font-weight:800;">
+                            <span style="position:absolute; top:-6px; right:-6px; background:#dc2626; color:white; padding:4px 6px; border-radius:999px;">
                                 {{ unread_notifications_count }}
                             </span>
                         {% endif %}
-                    </a>        
-                    <a href="/profile/" class="nav-link-btn ghost-btn">Meu perfil</a>
+                    </a>
+                    <a href="/profile/" class="nav-link-btn ghost-btn">Perfil</a>
                     <a href="/logout/" class="nav-link-btn ghost-btn">Sair</a>
                 {% else %}
                     <a href="/login/" class="nav-link-btn ghost-btn">Entrar</a>

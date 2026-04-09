@@ -1,33 +1,33 @@
 {% extends "base.html" %}
 
-{% block title %}Criar conta{% endblock %}
+{% block title %}Criar conta | Kixanu{% endblock %}
 
 {% block content %}
 <style>
-    .auth-wrapper {
-        max-width: 520px;
-        margin: 52px auto;
+    .auth-page {
+        min-height: calc(100vh - 120px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
     }
 
     .auth-card {
-        background: white;
+        width: 100%;
+        max-width: 460px;
+        background: #ffffff;
         border: 1px solid #e2e8f0;
-        border-radius: 24px;
-        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
-        padding: 38px 34px;
+        border-radius: 28px;
+        padding: 34px 28px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.08);
     }
 
-    .auth-header {
-        text-align: center;
-        margin-bottom: 28px;
-    }
-
-    .auth-badge {
-        width: 62px;
-        height: 62px;
-        margin: 0 auto 16px;
+    .auth-icon {
+        width: 58px;
+        height: 58px;
+        margin: 0 auto 18px;
         border-radius: 18px;
-        background: linear-gradient(135deg, #dbeafe, #eff6ff);
+        background: #eff6ff;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -35,126 +35,102 @@
     }
 
     .auth-title {
-        margin: 0 0 10px 0;
-        font-size: 34px;
+        margin: 0;
+        text-align: center;
+        font-size: 38px;
+        line-height: 1.1;
         font-weight: 800;
         color: #0f172a;
     }
 
     .auth-subtitle {
-        margin: 0;
-        font-size: 16px;
+        margin: 12px 0 26px;
+        text-align: center;
+        font-size: 15px;
+        line-height: 1.6;
         color: #64748b;
-        line-height: 1.5;
     }
 
-    form {
-        width: 100%;
+    .form-group {
+        margin-bottom: 18px;
     }
 
-    form p {
-        margin: 0 0 16px 0;
-    }
-
-    form label {
+    .form-label {
         display: block;
-        margin-bottom: 7px;
+        margin-bottom: 8px;
         font-size: 14px;
         font-weight: 700;
-        color: #334155;
+        color: #0f172a;
     }
 
-    form input {
-        display: block;
+    .form-input {
         width: 100%;
-        max-width: 100%;
-        padding: 14px 15px;
+        min-height: 48px;
+        padding: 12px 14px;
         border: 1px solid #cbd5e1;
         border-radius: 14px;
-        font-size: 15px;
         background: #f8fafc;
+        color: #0f172a;
+        font-size: 15px;
         box-sizing: border-box;
         outline: none;
         transition: 0.2s ease;
     }
 
-    form input:focus {
+    .form-input:focus {
         border-color: #2563eb;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
-    }
-
-    .manual-field {
-        margin-bottom: 16px;
-    }
-
-    .manual-field label {
-        display: block;
-        margin-bottom: 7px;
-        font-size: 14px;
-        font-weight: 700;
-        color: #334155;
-    }
-
-    .manual-field input {
-        display: block;
-        width: 100%;
-        max-width: 100%;
-        padding: 14px 15px;
-        border: 1px solid #cbd5e1;
-        border-radius: 14px;
-        font-size: 15px;
-        background: #f8fafc;
-        box-sizing: border-box;
-        outline: none;
-        transition: 0.2s ease;
-    }
-
-    .manual-field input:focus {
-        border-color: #2563eb;
-        background: white;
-        box-shadow: 0 0 0 4px rgba(37,99,235,0.10);
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
     }
 
     .field-help {
-        display: block;
-        margin-top: 6px;
-        color: #64748b;
+        margin-top: 8px;
         font-size: 13px;
-        line-height: 1.4;
+        line-height: 1.5;
+        color: #64748b;
     }
 
-    ul.errorlist {
+    .field-errors {
+        margin-top: 8px;
+        padding-left: 18px;
+        color: #b91c1c;
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .global-errors {
+        margin-bottom: 18px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        background: #fef2f2;
+        border: 1px solid #fecaca;
         color: #b91c1c;
         font-size: 14px;
-        margin: 0 0 8px 0;
-        padding-left: 18px;
+        line-height: 1.5;
     }
 
-    .submit-btn {
-        display: block;
+    .btn-submit {
         width: 100%;
+        min-height: 50px;
         border: none;
+        border-radius: 14px;
         background: #2563eb;
         color: white;
-        padding: 15px 18px;
-        border-radius: 14px;
-        font-size: 16px;
+        font-size: 15px;
         font-weight: 700;
         cursor: pointer;
-        margin-top: 8px;
         transition: 0.2s ease;
+        margin-top: 8px;
     }
 
-    .submit-btn:hover {
+    .btn-submit:hover {
         background: #1d4ed8;
-        transform: translateY(-1px);
     }
 
     .auth-footer {
-        margin-top: 22px;
+        margin-top: 18px;
         text-align: center;
-        font-size: 15px;
+        font-size: 14px;
         color: #64748b;
     }
 
@@ -162,81 +138,179 @@
         color: #2563eb;
         font-weight: 700;
         text-decoration: none;
-        margin-left: 6px;
     }
 
-    @media (max-width: 700px) {
-        .auth-wrapper {
-            margin: 18px auto;
-            max-width: 100%;
-        }
+    .auth-footer a:hover {
+        text-decoration: underline;
+    }
 
+    .messages-box {
+        margin-bottom: 18px;
+    }
+
+    .message-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .message-item.error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+    }
+
+    .message-item.success {
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    .message-item.info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
+    }
+
+    @media (max-width: 640px) {
         .auth-card {
-            padding: 24px 18px;
-            border-radius: 18px;
-        }
-
-        .auth-badge {
-            width: 52px;
-            height: 52px;
-            border-radius: 14px;
-            font-size: 24px;
-            margin-bottom: 12px;
+            padding: 28px 20px;
+            border-radius: 22px;
         }
 
         .auth-title {
-            font-size: 28px;
-            margin-bottom: 8px;
-        }
-
-        .auth-subtitle {
-            font-size: 14px;
-        }
-
-        form input,
-        .manual-field input {
-            padding: 12px 14px;
-            font-size: 15px;
-            border-radius: 12px;
-        }
-
-        .submit-btn {
-            padding: 14px 16px;
-            font-size: 15px;
-            border-radius: 12px;
-        }
-
-        .auth-footer {
-            font-size: 14px;
+            font-size: 32px;
         }
     }
 </style>
 
-<div class="auth-wrapper">
+<div class="auth-page">
     <div class="auth-card">
-        <div class="auth-header">
-            <div class="auth-badge">📝</div>
-            <h1 class="auth-title">Criar conta</h1>
-            <p class="auth-subtitle">Crie a sua conta para começar a gerir convites digitais.</p>
-        </div>
+        <div class="auth-icon">✉️</div>
+        <h1 class="auth-title">Criar conta</h1>
+        <p class="auth-subtitle">
+            Cria a tua conta no Kixanu para começar a gerir convites digitais.
+        </p>
+
+        {% if messages %}
+            <div class="messages-box">
+                {% for message in messages %}
+                    <div class="message-item {{ message.tags|default:'info' }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% if form.errors %}
+            <div class="global-errors">
+                Corrige os erros abaixo.
+            </div>
+        {% endif %}
+
+        {% if form.non_field_errors %}
+            <div class="global-errors">
+                {% for error in form.non_field_errors %}
+                    <div>{{ error }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
 
         <form method="POST">
             {% csrf_token %}
 
-            {{ form.as_p }}
-
-            <div class="manual-field">
-                <label for="phone">Telefone</label>
-                <input type="text" id="phone" name="phone" placeholder="Ex.: 923 000 000">
-                <small class="field-help">Poderás usar este número depois para iniciar sessão.</small>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.username.id_for_label }}">Nome de utilizador</label>
+                <input
+                    type="text"
+                    name="{{ form.username.html_name }}"
+                    id="{{ form.username.id_for_label }}"
+                    class="form-input"
+                    placeholder="Escolha um nome de utilizador"
+                    value="{{ form.username.value|default:'' }}"
+                    required
+                >
+                {% if form.username.help_text %}
+                    <div class="field-help">{{ form.username.help_text }}</div>
+                {% endif %}
+                {% if form.username.errors %}
+                    <ul class="field-errors">
+                        {% for error in form.username.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
             </div>
 
-            <button type="submit" class="submit-btn">Criar conta</button>
+            <div class="form-group">
+                <label class="form-label" for="{{ form.email.id_for_label }}">Email</label>
+                <input
+                    type="email"
+                    name="{{ form.email.html_name }}"
+                    id="{{ form.email.id_for_label }}"
+                    class="form-input"
+                    placeholder="Digite o seu email"
+                    value="{{ form.email.value|default:'' }}"
+                    required
+                >
+                {% if form.email.errors %}
+                    <ul class="field-errors">
+                        {% for error in form.email.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.password1.id_for_label }}">Palavra-passe</label>
+                <input
+                    type="password"
+                    name="{{ form.password1.html_name }}"
+                    id="{{ form.password1.id_for_label }}"
+                    class="form-input"
+                    placeholder="Crie uma palavra-passe"
+                    required
+                >
+                {% if form.password1.help_text %}
+                    <div class="field-help">{{ form.password1.help_text|safe }}</div>
+                {% endif %}
+                {% if form.password1.errors %}
+                    <ul class="field-errors">
+                        {% for error in form.password1.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="{{ form.password2.id_for_label }}">Confirmar palavra-passe</label>
+                <input
+                    type="password"
+                    name="{{ form.password2.html_name }}"
+                    id="{{ form.password2.id_for_label }}"
+                    class="form-input"
+                    placeholder="Repita a palavra-passe"
+                    required
+                >
+                {% if form.password2.errors %}
+                    <ul class="field-errors">
+                        {% for error in form.password2.errors %}
+                            <li>{{ error }}</li>
+                        {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <button type="submit" class="btn-submit">Criar conta</button>
         </form>
 
         <div class="auth-footer">
-            Já tem conta?
-            <a href="/login/">Entrar</a>
+            Já tens conta?
+            <a href="{% url 'login' %}">Entrar</a>
         </div>
     </div>
 </div>

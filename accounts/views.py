@@ -1,137 +1,231 @@
-from django.shortcuts import render, redirect
+import uuid
+
+from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
-from django.contrib.auth.models import User
-from .forms import CustomAuthenticationForm
 from django.contrib.auth import login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
-from events.models import Event
+from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.models import User
+from django.core.mail import EmailMultiAlternatives
+from django.http import HttpResponse
+from django.shortcuts import redirect, render
+
+from .forms import LoginForm, CustomRegisterForm
 from .models import UserProfile
 
 
+def send_verification_email(request, user, profile):
+    if not profile.email_verification_token:
+        profile.email_verification_token = uuid.uuid4()
+        profile.save()
+
+    site_url = settings.SITE_URL.rstrip('/')
+    verification_link = f"{site_url}/verify-email/{profile.email_verification_token}/"
+
+    subject = 'Verifica o teu email no Kixanu'
+    body = (
+        f"Olá {user.username},\n\n"
+        f"Verifica o teu email neste link:\n{verification_link}\n"
+    )
+
+    print("EMAIL:", user.email)
+    print("LINK:", verification_link)
+
+    email = EmailMultiAlternatives(
+        subject=subject,
+        body=body,
+        to=[user.email]
+    )
+    email.send(fail_silently=False)
+
+
 def register_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
     if request.method == 'POST':
-        form = UserCreationForm(request.POST)
-
-        username = request.POST.get('username', '').strip()
-        email = request.POST.get('email', '').strip()
-        phone = request.POST.get('phone', '').strip()
-
-        if User.objects.filter(username__iexact=username).exists():
-            messages.error(request, 'Este nome de utilizador já existe.')
-            return render(request, 'accounts/register.html', {
-                'form': form,
-                'phone': phone,
-                'email': email,
-            })
-
-        if email and User.objects.filter(email__iexact=email).exists():
-            messages.error(request, 'Este email já está registado.')
-            return render(request, 'accounts/register.html', {
-                'form': form,
-                'phone': phone,
-                'email': email,
-            })
-
-        if phone and UserProfile.objects.filter(phone=phone).exists():
-            messages.error(request, 'Este telefone já está em uso.')
-            return render(request, 'accounts/register.html', {
-                'form': form,
-                'phone': phone,
-                'email': email,
-            })
+        form = CustomRegisterForm(request.POST)
 
         if form.is_valid():
             user = form.save(commit=False)
-            user.email = email
+            user.email = form.cleaned_data['email'].strip().lower()
+            user.username = form.cleaned_data['username'].strip().lower()
+            user.is_active = True
             user.save()
 
-            profile, _ = UserProfile.objects.get_or_create(user=user)
-            if phone:
-                profile.phone = phone
-                profile.save()
+            profile, _ = UserProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'email_verified': False,
+                    'email_verification_token': uuid.uuid4()
+                }
+            )
 
-            login(request, user)
+            profile.email_verified = False
+            profile.email_verification_token = uuid.uuid4()
+            profile.save()
 
-            pending_event_id = request.session.get('pending_event_id')
-            if pending_event_id:
-                try:
-                    event = Event.objects.get(id=pending_event_id, owner__isnull=True)
-                    event.owner = user
-                    event.save()
-                    del request.session['pending_event_id']
-                    return redirect('event_detail', event_id=event.id)
-                except Event.DoesNotExist:
-                    pass
+            try:
+                send_verification_email(request, user, profile)
+                messages.success(request, 'Conta criada com sucesso. Verifica o teu email.')
+            except Exception as e:
+                print("ERRO EMAIL:", e)
+                messages.warning(
+                    request,
+                    'Conta criada com sucesso, mas houve erro ao enviar o email de verificação.'
+                )
 
-            return redirect('/')
-
-        messages.error(request, 'Corrige os erros do formulário e tenta novamente.')
-
+            return redirect(f"/resend-verification/?email={user.email}")
     else:
-        form = UserCreationForm()
+        form = CustomRegisterForm()
 
     return render(request, 'accounts/register.html', {'form': form})
 
 
-def login_view(request):
+def verify_email(request, token):
+    try:
+        profile = UserProfile.objects.get(email_verification_token=token)
+        profile.email_verified = True
+        profile.save()
+        messages.success(request, 'Email verificado com sucesso. Já podes iniciar sessão.')
+        return redirect('login')
+    except UserProfile.DoesNotExist:
+        return HttpResponse("Link inválido.")
+
+
+def resend_verification_email_view(request):
+    email = request.GET.get('email', '').strip().lower()
+
     if request.method == 'POST':
-        form = CustomAuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            user = form.get_user()
-            login(request, user)
+        email = request.POST.get('email', '').strip().lower()
 
-            pending_event_id = request.session.get('pending_event_id')
-            if pending_event_id:
-                try:
-                    event = Event.objects.get(id=pending_event_id)
-                    if event.owner is None:
-                        event.owner = user
-                        event.save()
-                    del request.session['pending_event_id']
-                    return redirect('event_detail', event_id=event.id)
-                except Event.DoesNotExist:
-                    pass
+        try:
+            user = User.objects.get(email__iexact=email)
+            profile, _ = UserProfile.objects.get_or_create(
+                user=user,
+                defaults={
+                    'email_verified': False,
+                    'email_verification_token': uuid.uuid4()
+                }
+            )
 
-            return redirect('/')
-    else:
-        form = CustomAuthenticationForm()
+            if profile.email_verified:
+                messages.info(request, 'Este email já está verificado. Já podes iniciar sessão.')
+                return redirect('login')
+
+            profile.email_verification_token = uuid.uuid4()
+            profile.save()
+
+            try:
+                send_verification_email(request, user, profile)
+                messages.success(request, 'Enviámos um novo email de verificação.')
+            except Exception as e:
+                print("ERRO EMAIL:", e)
+                messages.error(request, 'Erro ao enviar email de verificação.')
+
+        except User.DoesNotExist:
+            messages.error(request, 'Não existe nenhuma conta com este email.')
+
+    return render(request, 'accounts/resend_verification.html', {'email': email})
+
+
+def login_view(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+
+    form = LoginForm(request.POST or None)
+
+    if request.method == 'POST' and form.is_valid():
+        identifier = form.cleaned_data['identifier'].strip()
+        password = form.cleaned_data['password']
+
+        if '@' in identifier:
+            try:
+                user = User.objects.get(email__iexact=identifier)
+            except User.DoesNotExist:
+                form.add_error('identifier', 'Este email não existe.')
+                return render(request, 'accounts/login.html', {'form': form})
+        else:
+            try:
+                user = User.objects.get(username__iexact=identifier)
+            except User.DoesNotExist:
+                form.add_error('identifier', 'Este nome de utilizador não existe.')
+                return render(request, 'accounts/login.html', {'form': form})
+
+        if not user.check_password(password):
+            form.add_error('password', 'Palavra-passe incorreta.')
+            return render(request, 'accounts/login.html', {'form': form})
+
+        try:
+            profile = UserProfile.objects.get(user=user)
+        except UserProfile.DoesNotExist:
+            messages.error(request, 'Conta inválida. Contacta o suporte.')
+            return redirect('login')
+
+        if not profile.email_verified:
+            messages.error(request, 'Tens de verificar o teu email antes de entrar.')
+            return redirect(f"/resend-verification/?email={user.email}")
+
+        user.backend = 'accounts.backends.EmailOrUsernameBackend'
+        login(request, user)
+        return redirect('home')
 
     return render(request, 'accounts/login.html', {'form': form})
 
 
 @login_required
 def profile_view(request):
-    profile, _ = UserProfile.objects.get_or_create(user=request.user)
+    profile, _ = UserProfile.objects.get_or_create(
+        user=request.user,
+        defaults={
+            'email_verified': False,
+            'email_verification_token': uuid.uuid4()
+        }
+    )
 
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip()
+        email = request.POST.get('email', '').strip().lower()
         phone = request.POST.get('phone', '').strip()
 
         if email and User.objects.filter(email__iexact=email).exclude(id=request.user.id).exists():
-            messages.error(request, 'Este email já está registado por outro utilizador.')
-            return render(request, 'accounts/profile.html', {
-                'profile': profile
-            })
+            messages.error(request, 'Email já usado.')
+            return render(request, 'accounts/profile.html', {'profile': profile})
 
         if phone and UserProfile.objects.filter(phone=phone).exclude(user=request.user).exists():
-            messages.error(request, 'Este telefone já está em uso por outro utilizador.')
-            return render(request, 'accounts/profile.html', {
-                'profile': profile
-            })
+            messages.error(request, 'Telefone já usado.')
+            return render(request, 'accounts/profile.html', {'profile': profile})
+
+        email_changed = request.user.email.lower() != email if request.user.email else bool(email)
 
         request.user.email = email
         request.user.save()
 
         profile.phone = phone if phone else None
-        profile.save()
 
-        messages.success(request, 'Perfil atualizado com sucesso.')
-        return redirect('/profile/?updated=1')
+        if email_changed:
+            profile.email_verified = False
+            profile.email_verification_token = uuid.uuid4()
+            profile.save()
+            try:
+                send_verification_email(request, request.user, profile)
+                messages.success(
+                    request,
+                    'Perfil atualizado. Como alteraste o email, tens de o verificar novamente.'
+                )
+                return redirect(f"/resend-verification/?email={request.user.email}")
+            except Exception as e:
+                print("ERRO EMAIL:", e)
+                messages.warning(
+                    request,
+                    'Perfil atualizado, mas houve erro ao enviar o email de verificação.'
+                )
+        else:
+            profile.save()
+            messages.success(request, 'Perfil atualizado.')
 
-    return render(request, 'accounts/profile.html', {
-        'profile': profile
-    })
+        return redirect('/profile/')
+
+    return render(request, 'accounts/profile.html', {'profile': profile})
 
 
 @login_required
@@ -141,10 +235,10 @@ def change_password_view(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, 'Palavra-passe alterada com sucesso.')
-            return redirect('/profile/?password_updated=1')
+            messages.success(request, 'Password alterada.')
+            return redirect('/profile/')
         else:
-            messages.error(request, 'Corrige os erros do formulário.')
+            messages.error(request, 'Erro no formulário.')
     else:
         form = PasswordChangeForm(request.user)
 
