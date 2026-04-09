@@ -28,7 +28,11 @@ def send_verification_email(request, user, profile):
     body = (
         f"Olá {user.username},\n\n"
         f"Verifica o teu email neste link:\n{verification_link}\n\n"
+        f"Se não foste tu, ignora este email.\n"
     )
+
+    logger.info("A tentar enviar email de verificação para: %s", user.email)
+    logger.info("Link de verificação: %s", verification_link)
 
     email = EmailMultiAlternatives(
         subject=subject,
@@ -36,6 +40,8 @@ def send_verification_email(request, user, profile):
         to=[user.email]
     )
     email.send(fail_silently=False)
+
+    logger.info("Email enviado com sucesso para: %s", user.email)
 
 
 def register_view(request):
@@ -60,8 +66,10 @@ def register_view(request):
                 return redirect(f"/resend-verification/?email={user.email}")
 
             except Exception as e:
-                logger.exception("Erro no registo: %s", e)
-                messages.error(request, 'Erro interno no registo.')
+                logger.exception("Erro no registo/envio de email: %s", e)
+                messages.error(request, 'Erro interno no registo ou no envio do email.')
+        else:
+            messages.error(request, 'Corrige os erros do formulário.')
     else:
         form = CustomRegisterForm()
 
@@ -84,7 +92,6 @@ def verify_email(request, token):
 def resend_verification_email_view(request):
     email = request.GET.get('email')
 
-    # 🔴 FIX PRINCIPAL DO 500
     if not email and request.method == 'GET':
         return render(request, 'accounts/resend_verification.html', {'email': ''})
 
@@ -92,7 +99,7 @@ def resend_verification_email_view(request):
         email = request.POST.get('email', '').strip().lower()
 
         if not email:
-            messages.error(request, 'Introduce um email.')
+            messages.error(request, 'Introduz um email.')
             return render(request, 'accounts/resend_verification.html', {'email': ''})
 
         try:

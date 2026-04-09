@@ -14,7 +14,7 @@ SECRET_KEY = os.environ.get(
     'django-insecure-%i(2l_)7k#et(v#s#7xw3fh29c%)c48hvwanw=#zmz@8h+px!5'
 )
 
-DEBUG = os.environ.get('DEBUG', 'False') == 'True'
+DEBUG = os.environ.get('DEBUG', 'False') == 'False'
 
 ALLOWED_HOSTS = os.environ.get(
     'ALLOWED_HOSTS',
@@ -113,16 +113,16 @@ AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
 ]
 
-SITE_URL = os.environ.get('SITE_URL', 'https://invitation-app-auto.onrender.com')
+SITE_URL = 'https://invitation-app-auto.onrender.com'
 
-EMAIL_BACKEND = os.environ.get('EMAIL_BACKEND', 'django.core.mail.backends.smtp.EmailBackend')
-EMAIL_HOST = os.environ.get('EMAIL_HOST', 'smtp.gmail.com')
-EMAIL_PORT = int(os.environ.get('EMAIL_PORT', 587))
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS', 'True') == 'True'
-EMAIL_USE_SSL = os.environ.get('EMAIL_USE_SSL', 'False') == 'True'
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', f'Kixanu <{EMAIL_HOST_USER}>')
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_USER = '9free13@gmail.com'
+EMAIL_HOST_PASSWORD = 'jdrhgxnavdhjvzjw'
+DEFAULT_FROM_EMAIL =  '9free13@gmail.com'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
