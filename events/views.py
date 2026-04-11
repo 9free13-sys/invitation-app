@@ -299,6 +299,7 @@ def export_guests_pdf(request, event_id):
 
 
 @login_required
+@login_required
 def send_invites_email(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
@@ -316,26 +317,34 @@ def send_invites_email(request, event_id):
             ignored_count += 1
             continue
 
-        invite_link = request.build_absolute_uri(f"/invite/{guest.token}/")
+        # 🔴 LINK CURTO
+        invite_link = request.build_absolute_uri(f"/invite/{guest.slug}/")
 
-        subject = f"Convite para {event.name}"
+        subject = f"Convite: {event.name}"
+
         body = (
-            f"Olá {guest.full_name},\n\n"
-            f"Está convidado(a) para o evento {event.name}.\n\n"
-            f"Data: {event.date}\n"
-            f"Local: {event.location or 'Não informado'}\n"
+            f"Prezado(a) {guest.full_name},\n\n"
+
+            f"Temos o prazer de convidá-lo(a) para o evento:\n\n"
+
+            f"{event.name}\n\n"
+
+            f"📅 Data: {event.date}\n"
+            f"📍 Local: {event.location or 'A definir'}\n"
         )
 
         if event.description:
-            body += f"Descrição: {event.description}\n"
+            body += f"\n📝 Detalhes: {event.description}\n"
 
         if event.allowed_companions > 0:
             body += "\nEste convite permite acompanhante.\n"
 
         body += (
-            f"\nPara responder ao convite, use o link abaixo:\n"
+            f"\nPara confirmar ou recusar a sua presença, aceda ao link abaixo:\n"
             f"{invite_link}\n\n"
-            f"InvitePro"
+
+            f"Com os melhores cumprimentos,\n"
+            f"Equipa Kixanu"
         )
 
         email = EmailMultiAlternatives(
@@ -344,31 +353,20 @@ def send_invites_email(request, event_id):
             to=[guest.email]
         )
         email.send()
+
         sent_count += 1
 
     if sent_count > 0 and ignored_count > 0:
         messages.success(
             request,
-            f"Foram enviados {sent_count} convites por email. {ignored_count} convidados foram ignorados porque não têm email."
+            f"Foram enviados {sent_count} convites. {ignored_count} ignorados (sem email)."
         )
     elif sent_count > 0:
-        messages.success(
-            request,
-            f"Foram enviados {sent_count} convites por email com sucesso."
-        )
+        messages.success(request, f"Foram enviados {sent_count} convites com sucesso.")
     else:
-        messages.warning(
-            request,
-            "Nenhum email foi enviado. Verifica se os convidados têm email preenchido."
-        )
+        messages.warning(request, "Nenhum email foi enviado.")
 
-    query = request.GET.urlencode()
-    redirect_url = f"/event/{event.id}/guests/"
-    if query:
-        redirect_url = f"{redirect_url}?{query}"
-
-    return redirect(redirect_url)
-
+    return redirect(f"/event/{event.id}/guests/")
 
 @login_required
 def delete_event(request, event_id):

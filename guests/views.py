@@ -21,7 +21,7 @@ def create_invite(request):
             event=event
         )
 
-        return redirect(f"/invite/{guest.token}/")
+        return redirect(f"/invite/{guest.slug}/")
 
     return render(request, 'create_invite.html')
 
@@ -68,13 +68,13 @@ def decline_guest(request, token):
     })
 
 
-def invite_page(request, token):
-    guest = get_object_or_404(Guest, token=token)
+def invite_page(request, slug):
+    guest = get_object_or_404(Guest, slug=slug)
     return render(request, 'guests/public_invite.html', {'guest': guest})
 
 
-def invite_response(request, token, action):
-    guest = get_object_or_404(Guest, token=token)
+def invite_response(request, slug, action):
+    guest = get_object_or_404(Guest, slug=slug)
 
     if action == 'confirm':
         guest.status = 'confirmado'
