@@ -9,21 +9,13 @@
         :root {
             --primary: #2563eb;
             --primary-dark: #1d4ed8;
-            --primary-soft: #dbeafe;
             --dark: #0f172a;
-            --dark-soft: #1e293b;
             --text: #1e293b;
             --muted: #64748b;
             --border: #e2e8f0;
             --bg: #f8fafc;
             --card: #ffffff;
-            --success: #16a34a;
-            --warning: #d97706;
             --danger: #dc2626;
-            --radius-lg: 22px;
-            --radius-md: 14px;
-            --shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
-            --shadow-soft: 0 8px 20px rgba(15, 23, 42, 0.06);
         }
 
         * {
@@ -45,10 +37,17 @@
             color: inherit;
         }
 
+        button {
+            font-family: inherit;
+        }
+
         .navbar {
             background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-            padding: 14px 28px;
+            padding: 14px 24px;
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
         .nav-container {
@@ -70,10 +69,24 @@
             text-decoration: none;
             white-space: nowrap;
             letter-spacing: -0.2px;
+            flex-shrink: 0;
         }
 
         .logo-mark {
-            font-size: 22px;
+            width: 34px;
+            height: 34px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.14);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+        }
+
+        .logo-text {
+            display: inline-block;
+            line-height: 1;
         }
 
         .nav-links {
@@ -96,11 +109,13 @@
             transition: 0.2s ease;
             white-space: nowrap;
             border: 1px solid transparent;
+            cursor: pointer;
         }
 
         .cta-btn {
             background: white;
             color: var(--primary);
+            box-shadow: 0 8px 18px rgba(255,255,255,0.12);
         }
 
         .cta-btn:hover {
@@ -108,35 +123,203 @@
         }
 
         .ghost-btn {
-            background: rgba(255, 255, 255, 0.08);
+            background: rgba(255, 255, 255, 0.10);
             color: white;
-            border-color: rgba(255, 255, 255, 0.22);
+            border-color: rgba(255, 255, 255, 0.24);
         }
 
         .ghost-btn:hover {
-            background: rgba(255, 255, 255, 0.14);
+            background: rgba(255, 255, 255, 0.16);
         }
 
-        .notification-btn {
+        .nav-popover-wrap {
             position: relative;
+        }
+
+        .icon-btn {
+            position: relative;
+            width: 44px;
+            min-width: 44px;
+            height: 44px;
+            padding: 0;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.10);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s ease;
+            font-size: 18px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .icon-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
         }
 
         .notification-badge {
             position: absolute;
-            top: -6px;
-            right: -6px;
-            min-width: 22px;
-            height: 22px;
-            padding: 0 6px;
+            top: -5px;
+            right: -3px;
+            min-width: 20px;
+            height: 20px;
+            padding: 0 5px;
             border-radius: 999px;
             background: var(--danger);
             color: white;
-            font-size: 12px;
+            font-size: 11px;
             font-weight: 800;
             display: inline-flex;
             align-items: center;
             justify-content: center;
             line-height: 1;
+            border: 2px solid #2563eb;
+        }
+
+        .account-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 14px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.10);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.24);
+            cursor: pointer;
+            transition: 0.2s ease;
+            font-size: 14px;
+            font-weight: 700;
+            gap: 8px;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
+        }
+
+        .account-btn:hover {
+            background: rgba(255, 255, 255, 0.16);
+        }
+
+        .account-avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 999px;
+            background: rgba(255, 255, 255, 0.18);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .popover-panel {
+            position: absolute;
+            top: calc(100% + 10px);
+            right: 0;
+            width: 320px;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            box-shadow: 0 20px 45px rgba(15, 23, 42, 0.16);
+            padding: 14px;
+            display: none;
+            z-index: 1100;
+        }
+
+        .popover-panel.open {
+            display: block;
+        }
+
+        .popover-title {
+            font-size: 15px;
+            font-weight: 800;
+            color: var(--dark);
+            margin: 0 0 10px 0;
+        }
+
+        .popover-subtitle {
+            font-size: 13px;
+            color: var(--muted);
+            margin: 0;
+        }
+
+        .popover-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .popover-item {
+            display: block;
+            padding: 12px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            color: inherit;
+            transition: 0.2s ease;
+        }
+
+        .popover-item:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .popover-item-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--dark);
+            margin: 0 0 4px 0;
+        }
+
+        .popover-item-text {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .popover-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .popover-action-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            width: 100%;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            text-decoration: none;
+            color: var(--dark);
+            font-size: 14px;
+            font-weight: 700;
+            transition: 0.2s ease;
+        }
+
+        .popover-action-link:hover {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+        }
+
+        .popover-divider {
+            height: 1px;
+            background: var(--border);
+            margin: 12px 0;
+        }
+
+        .popover-empty {
+            padding: 14px;
+            border-radius: 14px;
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.5;
         }
 
         .container {
@@ -145,31 +328,78 @@
             padding: 28px 20px 40px;
         }
 
-        input,
-        select,
-        textarea,
-        button {
-            font-family: inherit;
-        }
-
         @media (max-width: 700px) {
             .navbar {
                 padding: 12px 14px;
+                border-bottom-left-radius: 18px;
+                border-bottom-right-radius: 18px;
             }
 
             .nav-container {
-                flex-direction: column;
                 align-items: stretch;
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 17px;
+                min-width: 0;
+            }
+
+            .logo-mark {
+                width: 32px;
+                height: 32px;
+                font-size: 17px;
+                border-radius: 11px;
+                flex-shrink: 0;
+            }
+
+            .logo-text {
+                font-size: 16px;
             }
 
             .nav-links {
                 width: 100%;
-                flex-direction: column;
-                align-items: stretch;
+                display: grid;
+                grid-template-columns: minmax(0, 1fr) 46px auto;
+                gap: 8px;
+                align-items: center;
             }
 
-            .nav-link-btn {
+            .cta-btn {
+                min-height: 46px;
                 width: 100%;
+                padding: 12px 14px;
+                font-size: 14px;
+                font-weight: 800;
+                min-width: 0;
+            }
+
+            .icon-btn,
+            .account-btn {
+                min-height: 46px;
+                height: 46px;
+            }
+
+            .icon-btn {
+                width: 46px;
+                min-width: 46px;
+            }
+
+            .account-btn {
+                padding: 10px 12px;
+                min-width: 88px;
+                justify-content: center;
+            }
+
+            .popover-panel {
+                position: fixed;
+                top: 78px;
+                left: 14px;
+                right: 14px;
+                width: auto;
+                max-width: none;
+                border-radius: 20px;
+                padding: 14px;
             }
 
             .container {
@@ -186,21 +416,85 @@
         <div class="nav-container">
             <a href="/" class="logo">
                 <span class="logo-mark">🎉</span>
-                <span>kixanu</span>
+                <span class="logo-text">kixanu</span>
             </a>
 
             <div class="nav-links">
                 <a href="/create/" class="nav-link-btn cta-btn">Criar convite</a>
 
                 {% if request.user.is_authenticated %}
-                    <a href="{% url 'notification_list' %}" class="nav-link-btn ghost-btn notification-btn">
-                        Notificações
-                        {% if unread_notifications_count > 0 %}
-                            <span class="notification-badge">{{ unread_notifications_count }}</span>
-                        {% endif %}
-                    </a>
-                    <a href="/profile/" class="nav-link-btn ghost-btn">Perfil</a>
-                    <a href="/logout/" class="nav-link-btn ghost-btn">Sair</a>
+                    <div class="nav-popover-wrap">
+                        <button
+                            type="button"
+                            class="icon-btn"
+                            id="notificationsToggle"
+                            aria-label="Abrir notificações"
+                            aria-expanded="false"
+                        >
+                            🔔
+                            {% if unread_notifications_count > 0 %}
+                                <span class="notification-badge">{{ unread_notifications_count }}</span>
+                            {% endif %}
+                        </button>
+
+                        <div class="popover-panel" id="notificationsPanel">
+                            <h3 class="popover-title">Notificações</h3>
+
+                            {% if notifications %}
+                                <div class="popover-list">
+                                    {% for notification in notifications|slice:":3" %}
+                                        <a href="{% url 'notification_list' %}" class="popover-item">
+                                            <p class="popover-item-title">{{ notification.title }}</p>
+                                            <p class="popover-item-text">{{ notification.message|truncatechars:60 }}</p>
+                                        </a>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="popover-divider"></div>
+
+                                <a href="{% url 'notification_list' %}" class="popover-action-link" style="justify-content:center;">
+                                    Todas as notificações
+                                </a>
+                            {% else %}
+                                <div class="popover-empty">
+                                    Não tens notificações novas neste momento.
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="nav-popover-wrap">
+                        <button
+                            type="button"
+                            class="account-btn"
+                            id="accountToggle"
+                            aria-label="Abrir menu da conta"
+                            aria-expanded="false"
+                        >
+                            <span class="account-avatar">
+                                {{ request.user.username|slice:":1"|upper }}
+                            </span>
+                            <span>Conta</span>
+                        </button>
+
+                        <div class="popover-panel" id="accountPanel">
+                            <h3 class="popover-title">{{ request.user.username }}</h3>
+                            <p class="popover-subtitle">Gerir conta e sessão</p>
+
+                            <div class="popover-divider"></div>
+
+                            <div class="popover-actions">
+                                <a href="/profile/" class="popover-action-link">
+                                    <span>👤</span>
+                                    <span>Perfil</span>
+                                </a>
+                                <a href="/logout/" class="popover-action-link">
+                                    <span>🚪</span>
+                                    <span>Sair</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 {% else %}
                     <a href="/login/" class="nav-link-btn ghost-btn">Entrar</a>
                 {% endif %}
@@ -211,6 +505,82 @@
     <div class="container">
         {% block content %}{% endblock %}
     </div>
+
+    <script>
+        (function () {
+            const notificationsToggle = document.getElementById('notificationsToggle');
+            const notificationsPanel = document.getElementById('notificationsPanel');
+            const accountToggle = document.getElementById('accountToggle');
+            const accountPanel = document.getElementById('accountPanel');
+
+            function closePanel(panel, toggle) {
+                if (panel) panel.classList.remove('open');
+                if (toggle) toggle.setAttribute('aria-expanded', 'false');
+            }
+
+            function openPanel(panel, toggle) {
+                if (panel) panel.classList.add('open');
+                if (toggle) toggle.setAttribute('aria-expanded', 'true');
+            }
+
+            function togglePanel(panel, toggle, otherPanel, otherToggle) {
+                if (!panel || !toggle) return;
+
+                const isOpen = panel.classList.contains('open');
+                closePanel(otherPanel, otherToggle);
+
+                if (isOpen) {
+                    closePanel(panel, toggle);
+                } else {
+                    openPanel(panel, toggle);
+                }
+            }
+
+            if (notificationsToggle && notificationsPanel) {
+                notificationsToggle.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    togglePanel(
+                        notificationsPanel,
+                        notificationsToggle,
+                        accountPanel,
+                        accountToggle
+                    );
+                });
+
+                notificationsPanel.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+            }
+
+            if (accountToggle && accountPanel) {
+                accountToggle.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    togglePanel(
+                        accountPanel,
+                        accountToggle,
+                        notificationsPanel,
+                        notificationsToggle
+                    );
+                });
+
+                accountPanel.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                });
+            }
+
+            document.addEventListener('click', function () {
+                closePanel(notificationsPanel, notificationsToggle);
+                closePanel(accountPanel, accountToggle);
+            });
+
+            document.addEventListener('keydown', function (event) {
+                if (event.key === 'Escape') {
+                    closePanel(notificationsPanel, notificationsToggle);
+                    closePanel(accountPanel, accountToggle);
+                }
+            });
+        })();
+    </script>
 
 </body>
 </html>
