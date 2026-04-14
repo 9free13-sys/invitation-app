@@ -336,13 +336,14 @@
             }
 
             .nav-container {
-                align-items: stretch;
-                gap: 12px;
+                align-items: center;
+                gap: 10px;
             }
 
             .logo {
-                font-size: 17px;
+                font-size: 16px;
                 min-width: 0;
+                flex: 1;
             }
 
             .logo-mark {
@@ -354,52 +355,62 @@
             }
 
             .logo-text {
-                font-size: 16px;
+                font-size: 15px;
             }
 
             .nav-links {
-                width: 100%;
-                display: grid;
-                grid-template-columns: minmax(0, 1fr) 46px auto;
+                flex-wrap: nowrap;
                 gap: 8px;
-                align-items: center;
+                flex-shrink: 0;
             }
 
             .cta-btn {
-                min-height: 46px;
-                width: 100%;
-                padding: 12px 14px;
-                font-size: 14px;
+                min-height: 42px;
+                padding: 10px 14px;
+                font-size: 13px;
                 font-weight: 800;
-                min-width: 0;
-            }
-
-            .icon-btn,
-            .account-btn {
-                min-height: 46px;
-                height: 46px;
             }
 
             .icon-btn {
-                width: 46px;
-                min-width: 46px;
+                width: 42px;
+                min-width: 42px;
+                height: 42px;
+                min-height: 42px;
+                font-size: 17px;
             }
 
             .account-btn {
-                padding: 10px 12px;
-                min-width: 88px;
-                justify-content: center;
+                min-height: 42px;
+                height: 42px;
+                padding: 8px 12px;
+                min-width: 78px;
+                gap: 6px;
+                font-size: 13px;
+            }
+
+            .account-avatar {
+                width: 22px;
+                height: 22px;
+                font-size: 11px;
             }
 
             .popover-panel {
-                position: fixed;
-                top: 78px;
-                left: 14px;
-                right: 14px;
-                width: auto;
-                max-width: none;
-                border-radius: 20px;
+                position: absolute;
+                top: calc(100% + 10px);
+                right: 0;
+                left: auto;
+                width: 280px;
+                max-width: calc(100vw - 28px);
+                border-radius: 18px;
                 padding: 14px;
+            }
+
+            #notificationsPanel {
+                right: -46px;
+            }
+
+            #accountPanel {
+                right: 0;
             }
 
             .container {
@@ -487,6 +498,10 @@
                                 <a href="/profile/" class="popover-action-link">
                                     <span>👤</span>
                                     <span>Perfil</span>
+                                </a>
+                                <a href="/my-invitations/" class="popover-action-link">
+                                    <span>📩</span>
+                                    <span>Meus convites</span>
                                 </a>
                                 <a href="/logout/" class="popover-action-link">
                                     <span>🚪</span>

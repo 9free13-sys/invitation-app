@@ -9,10 +9,9 @@ urlpatterns = [
     path('', include('dashboard.urls')),
     path('event/', include('events.urls')),
 
-    # convidados na raiz para os links públicos funcionarem
     path('', include('guests.urls')),
-
     path('', include('accounts.urls')),
+    path('', include('invitations.urls')),
     path('notifications/', include('notifications.urls')),
 ]
 

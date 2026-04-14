@@ -1,0 +1,428 @@
+{% extends "base.html" %}
+
+{% block title %}Meus convites | Kixanu{% endblock %}
+
+{% block content %}
+<style>
+    .page-shell {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .hero-card {
+        background: linear-gradient(135deg, #020617, #0f172a);
+        border-radius: 28px;
+        padding: 28px;
+        color: white;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    }
+
+    .hero-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 34px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .hero-title {
+        margin: 0 0 10px 0;
+        font-size: 40px;
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -0.6px;
+    }
+
+    .hero-text {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.7;
+        color: #cbd5e1;
+        max-width: 760px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .stat-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 22px;
+        padding: 20px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .stat-label {
+        margin: 0 0 8px 0;
+        font-size: 13px;
+        color: #64748b;
+        font-weight: 700;
+    }
+
+    .stat-value {
+        margin: 0;
+        font-size: 32px;
+        line-height: 1;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .content-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 22px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .toolbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        margin-bottom: 18px;
+        flex-wrap: wrap;
+    }
+
+    .section-title {
+        margin: 0;
+        font-size: 28px;
+        line-height: 1.1;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.3px;
+    }
+
+    .section-text {
+        margin: 6px 0 0 0;
+        font-size: 14px;
+        color: #64748b;
+        line-height: 1.6;
+    }
+
+    .filter-tabs {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .filter-tab {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 999px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+        color: #0f172a;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 800;
+        transition: 0.2s ease;
+    }
+
+    .filter-tab:hover {
+        background: #eff6ff;
+        border-color: #bfdbfe;
+    }
+
+    .filter-tab.active {
+        background: #2563eb;
+        border-color: #2563eb;
+        color: white;
+    }
+
+    .invite-list {
+        display: grid;
+        gap: 16px;
+    }
+
+    .invite-card {
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+        border-radius: 22px;
+        padding: 20px;
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 18px;
+        align-items: start;
+    }
+
+    .invite-title {
+        margin: 0 0 8px 0;
+        font-size: 22px;
+        line-height: 1.15;
+        font-weight: 900;
+        color: #0f172a;
+        letter-spacing: -0.3px;
+    }
+
+    .invite-meta {
+        display: grid;
+        gap: 6px;
+    }
+
+    .invite-meta-item {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.6;
+        color: #475569;
+    }
+
+    .invite-meta-label {
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 900;
+        white-space: nowrap;
+        border: 1px solid transparent;
+    }
+
+    .status-pending {
+        background: #fff7ed;
+        color: #c2410c;
+        border-color: #fdba74;
+    }
+
+    .status-accepted {
+        background: #ecfdf5;
+        color: #166534;
+        border-color: #86efac;
+    }
+
+    .status-declined {
+        background: #fef2f2;
+        color: #b91c1c;
+        border-color: #fca5a5;
+    }
+
+    .invite-actions {
+        margin-top: 14px;
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .invite-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 42px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 14px;
+        font-weight: 800;
+        transition: 0.2s ease;
+    }
+
+    .invite-btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .invite-btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .empty-state {
+        border: 1px dashed #cbd5e1;
+        background: #f8fafc;
+        border-radius: 22px;
+        padding: 28px;
+        text-align: center;
+    }
+
+    .empty-title {
+        margin: 0 0 10px 0;
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .empty-text {
+        margin: 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #64748b;
+    }
+
+    @media (max-width: 900px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .invite-card {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 640px) {
+        .hero-card {
+            padding: 22px 18px;
+            border-radius: 22px;
+        }
+
+        .hero-title {
+            font-size: 32px;
+        }
+
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .content-card {
+            padding: 18px;
+            border-radius: 20px;
+        }
+
+        .section-title {
+            font-size: 24px;
+        }
+
+        .invite-title {
+            font-size: 20px;
+        }
+
+        .filter-tabs {
+            width: 100%;
+        }
+
+        .filter-tab {
+            flex: 1 1 calc(50% - 10px);
+        }
+    }
+</style>
+
+<div class="page-shell">
+    <section class="hero-card">
+        <div class="hero-badge">📩 Área pessoal</div>
+        <h1 class="hero-title">Meus convites</h1>
+        <p class="hero-text">
+            Aqui encontras todos os convites que recebeste, incluindo os que estão pendentes, confirmados e recusados.
+        </p>
+    </section>
+
+    <section class="stats-grid">
+        <div class="stat-card">
+            <p class="stat-label">Total</p>
+            <p class="stat-value">{{ total_count }}</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Pendentes</p>
+            <p class="stat-value">{{ pending_count }}</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Confirmados</p>
+            <p class="stat-value">{{ accepted_count }}</p>
+        </div>
+        <div class="stat-card">
+            <p class="stat-label">Recusados</p>
+            <p class="stat-value">{{ declined_count }}</p>
+        </div>
+    </section>
+
+    <section class="content-card">
+        <div class="toolbar">
+            <div>
+                <h2 class="section-title">Lista de convites</h2>
+                <p class="section-text">Filtra rapidamente os teus convites por estado.</p>
+            </div>
+
+            <div class="filter-tabs">
+                <a href="{% url 'my_invitations' %}" class="filter-tab {% if not status_filter %}active{% endif %}">
+                    Todos
+                </a>
+                <a href="{% url 'my_invitations' %}?status=pending" class="filter-tab {% if status_filter == 'pending' %}active{% endif %}">
+                    Pendentes
+                </a>
+                <a href="{% url 'my_invitations' %}?status=accepted" class="filter-tab {% if status_filter == 'accepted' %}active{% endif %}">
+                    Confirmados
+                </a>
+                <a href="{% url 'my_invitations' %}?status=declined" class="filter-tab {% if status_filter == 'declined' %}active{% endif %}">
+                    Recusados
+                </a>
+            </div>
+        </div>
+
+        {% if invitations %}
+            <div class="invite-list">
+                {% for invitation in invitations %}
+                    <article class="invite-card">
+                        <div>
+                            <h3 class="invite-title">{{ invitation.event.name }}</h3>
+
+                            <div class="invite-meta">
+                                <p class="invite-meta-item">
+                                    <span class="invite-meta-label">Data:</span>
+                                    {{ invitation.event.date }}
+                                </p>
+
+                                <p class="invite-meta-item">
+                                    <span class="invite-meta-label">Local:</span>
+                                    {{ invitation.event.location|default:"Não informado" }}
+                                </p>
+
+                                <p class="invite-meta-item">
+                                    <span class="invite-meta-label">Recebido em:</span>
+                                    {{ invitation.sent_at|date:"d/m/Y H:i" }}
+                                </p>
+
+                                {% if invitation.event.description %}
+                                    <p class="invite-meta-item">
+                                        <span class="invite-meta-label">Detalhes:</span>
+                                        {{ invitation.event.description }}
+                                    </p>
+                                {% endif %}
+                            </div>
+
+                            <div class="invite-actions">
+                                <a href="{% url 'invite_status' invitation.guest.slug %}" class="invite-btn invite-btn-primary">
+                                    Ver convite
+                                </a>
+                            </div>
+                        </div>
+
+                        <div>
+                            {% if invitation.status == 'pending' %}
+                                <span class="status-badge status-pending">Pendente</span>
+                            {% elif invitation.status == 'accepted' %}
+                                <span class="status-badge status-accepted">Confirmado</span>
+                            {% elif invitation.status == 'declined' %}
+                                <span class="status-badge status-declined">Recusado</span>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <h3 class="empty-title">Ainda não tens convites</h3>
+                <p class="empty-text">
+                    Quando receberes convites para eventos, eles vão aparecer aqui automaticamente.
+                </p>
+            </div>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

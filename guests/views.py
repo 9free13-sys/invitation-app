@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.files import File
 from .models import Guest
 from events.models import Event
+from invitations.models import Invitation
 import qrcode
 import tempfile
 
@@ -17,8 +18,14 @@ def create_invite(request):
 
         guest = Guest.objects.create(
             full_name=request.POST['guest_name'],
-            phone=request.POST['phone'],
+            phone=request.POST.get('phone'),
+            email=request.POST.get('email'),
             event=event
+        )
+
+        Invitation.objects.get_or_create(
+            event=event,
+            guest=guest
         )
 
         return redirect(f"/invite/{guest.slug}/")
@@ -43,10 +50,118 @@ def generate_qr_for_guest(guest):
         guest.qr_code.save(f'guest_{guest.id}_qr.png', File(temp_file), save=True)
 
 
+def invite_page(request, slug):
+    guest = get_object_or_404(Guest, slug=slug)
+    return render(request, 'guests/public_invite.html', {'guest': guest})
+
+
+def invite_page_by_token(request, token):
+    guest = get_object_or_404(Guest, token=token)
+
+    if guest.slug:
+        return redirect('invite_page', slug=guest.slug)
+
+    return render(request, 'guests/public_invite.html', {'guest': guest})
+
+
+def invite_status(request, slug):
+    guest = get_object_or_404(Guest, slug=slug)
+    return render(request, 'guests/invite_response.html', {
+        'guest': guest,
+        'action': guest.status
+    })
+
+
+def invite_response(request, slug, action):
+    guest = get_object_or_404(Guest, slug=slug)
+
+    invitation, _ = Invitation.objects.get_or_create(
+        event=guest.event,
+        guest=guest
+    )
+
+    if action == 'confirm':
+        guest.status = 'confirmado'
+        invitation.status = 'accepted'
+
+        if guest.event.allowed_companions > 0:
+            companion_name = request.POST.get('companion_name')
+            if companion_name:
+                guest.companion_name = companion_name
+
+        guest.save()
+        invitation.save()
+
+        if not guest.qr_code:
+            generate_qr_for_guest(guest)
+
+        guest.refresh_from_db()
+
+    elif action == 'decline':
+        guest.status = 'recusado'
+        invitation.status = 'declined'
+        guest.save()
+        invitation.save()
+
+    return render(request, 'guests/invite_response.html', {
+        'guest': guest,
+        'action': action
+    })
+
+
+def invite_response_by_token(request, token, action):
+    guest = get_object_or_404(Guest, token=token)
+
+    if guest.slug:
+        return redirect('invite_response', slug=guest.slug, action=action)
+
+    invitation, _ = Invitation.objects.get_or_create(
+        event=guest.event,
+        guest=guest
+    )
+
+    if action == 'confirm':
+        guest.status = 'confirmado'
+        invitation.status = 'accepted'
+
+        if guest.event.allowed_companions > 0:
+            companion_name = request.POST.get('companion_name')
+            if companion_name:
+                guest.companion_name = companion_name
+
+        guest.save()
+        invitation.save()
+
+        if not guest.qr_code:
+            generate_qr_for_guest(guest)
+
+        guest.refresh_from_db()
+
+    elif action == 'decline':
+        guest.status = 'recusado'
+        invitation.status = 'declined'
+        guest.save()
+        invitation.save()
+
+    return render(request, 'guests/invite_response.html', {
+        'guest': guest,
+        'action': action
+    })
+
+
 def confirm_guest(request, token):
     guest = get_object_or_404(Guest, token=token)
+
+    invitation, _ = Invitation.objects.get_or_create(
+        event=guest.event,
+        guest=guest
+    )
+
     guest.status = 'confirmado'
+    invitation.status = 'accepted'
+
     guest.save()
+    invitation.save()
 
     if not guest.qr_code:
         generate_qr_for_guest(guest)
@@ -59,45 +174,21 @@ def confirm_guest(request, token):
 
 def decline_guest(request, token):
     guest = get_object_or_404(Guest, token=token)
+
+    invitation, _ = Invitation.objects.get_or_create(
+        event=guest.event,
+        guest=guest
+    )
+
     guest.status = 'recusado'
+    invitation.status = 'declined'
+
     guest.save()
+    invitation.save()
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
         'action': 'decline'
-    })
-
-
-def invite_page(request, slug):
-    guest = get_object_or_404(Guest, slug=slug)
-    return render(request, 'guests/public_invite.html', {'guest': guest})
-
-
-def invite_response(request, slug, action):
-    guest = get_object_or_404(Guest, slug=slug)
-
-    if action == 'confirm':
-        guest.status = 'confirmado'
-
-        if guest.event.allowed_companions > 0:
-            companion_name = request.POST.get('companion_name')
-            if companion_name:
-                guest.companion_name = companion_name
-
-        guest.save()
-
-        if not guest.qr_code:
-            generate_qr_for_guest(guest)
-
-        guest.refresh_from_db()
-
-    elif action == 'decline':
-        guest.status = 'recusado'
-        guest.save()
-
-    return render(request, 'guests/invite_response.html', {
-        'guest': guest,
-        'action': action
     })
 
 

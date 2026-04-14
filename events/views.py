@@ -10,6 +10,7 @@ from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, 
 from reportlab.lib.styles import getSampleStyleSheet
 from .models import Event
 from guests.models import Guest
+from invitations.models import Invitation
 import uuid
 
 
@@ -64,14 +65,19 @@ def event_detail(request, event_id):
     if request.method == 'POST':
         full_name = request.POST.get('full_name')
         phone = request.POST.get('phone')
-        email = request.POST.get('email')
+        email = (request.POST.get('email') or '').strip().lower()
 
-        Guest.objects.create(
+        guest = Guest.objects.create(
             event=event,
             full_name=full_name,
             phone=phone,
-            email=email,
+            email=email if email else None,
             token=uuid.uuid4()
+        )
+
+        Invitation.objects.get_or_create(
+            event=event,
+            guest=guest
         )
 
         return redirect(f'/event/{event.id}/?guest_added=1')
@@ -299,7 +305,6 @@ def export_guests_pdf(request, event_id):
 
 
 @login_required
-@login_required
 def send_invites_email(request, event_id):
     event = get_object_or_404(Event, id=event_id)
 
@@ -317,18 +322,19 @@ def send_invites_email(request, event_id):
             ignored_count += 1
             continue
 
-        # 🔴 LINK CURTO
+        Invitation.objects.get_or_create(
+            event=event,
+            guest=guest
+        )
+
         invite_link = request.build_absolute_uri(f"/invite/{guest.slug}/")
 
         subject = f"Convite: {event.name}"
 
         body = (
             f"Prezado(a) {guest.full_name},\n\n"
-
             f"Temos o prazer de convidá-lo(a) para o evento:\n\n"
-
             f"{event.name}\n\n"
-
             f"📅 Data: {event.date}\n"
             f"📍 Local: {event.location or 'A definir'}\n"
         )
@@ -342,7 +348,6 @@ def send_invites_email(request, event_id):
         body += (
             f"\nPara confirmar ou recusar a sua presença, aceda ao link abaixo:\n"
             f"{invite_link}\n\n"
-
             f"Com os melhores cumprimentos,\n"
             f"Equipa Kixanu"
         )
@@ -367,6 +372,7 @@ def send_invites_email(request, event_id):
         messages.warning(request, "Nenhum email foi enviado.")
 
     return redirect(f"/event/{event.id}/guests/")
+
 
 @login_required
 def delete_event(request, event_id):

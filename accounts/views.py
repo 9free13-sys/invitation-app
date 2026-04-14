@@ -31,17 +31,12 @@ def send_verification_email(request, user, profile):
         f"Se não foste tu, ignora este email.\n"
     )
 
-    logger.info("A tentar enviar email de verificação para: %s", user.email)
-    logger.info("Link de verificação: %s", verification_link)
-
     email = EmailMultiAlternatives(
         subject=subject,
         body=body,
         to=[user.email]
     )
     email.send(fail_silently=False)
-
-    logger.info("Email enviado com sucesso para: %s", user.email)
 
 
 def register_view(request):
@@ -130,7 +125,7 @@ def login_view(request):
     form = LoginForm(request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        identifier = form.cleaned_data['identifier'].strip()
+        identifier = form.cleaned_data['identifier'].strip().lower()
         password = form.cleaned_data['password']
 
         try:
@@ -163,7 +158,7 @@ def profile_view(request):
     profile = UserProfile.objects.get(user=request.user)
 
     if request.method == 'POST':
-        request.user.email = request.POST.get('email')
+        request.user.email = request.POST.get('email', '').strip().lower()
         request.user.save()
 
         profile.phone = request.POST.get('phone')
