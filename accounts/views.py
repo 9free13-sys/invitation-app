@@ -55,14 +55,21 @@ def register_view(request):
 
                 profile, _ = UserProfile.objects.get_or_create(user=user)
 
-                send_verification_email(request, user, profile)
+                try:
+                    send_verification_email(request, user, profile)
+                    messages.success(request, 'Conta criada. Verifica o teu email.')
+                except Exception as email_error:
+                    logger.exception("Erro ao enviar email de verificação: %s", email_error)
+                    messages.warning(
+                        request,
+                        'Conta criada, mas houve um erro ao enviar o email de verificação.'
+                    )
 
-                messages.success(request, 'Conta criada. Verifica o teu email.')
                 return redirect(f"/resend-verification/?email={user.email}")
 
             except Exception as e:
-                logger.exception("Erro no registo/envio de email: %s", e)
-                messages.error(request, 'Erro interno no registo ou no envio do email.')
+                logger.exception("Erro no registo: %s", e)
+                messages.error(request, 'Erro interno no registo.')
         else:
             messages.error(request, 'Corrige os erros do formulário.')
     else:
@@ -83,37 +90,54 @@ def verify_email(request, token):
         messages.error(request, 'Link inválido.')
         return redirect('login')
 
+    except Exception as e:
+        logger.exception("Erro ao verificar email: %s", e)
+        messages.error(request, 'Erro interno ao verificar email.')
+        return redirect('login')
+
 
 def resend_verification_email_view(request):
-    email = request.GET.get('email')
-
-    if not email and request.method == 'GET':
-        return render(request, 'accounts/resend_verification.html', {'email': ''})
+    email = (request.GET.get('email') or '').strip().lower()
 
     if request.method == 'POST':
-        email = request.POST.get('email', '').strip().lower()
+        email = (request.POST.get('email') or '').strip().lower()
 
         if not email:
-            messages.error(request, 'Introduz um email.')
+            messages.error(request, 'Introduz um email válido.')
             return render(request, 'accounts/resend_verification.html', {'email': ''})
 
         try:
             user = User.objects.get(email__iexact=email)
-            profile = UserProfile.objects.get(user=user)
-
-            if profile.email_verified:
-                messages.info(request, 'Email já verificado.')
-                return redirect('login')
-
-            send_verification_email(request, user, profile)
-            messages.success(request, 'Email reenviado.')
-
         except User.DoesNotExist:
-            messages.error(request, 'Email não encontrado.')
-
+            messages.error(request, 'Não existe nenhuma conta com este email.')
+            return render(request, 'accounts/resend_verification.html', {'email': email})
         except Exception as e:
-            logger.exception("Erro resend: %s", e)
-            messages.error(request, 'Erro interno.')
+            logger.exception("Erro ao procurar utilizador para reenvio: %s", e)
+            messages.error(request, 'Erro interno ao procurar a conta.')
+            return render(request, 'accounts/resend_verification.html', {'email': email})
+
+        try:
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+        except Exception as e:
+            logger.exception("Erro ao obter/criar perfil no reenvio: %s", e)
+            messages.error(request, 'Erro interno ao preparar a verificação.')
+            return render(request, 'accounts/resend_verification.html', {'email': email})
+
+        if profile.email_verified:
+            messages.info(request, 'Este email já está verificado.')
+            return redirect('login')
+
+        try:
+            send_verification_email(request, user, profile)
+            messages.success(request, 'Email de verificação reenviado com sucesso.')
+        except Exception as e:
+            logger.exception("Erro ao reenviar email de verificação: %s", e)
+            messages.error(
+                request,
+                'Não foi possível reenviar o email de verificação neste momento.'
+            )
+
+        return render(request, 'accounts/resend_verification.html', {'email': email})
 
     return render(request, 'accounts/resend_verification.html', {'email': email})
 
@@ -136,12 +160,21 @@ def login_view(request):
         except User.DoesNotExist:
             form.add_error('identifier', 'Utilizador não existe.')
             return render(request, 'accounts/login.html', {'form': form})
+        except Exception as e:
+            logger.exception("Erro ao procurar utilizador no login: %s", e)
+            messages.error(request, 'Erro interno no login.')
+            return render(request, 'accounts/login.html', {'form': form})
 
         if not user.check_password(password):
             form.add_error('password', 'Password incorreta.')
             return render(request, 'accounts/login.html', {'form': form})
 
-        profile = UserProfile.objects.get(user=user)
+        try:
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+        except Exception as e:
+            logger.exception("Erro ao obter perfil no login: %s", e)
+            messages.error(request, 'Erro interno no login.')
+            return render(request, 'accounts/login.html', {'form': form})
 
         if not profile.email_verified:
             return redirect(f"/resend-verification/?email={user.email}")
@@ -155,17 +188,21 @@ def login_view(request):
 
 @login_required
 def profile_view(request):
-    profile = UserProfile.objects.get(user=request.user)
+    profile, _ = UserProfile.objects.get_or_create(user=request.user)
 
     if request.method == 'POST':
-        request.user.email = request.POST.get('email', '').strip().lower()
-        request.user.save()
+        try:
+            request.user.email = (request.POST.get('email') or '').strip().lower()
+            request.user.save()
 
-        profile.phone = request.POST.get('phone')
-        profile.save()
+            profile.phone = request.POST.get('phone')
+            profile.save()
 
-        messages.success(request, 'Perfil atualizado.')
-        return redirect('profile')
+            messages.success(request, 'Perfil atualizado.')
+            return redirect('profile')
+        except Exception as e:
+            logger.exception("Erro ao atualizar perfil: %s", e)
+            messages.error(request, 'Erro ao atualizar perfil.')
 
     return render(request, 'accounts/profile.html', {'profile': profile})
 
@@ -175,10 +212,14 @@ def change_password_view(request):
     form = PasswordChangeForm(request.user, request.POST or None)
 
     if request.method == 'POST' and form.is_valid():
-        user = form.save()
-        update_session_auth_hash(request, user)
-        messages.success(request, 'Password alterada.')
-        return redirect('profile')
+        try:
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, 'Password alterada.')
+            return redirect('profile')
+        except Exception as e:
+            logger.exception("Erro ao alterar password: %s", e)
+            messages.error(request, 'Erro ao alterar password.')
 
     return render(request, 'accounts/change_password.html', {'form': form})
 
