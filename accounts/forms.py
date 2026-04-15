@@ -1,9 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth.models import User
 
 
-class LoginForm(forms.Form):
+class LoginForm(AuthenticationForm):
     identifier = forms.CharField(
         label='Email ou nome de utilizador',
         widget=forms.TextInput(attrs={
@@ -17,6 +17,11 @@ class LoginForm(forms.Form):
             'placeholder': 'Digite a sua palavra-passe'
         })
     )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if 'username' in self.fields:
+            del self.fields['username']
 
 
 class CustomRegisterForm(UserCreationForm):
@@ -55,17 +60,13 @@ class CustomRegisterForm(UserCreationForm):
         fields = ['username', 'email', 'password1', 'password2']
 
     def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if email:
-            email = email.lower().strip()
-            if User.objects.filter(email__iexact=email).exists():
-                raise forms.ValidationError('Email já existe')
+        email = (self.cleaned_data.get('email') or '').strip().lower()
+        if email and User.objects.filter(email__iexact=email).exists():
+            raise forms.ValidationError('Email já existe')
         return email
 
     def clean_username(self):
-        username = self.cleaned_data.get('username')
-        if username:
-            username = username.lower().strip()
-            if User.objects.filter(username__iexact=username).exists():
-                raise forms.ValidationError('Nome de utilizador já existe')
+        username = (self.cleaned_data.get('username') or '').strip().lower()
+        if username and User.objects.filter(username__iexact=username).exists():
+            raise forms.ValidationError('Username já existe')
         return username

@@ -16,8 +16,10 @@ from .models import UserProfile
 logger = logging.getLogger(__name__)
 
 
-def send_verification_email(request, user, profile):
-    profile.email_verification_token = uuid.uuid4()
+def send_verification_email(request, user, profile, force_new_token=False):
+    if force_new_token or not profile.email_verification_token:
+        profile.email_verification_token = uuid.uuid4()
+
     profile.email_verified = False
     profile.save()
 
@@ -43,26 +45,29 @@ def register_view(request):
     if request.user.is_authenticated:
         return redirect('home')
 
-    if request.method == 'POST':
-        form = CustomRegisterForm(request.POST)
+    form = CustomRegisterForm(request.POST or None)
 
+    if request.method == 'POST':
         if form.is_valid():
             try:
+                email = form.cleaned_data['email'].strip().lower()
+                username = form.cleaned_data['username'].strip().lower()
+
                 user = form.save(commit=False)
-                user.email = form.cleaned_data['email'].strip().lower()
-                user.username = form.cleaned_data['username'].strip().lower()
+                user.email = email
+                user.username = username
                 user.save()
 
                 profile, _ = UserProfile.objects.get_or_create(user=user)
 
                 try:
-                    send_verification_email(request, user, profile)
+                    send_verification_email(request, user, profile, force_new_token=False)
                     messages.success(request, 'Conta criada. Verifica o teu email.')
                 except Exception as email_error:
-                    logger.exception("Erro ao enviar email de verificação: %s", email_error)
+                    logger.exception("Erro ao enviar email de verificação no registo: %s", email_error)
                     messages.warning(
                         request,
-                        'Conta criada, mas houve um erro ao enviar o email de verificação.'
+                        'Conta criada, mas não foi possível enviar o email de verificação agora.'
                     )
 
                 return redirect(f"/resend-verification/?email={user.email}")
@@ -72,8 +77,6 @@ def register_view(request):
                 messages.error(request, 'Erro interno no registo.')
         else:
             messages.error(request, 'Corrige os erros do formulário.')
-    else:
-        form = CustomRegisterForm()
 
     return render(request, 'accounts/register.html', {'form': form})
 
@@ -81,8 +84,14 @@ def register_view(request):
 def verify_email(request, token):
     try:
         profile = UserProfile.objects.get(email_verification_token=token)
+
+        if profile.email_verified:
+            messages.info(request, 'Este email já foi verificado.')
+            return redirect('login')
+
         profile.email_verified = True
         profile.save()
+
         messages.success(request, 'Email verificado com sucesso.')
         return redirect('login')
 
@@ -108,34 +117,20 @@ def resend_verification_email_view(request):
 
         try:
             user = User.objects.get(email__iexact=email)
+            profile, _ = UserProfile.objects.get_or_create(user=user)
+
+            if profile.email_verified:
+                messages.info(request, 'Este email já está verificado.')
+                return redirect('login')
+
+            send_verification_email(request, user, profile, force_new_token=False)
+            messages.success(request, 'Email de verificação reenviado com sucesso.')
+
         except User.DoesNotExist:
             messages.error(request, 'Não existe nenhuma conta com este email.')
-            return render(request, 'accounts/resend_verification.html', {'email': email})
-        except Exception as e:
-            logger.exception("Erro ao procurar utilizador para reenvio: %s", e)
-            messages.error(request, 'Erro interno ao procurar a conta.')
-            return render(request, 'accounts/resend_verification.html', {'email': email})
-
-        try:
-            profile, _ = UserProfile.objects.get_or_create(user=user)
-        except Exception as e:
-            logger.exception("Erro ao obter/criar perfil no reenvio: %s", e)
-            messages.error(request, 'Erro interno ao preparar a verificação.')
-            return render(request, 'accounts/resend_verification.html', {'email': email})
-
-        if profile.email_verified:
-            messages.info(request, 'Este email já está verificado.')
-            return redirect('login')
-
-        try:
-            send_verification_email(request, user, profile)
-            messages.success(request, 'Email de verificação reenviado com sucesso.')
         except Exception as e:
             logger.exception("Erro ao reenviar email de verificação: %s", e)
-            messages.error(
-                request,
-                'Não foi possível reenviar o email de verificação neste momento.'
-            )
+            messages.error(request, 'Não foi possível reenviar o email de verificação neste momento.')
 
         return render(request, 'accounts/resend_verification.html', {'email': email})
 
@@ -192,14 +187,41 @@ def profile_view(request):
 
     if request.method == 'POST':
         try:
-            request.user.email = (request.POST.get('email') or '').strip().lower()
+            new_email = (request.POST.get('email') or '').strip().lower()
+            new_phone = request.POST.get('phone')
+
+            email_changed = request.user.email != new_email
+
+            request.user.email = new_email
             request.user.save()
 
-            profile.phone = request.POST.get('phone')
+            profile.phone = new_phone
+
+            if email_changed and new_email:
+                profile.email_verified = False
+                if not profile.email_verification_token:
+                    profile.email_verification_token = uuid.uuid4()
+
             profile.save()
 
-            messages.success(request, 'Perfil atualizado.')
+            if email_changed and new_email:
+                try:
+                    send_verification_email(request, request.user, profile, force_new_token=False)
+                    messages.success(
+                        request,
+                        'Perfil atualizado. Verifica o novo email para continuares a usá-lo.'
+                    )
+                except Exception as email_error:
+                    logger.exception("Erro ao reenviar verificação após alterar email: %s", email_error)
+                    messages.warning(
+                        request,
+                        'Perfil atualizado, mas houve um erro ao enviar o novo email de verificação.'
+                    )
+            else:
+                messages.success(request, 'Perfil atualizado.')
+
             return redirect('profile')
+
         except Exception as e:
             logger.exception("Erro ao atualizar perfil: %s", e)
             messages.error(request, 'Erro ao atualizar perfil.')
