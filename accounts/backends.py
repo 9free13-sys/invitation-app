@@ -6,14 +6,18 @@ User = get_user_model()
 
 class EmailOrUsernameBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
-        if username is None or password is None:
+        identifier = username or kwargs.get('identifier')
+
+        if not identifier or not password:
             return None
 
+        identifier = identifier.strip().lower()
+
         try:
-            if "@" in username:
-                user = User.objects.get(email__iexact=username)
+            if '@' in identifier:
+                user = User.objects.get(email__iexact=identifier)
             else:
-                user = User.objects.get(username__iexact=username)
+                user = User.objects.get(username__iexact=identifier)
         except User.DoesNotExist:
             return None
 

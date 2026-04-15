@@ -1,9 +1,9 @@
 from django import forms
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
 
-class LoginForm(AuthenticationForm):
+class LoginForm(forms.Form):
     identifier = forms.CharField(
         label='Email ou nome de utilizador',
         widget=forms.TextInput(attrs={
@@ -17,11 +17,6 @@ class LoginForm(AuthenticationForm):
             'placeholder': 'Digite a sua palavra-passe'
         })
     )
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if 'username' in self.fields:
-            del self.fields['username']
 
 
 class CustomRegisterForm(UserCreationForm):

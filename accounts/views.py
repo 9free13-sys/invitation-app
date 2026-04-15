@@ -3,7 +3,7 @@ import uuid
 
 from django.conf import settings
 from django.contrib import messages
-from django.contrib.auth import login, logout, update_session_auth_hash
+from django.contrib.auth import authenticate, login, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
@@ -143,40 +143,36 @@ def login_view(request):
 
     form = LoginForm(request.POST or None)
 
-    if request.method == 'POST' and form.is_valid():
-        identifier = form.cleaned_data['identifier'].strip().lower()
-        password = form.cleaned_data['password']
+    if request.method == 'POST':
+        if form.is_valid():
+            identifier = form.cleaned_data['identifier'].strip().lower()
+            password = form.cleaned_data['password']
 
-        try:
-            if '@' in identifier:
-                user = User.objects.get(email__iexact=identifier)
-            else:
-                user = User.objects.get(username__iexact=identifier)
-        except User.DoesNotExist:
-            form.add_error('identifier', 'Utilizador não existe.')
-            return render(request, 'accounts/login.html', {'form': form})
-        except Exception as e:
-            logger.exception("Erro ao procurar utilizador no login: %s", e)
-            messages.error(request, 'Erro interno no login.')
-            return render(request, 'accounts/login.html', {'form': form})
+            user = authenticate(request, username=identifier, password=password)
 
-        if not user.check_password(password):
-            form.add_error('password', 'Password incorreta.')
-            return render(request, 'accounts/login.html', {'form': form})
+            if user is None:
+                if '@' in identifier:
+                    user_exists = User.objects.filter(email__iexact=identifier).exists()
+                else:
+                    user_exists = User.objects.filter(username__iexact=identifier).exists()
 
-        try:
+                if not user_exists:
+                    form.add_error('identifier', 'Utilizador não existe.')
+                else:
+                    form.add_error('password', 'Palavra-passe incorreta.')
+
+                return render(request, 'accounts/login.html', {'form': form})
+
             profile, _ = UserProfile.objects.get_or_create(user=user)
-        except Exception as e:
-            logger.exception("Erro ao obter perfil no login: %s", e)
-            messages.error(request, 'Erro interno no login.')
-            return render(request, 'accounts/login.html', {'form': form})
 
-        if not profile.email_verified:
-            return redirect(f"/resend-verification/?email={user.email}")
+            if not profile.email_verified:
+                messages.warning(request, 'Precisas de verificar o teu email antes de entrar.')
+                return redirect(f"/resend-verification/?email={user.email}")
 
-        user.backend = 'accounts.backends.EmailOrUsernameBackend'
-        login(request, user)
-        return redirect('home')
+            login(request, user)
+            return redirect('home')
+        else:
+            messages.error(request, 'Preenche os campos corretamente.')
 
     return render(request, 'accounts/login.html', {'form': form})
 
@@ -237,11 +233,11 @@ def change_password_view(request):
         try:
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, 'Password alterada.')
+            messages.success(request, 'Palavra-passe alterada.')
             return redirect('profile')
         except Exception as e:
             logger.exception("Erro ao alterar password: %s", e)
-            messages.error(request, 'Erro ao alterar password.')
+            messages.error(request, 'Erro ao alterar palavra-passe.')
 
     return render(request, 'accounts/change_password.html', {'form': form})
 

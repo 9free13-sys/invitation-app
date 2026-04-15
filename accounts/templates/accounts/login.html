@@ -14,7 +14,7 @@
 
     .auth-card {
         width: 100%;
-        max-width: 460px;
+        max-width: 440px;
         background: #ffffff;
         border: 1px solid #e2e8f0;
         border-radius: 28px;
@@ -37,7 +37,7 @@
     .auth-title {
         margin: 0;
         text-align: center;
-        font-size: 38px;
+        font-size: 36px;
         line-height: 1.1;
         font-weight: 800;
         color: #0f172a;
@@ -47,8 +47,44 @@
         margin: 12px 0 26px;
         text-align: center;
         font-size: 15px;
-        line-height: 1.6;
+        line-height: 1.7;
         color: #64748b;
+    }
+
+    .messages-box {
+        margin-bottom: 18px;
+    }
+
+    .message-item {
+        padding: 12px 14px;
+        border-radius: 14px;
+        margin-bottom: 10px;
+        font-size: 14px;
+        line-height: 1.5;
+    }
+
+    .message-item.error {
+        background: #fef2f2;
+        border: 1px solid #fecaca;
+        color: #b91c1c;
+    }
+
+    .message-item.success {
+        background: #ecfdf5;
+        border: 1px solid #bbf7d0;
+        color: #166534;
+    }
+
+    .message-item.warning {
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        color: #c2410c;
+    }
+
+    .message-item.info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        color: #1d4ed8;
     }
 
     .form-group {
@@ -83,23 +119,11 @@
         box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
     }
 
-    .field-errors {
+    .field-error {
         margin-top: 8px;
-        padding-left: 18px;
-        color: #b91c1c;
         font-size: 13px;
-        line-height: 1.5;
-    }
-
-    .global-errors {
-        margin-bottom: 18px;
-        padding: 12px 14px;
-        border-radius: 14px;
-        background: #fef2f2;
-        border: 1px solid #fecaca;
         color: #b91c1c;
-        font-size: 14px;
-        line-height: 1.5;
+        font-weight: 600;
     }
 
     .btn-submit {
@@ -113,11 +137,26 @@
         font-weight: 700;
         cursor: pointer;
         transition: 0.2s ease;
-        margin-top: 8px;
     }
 
     .btn-submit:hover {
         background: #1d4ed8;
+    }
+
+    .auth-links {
+        margin-top: 16px;
+        text-align: center;
+    }
+
+    .auth-links a {
+        color: #2563eb;
+        font-size: 14px;
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .auth-links a:hover {
+        text-decoration: underline;
     }
 
     .auth-footer {
@@ -127,52 +166,14 @@
         color: #64748b;
     }
 
-    .auth-footer a,
-    .auth-links a {
+    .auth-footer a {
         color: #2563eb;
         font-weight: 700;
         text-decoration: none;
     }
 
-    .auth-footer a:hover,
-    .auth-links a:hover {
+    .auth-footer a:hover {
         text-decoration: underline;
-    }
-
-    .messages-box {
-        margin-bottom: 18px;
-    }
-
-    .message-item {
-        padding: 12px 14px;
-        border-radius: 14px;
-        margin-bottom: 10px;
-        font-size: 14px;
-        line-height: 1.5;
-    }
-
-    .message-item.error {
-        background: #fef2f2;
-        border: 1px solid #fecaca;
-        color: #b91c1c;
-    }
-
-    .message-item.success {
-        background: #ecfdf5;
-        border: 1px solid #bbf7d0;
-        color: #166534;
-    }
-
-    .message-item.info {
-        background: #eff6ff;
-        border: 1px solid #bfdbfe;
-        color: #1d4ed8;
-    }
-
-    .auth-links {
-        margin-top: 14px;
-        text-align: center;
-        font-size: 14px;
     }
 
     @media (max-width: 640px) {
@@ -182,7 +183,7 @@
         }
 
         .auth-title {
-            font-size: 32px;
+            font-size: 30px;
         }
     }
 </style>
@@ -205,53 +206,37 @@
             </div>
         {% endif %}
 
-        {% if form.non_field_errors %}
-            <div class="global-errors">
-                {% for error in form.non_field_errors %}
-                    <div>{{ error }}</div>
-                {% endfor %}
-            </div>
-        {% endif %}
-
         <form method="POST">
             {% csrf_token %}
 
             <div class="form-group">
-                <label class="form-label" for="{{ form.identifier.id_for_label }}">Email ou nome de utilizador</label>
+                <label class="form-label" for="id_identifier">Email ou nome de utilizador</label>
                 <input
                     type="text"
-                    name="{{ form.identifier.html_name }}"
-                    id="{{ form.identifier.id_for_label }}"
+                    name="identifier"
+                    id="id_identifier"
                     class="form-input"
                     placeholder="Digite o email ou nome de utilizador"
                     value="{{ form.identifier.value|default:'' }}"
                     required
                 >
                 {% if form.identifier.errors %}
-                    <ul class="field-errors">
-                        {% for error in form.identifier.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="field-error">{{ form.identifier.errors.0 }}</div>
                 {% endif %}
             </div>
 
             <div class="form-group">
-                <label class="form-label" for="{{ form.password.id_for_label }}">Palavra-passe</label>
+                <label class="form-label" for="id_password">Palavra-passe</label>
                 <input
                     type="password"
-                    name="{{ form.password.html_name }}"
-                    id="{{ form.password.id_for_label }}"
+                    name="password"
+                    id="id_password"
                     class="form-input"
                     placeholder="Digite a sua palavra-passe"
                     required
                 >
                 {% if form.password.errors %}
-                    <ul class="field-errors">
-                        {% for error in form.password.errors %}
-                            <li>{{ error }}</li>
-                        {% endfor %}
-                    </ul>
+                    <div class="field-error">{{ form.password.errors.0 }}</div>
                 {% endif %}
             </div>
 
