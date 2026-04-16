@@ -1,11 +1,12 @@
 from io import BytesIO
+import base64
 
 import qrcode
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404, redirect, render
 
+from events.models import Event
 from invitations.models import Invitation
 from .models import Guest
 
@@ -40,7 +41,7 @@ def guest_list(request):
     return render(request, 'guests/guest_list.html', {'guests': guests})
 
 
-def generate_qr_for_guest(guest):
+def get_qr_code_base64(guest):
     qr_data = (
         f"Kixanu|event:{guest.event.id}|guest:{guest.id}|"
         f"token:{guest.token}|status:{guest.status}"
@@ -58,9 +59,9 @@ def generate_qr_for_guest(guest):
 
     buffer = BytesIO()
     qr_image.save(buffer, format='PNG')
-    file_name = f'guest_{guest.id}_qr.png'
+    buffer.seek(0)
 
-    guest.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=True)
+    return base64.b64encode(buffer.getvalue()).decode('utf-8')
 
 
 def invite_page(request, slug):
@@ -80,13 +81,14 @@ def invite_page_by_token(request, token):
 def invite_status(request, slug):
     guest = get_object_or_404(Guest, slug=slug)
 
+    qr_code_base64 = None
     if guest.status == 'confirmado':
-        generate_qr_for_guest(guest)
-        guest.refresh_from_db()
+        qr_code_base64 = get_qr_code_base64(guest)
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
-        'action': guest.status
+        'action': guest.status,
+        'qr_code_base64': qr_code_base64,
     })
 
 
@@ -97,6 +99,8 @@ def invite_response(request, slug, action):
         event=guest.event,
         guest=guest
     )
+
+    qr_code_base64 = None
 
     if action == 'confirm':
         guest.status = 'confirmado'
@@ -109,9 +113,9 @@ def invite_response(request, slug, action):
 
         guest.save()
         invitation.save()
-
-        generate_qr_for_guest(guest)
         guest.refresh_from_db()
+
+        qr_code_base64 = get_qr_code_base64(guest)
 
     elif action == 'decline':
         guest.status = 'recusado'
@@ -121,7 +125,8 @@ def invite_response(request, slug, action):
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
-        'action': action
+        'action': action,
+        'qr_code_base64': qr_code_base64,
     })
 
 
@@ -136,6 +141,8 @@ def invite_response_by_token(request, token, action):
         guest=guest
     )
 
+    qr_code_base64 = None
+
     if action == 'confirm':
         guest.status = 'confirmado'
         invitation.status = 'accepted'
@@ -147,9 +154,9 @@ def invite_response_by_token(request, token, action):
 
         guest.save()
         invitation.save()
-
-        generate_qr_for_guest(guest)
         guest.refresh_from_db()
+
+        qr_code_base64 = get_qr_code_base64(guest)
 
     elif action == 'decline':
         guest.status = 'recusado'
@@ -159,7 +166,8 @@ def invite_response_by_token(request, token, action):
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
-        'action': action
+        'action': action,
+        'qr_code_base64': qr_code_base64,
     })
 
 
@@ -176,13 +184,14 @@ def confirm_guest(request, token):
 
     guest.save()
     invitation.save()
-
-    generate_qr_for_guest(guest)
     guest.refresh_from_db()
+
+    qr_code_base64 = get_qr_code_base64(guest)
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
-        'action': 'confirm'
+        'action': 'confirm',
+        'qr_code_base64': qr_code_base64,
     })
 
 
@@ -202,7 +211,8 @@ def decline_guest(request, token):
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
-        'action': 'decline'
+        'action': 'decline',
+        'qr_code_base64': None,
     })
 
 

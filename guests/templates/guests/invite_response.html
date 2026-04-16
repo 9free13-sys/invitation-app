@@ -342,9 +342,13 @@
                 Guarda este QR Code e apresenta-o no acesso ao evento.
             </p>
 
-            {% if guest.qr_code %}
+            {% if qr_code_base64 %}
                 <div class="qr-image-wrap">
-                    <img src="{{ guest.qr_code.url }}" alt="QR Code do convite" class="qr-image">
+                    <img
+                        src="data:image/png;base64,{{ qr_code_base64 }}"
+                        alt="QR Code do convite"
+                        class="qr-image"
+                    >
                 </div>
             {% else %}
                 <div class="qr-missing">
@@ -370,8 +374,12 @@
         {% endif %}
 
         <div class="actions">
-            {% if guest.qr_code %}
-                <a href="{{ guest.qr_code.url }}" download class="btn-action btn-success">
+            {% if qr_code_base64 %}
+                <a
+                    href="data:image/png;base64,{{ qr_code_base64 }}"
+                    download="convite_qr_code.png"
+                    class="btn-action btn-success"
+                >
                     Guardar convite
                 </a>
             {% endif %}
