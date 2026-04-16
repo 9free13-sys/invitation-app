@@ -1,8 +1,8 @@
 from io import BytesIO
 import base64
 import json
-import qrcode
 
+import qrcode
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
@@ -13,33 +13,6 @@ from events.models import Event
 from invitations.models import Invitation
 from .models import Guest
 
-
-def verify_qr(request):
-    token = request.GET.get('token')
-
-    try:
-        guest = Guest.objects.get(token=token)
-
-        if guest.checked_in:
-            return JsonResponse({
-                'valid': False,
-                'message': 'Já fez check-in'
-            })
-
-        guest.checked_in = True
-        guest.checked_in_at = timezone.now()
-        guest.save()
-
-        return JsonResponse({
-            'valid': True,
-            'message': f'{guest.full_name} confirmado com sucesso'
-        })
-
-    except Guest.DoesNotExist:
-        return JsonResponse({
-            'valid': False,
-            'message': 'QR inválido'
-        })
 
 def create_invite(request):
     if request.method == 'POST':
@@ -60,7 +33,7 @@ def create_invite(request):
             guest=guest
         )
 
-        return redirect(f"/invite/{guest.slug}/")
+        return redirect(f'/invite/{guest.slug}/')
 
     return render(request, 'create_invite.html')
 
@@ -73,8 +46,8 @@ def guest_list(request):
 
 def get_qr_code_base64(guest):
     qr_data = (
-        f"Kixanu|event:{guest.event.id}|guest:{guest.id}|"
-        f"token:{guest.token}|status:{guest.status}"
+        f'Kixanu|event:{guest.event.id}|guest:{guest.id}|'
+        f'token:{guest.token}|status:{guest.status}'
     )
 
     qr = qrcode.QRCode(

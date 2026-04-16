@@ -24,7 +24,6 @@ class Guest(models.Model):
 
     def _generate_unique_slug(self):
         base_slug = slugify(self.full_name) or 'convidado'
-        base_slug = base_slug[:200]
         unique_part = str(self.token)[:8]
         slug = f'{base_slug}-{unique_part}'
         counter = 1
@@ -40,8 +39,6 @@ class Guest(models.Model):
             self.token = uuid.uuid4()
 
         if not self.slug:
-            self.slug = self._generate_unique_slug()
-        elif Guest.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
             self.slug = self._generate_unique_slug()
 
         super().save(*args, **kwargs)

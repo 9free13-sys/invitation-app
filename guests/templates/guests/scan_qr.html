@@ -110,6 +110,7 @@
         padding: 20px;
         border: 1px solid #e2e8f0;
         background: #f8fafc;
+        display: none;
     }
 
     .result-ok {
@@ -173,7 +174,7 @@
         <div class="scan-badge">📷 Leitor de QR</div>
         <h1 class="scan-title">Validar entrada</h1>
         <p class="scan-text">
-            Usa a câmara do dispositivo para ler o QR Code do convidado e confirmar se ele pertence a este evento.
+            Usa a câmara do dispositivo para ler o QR Code do convidado e confirmar se ele pertence mesmo a este evento.
         </p>
     </section>
 
@@ -190,7 +191,7 @@
         </div>
     </section>
 
-    <section id="resultBox" class="result-card" style="display:none;">
+    <section id="resultBox" class="result-card">
         <h3 id="resultTitle" class="result-title"></h3>
         <p id="resultMessage" class="result-message"></p>
         <div id="resultMeta" class="result-meta"></div>
@@ -267,22 +268,6 @@
         if (!html5QrCode) {
             html5QrCode = new Html5Qrcode("reader");
         }
-
-        async function handleScan(result) {
-    try {
-        const response = await fetch(`/guests/verify-qr/?token=${result}`);
-        const data = await response.json();
-
-        if (data.valid) {
-            alert(data.message);
-        } else {
-            alert(data.message);
-        }
-
-    } catch (error) {
-        alert("Erro ao validar QR");
-    }
-}
 
         await html5QrCode.start(
             { facingMode: "environment" },
