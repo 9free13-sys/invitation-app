@@ -1,12 +1,14 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
+from io import BytesIO
+
+import qrcode
 from django.contrib import messages
-from django.core.files import File
-from .models import Guest
+from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
+from django.shortcuts import get_object_or_404, redirect, render
+
 from events.models import Event
 from invitations.models import Invitation
-import qrcode
-import tempfile
+from .models import Guest
 
 
 def create_invite(request):
@@ -40,14 +42,26 @@ def guest_list(request):
 
 
 def generate_qr_for_guest(guest):
-    qr_data = f"Kixanu|event:{guest.event.id}|guest:{guest.id}|token:{guest.token}|status:{guest.status}"
+    qr_data = (
+        f"Kixanu|event:{guest.event.id}|guest:{guest.id}|"
+        f"token:{guest.token}|status:{guest.status}"
+    )
 
-    qr = qrcode.make(qr_data)
+    qr = qrcode.QRCode(
+        version=1,
+        box_size=10,
+        border=4,
+    )
+    qr.add_data(qr_data)
+    qr.make(fit=True)
 
-    with tempfile.NamedTemporaryFile(suffix='.png') as temp_file:
-        qr.save(temp_file, format='PNG')
-        temp_file.seek(0)
-        guest.qr_code.save(f'guest_{guest.id}_qr.png', File(temp_file), save=True)
+    qr_image = qr.make_image(fill_color="black", back_color="white")
+
+    buffer = BytesIO()
+    qr_image.save(buffer, format='PNG')
+    file_name = f'guest_{guest.id}_qr.png'
+
+    guest.qr_code.save(file_name, ContentFile(buffer.getvalue()), save=True)
 
 
 def invite_page(request, slug):
@@ -66,6 +80,11 @@ def invite_page_by_token(request, token):
 
 def invite_status(request, slug):
     guest = get_object_or_404(Guest, slug=slug)
+
+    if guest.status == 'confirmado' and not guest.qr_code:
+        generate_qr_for_guest(guest)
+        guest.refresh_from_db()
+
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
         'action': guest.status
@@ -84,7 +103,7 @@ def invite_response(request, slug, action):
         guest.status = 'confirmado'
         invitation.status = 'accepted'
 
-        if guest.event.allowed_companions > 0:
+        if hasattr(guest.event, 'allowed_companions') and guest.event.allowed_companions > 0:
             companion_name = request.POST.get('companion_name')
             if companion_name:
                 guest.companion_name = companion_name
@@ -124,7 +143,7 @@ def invite_response_by_token(request, token, action):
         guest.status = 'confirmado'
         invitation.status = 'accepted'
 
-        if guest.event.allowed_companions > 0:
+        if hasattr(guest.event, 'allowed_companions') and guest.event.allowed_companions > 0:
             companion_name = request.POST.get('companion_name')
             if companion_name:
                 guest.companion_name = companion_name
@@ -165,6 +184,8 @@ def confirm_guest(request, token):
 
     if not guest.qr_code:
         generate_qr_for_guest(guest)
+
+    guest.refresh_from_db()
 
     return render(request, 'guests/invite_response.html', {
         'guest': guest,
