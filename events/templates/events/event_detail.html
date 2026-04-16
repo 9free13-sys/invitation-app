@@ -66,6 +66,7 @@
         font-weight: 800;
         transition: 0.2s ease;
         border: 1px solid transparent;
+        cursor: pointer;
     }
 
     .event-btn-primary {
@@ -85,6 +86,15 @@
 
     .event-btn-secondary:hover {
         background: rgba(255, 255, 255, 0.16);
+    }
+
+    .event-btn-danger {
+        background: #ef4444;
+        color: #ffffff;
+    }
+
+    .event-btn-danger:hover {
+        background: #dc2626;
     }
 
     .stats-grid {
@@ -163,6 +173,112 @@
         color: #0f172a;
     }
 
+    .form-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .form-group.full {
+        grid-column: 1 / -1;
+    }
+
+    .form-label {
+        font-size: 13px;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .form-input {
+        width: 100%;
+        min-height: 48px;
+        padding: 12px 14px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        background: #f8fafc;
+        color: #0f172a;
+        font-size: 15px;
+        box-sizing: border-box;
+        outline: none;
+        transition: 0.2s ease;
+    }
+
+    .form-input:focus {
+        border-color: #2563eb;
+        background: #ffffff;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.10);
+    }
+
+    .form-actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .primary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 12px 18px;
+        border: none;
+        border-radius: 14px;
+        background: #2563eb;
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .primary-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .secondary-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 48px;
+        padding: 12px 18px;
+        border: 1px solid #cbd5e1;
+        border-radius: 14px;
+        background: #ffffff;
+        color: #0f172a;
+        font-size: 14px;
+        font-weight: 800;
+        text-decoration: none;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .secondary-btn:hover {
+        background: #f8fafc;
+    }
+
+    .guest-toolbar {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 16px;
+        flex-wrap: wrap;
+    }
+
+    .guest-toolbar-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
     .guest-list {
         display: grid;
         gap: 12px;
@@ -190,6 +306,15 @@
         margin: 0;
         font-size: 13px;
         color: #64748b;
+        line-height: 1.6;
+    }
+
+    .guest-right {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
     }
 
     .status-badge {
@@ -223,6 +348,39 @@
         border-color: #fca5a5;
     }
 
+    .small-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 38px;
+        padding: 8px 14px;
+        border-radius: 12px;
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 800;
+        transition: 0.2s ease;
+        border: 1px solid transparent;
+        cursor: pointer;
+    }
+
+    .small-btn-blue {
+        background: #2563eb;
+        color: white;
+    }
+
+    .small-btn-blue:hover {
+        background: #1d4ed8;
+    }
+
+    .small-btn-red {
+        background: #ef4444;
+        color: white;
+    }
+
+    .small-btn-red:hover {
+        background: #dc2626;
+    }
+
     .empty-box {
         border: 1px dashed #cbd5e1;
         background: #f8fafc;
@@ -239,7 +397,8 @@
             grid-template-columns: repeat(2, minmax(0, 1fr));
         }
 
-        .detail-grid {
+        .detail-grid,
+        .form-grid {
             grid-template-columns: 1fr;
         }
     }
@@ -254,11 +413,15 @@
             font-size: 30px;
         }
 
-        .event-actions {
+        .event-actions,
+        .form-actions,
+        .guest-toolbar-actions {
             flex-direction: column;
         }
 
-        .event-btn {
+        .event-btn,
+        .primary-btn,
+        .secondary-btn {
             width: 100%;
         }
 
@@ -275,6 +438,11 @@
             flex-direction: column;
             align-items: flex-start;
         }
+
+        .guest-right {
+            width: 100%;
+            justify-content: flex-start;
+        }
     }
 </style>
 
@@ -283,7 +451,7 @@
         <div class="event-badge">🎉 Evento</div>
         <h1 class="event-title">{{ event.name }}</h1>
         <p class="event-text">
-            Gere convidados, acompanha confirmações e valida entradas através do leitor de QR Code.
+            Gere convidados, envia convites e valida entradas através do leitor de QR Code.
         </p>
 
         <div class="event-actions">
@@ -291,7 +459,10 @@
                 📷 Ler QR
             </a>
             <a href="{% url 'guest_list' %}" class="event-btn event-btn-secondary">
-                👥 Ver convidados
+                👥 Ver todos os convidados
+            </a>
+            <a href="{% url 'event_list' %}" class="event-btn event-btn-secondary">
+                ← Voltar aos eventos
             </a>
         </div>
     </section>
@@ -342,7 +513,50 @@
     </section>
 
     <section class="content-card">
-        <h2 class="section-title">Convidados</h2>
+        <h2 class="section-title">Adicionar convidado</h2>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    <label class="form-label" for="full_name">Nome completo</label>
+                    <input type="text" name="full_name" id="full_name" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="phone">Telefone</label>
+                    <input type="text" name="phone" id="phone" class="form-input">
+                </div>
+
+                <div class="form-group full">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" name="email" id="email" class="form-input">
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="primary-btn">Adicionar convidado</button>
+            </div>
+        </form>
+    </section>
+
+    <section class="content-card">
+        <div class="guest-toolbar">
+            <h2 class="section-title" style="margin:0;">Convidados</h2>
+
+            <div class="guest-toolbar-actions">
+                <a href="{% url 'send_invites_email' event.id %}" class="secondary-btn">
+                    📧 Enviar convites
+                </a>
+                <a href="{% url 'export_guests_excel' event.id %}" class="secondary-btn">
+                    📊 Exportar Excel
+                </a>
+                <a href="{% url 'export_guests_pdf' event.id %}" class="secondary-btn">
+                    📄 Exportar PDF
+                </a>
+            </div>
+        </div>
 
         {% if guests %}
             <div class="guest-list">
@@ -351,11 +565,13 @@
                         <div>
                             <p class="guest-name">{{ guest.full_name }}</p>
                             <p class="guest-meta">
-                                {{ guest.email|default:"Sem email" }}{% if guest.phone %} • {{ guest.phone }}{% endif %}
+                                {{ guest.email|default:"Sem email" }}
+                                {% if guest.phone %} • {{ guest.phone }}{% endif %}
+                                {% if guest.companion_name %} • Acompanhante: {{ guest.companion_name }}{% endif %}
                             </p>
                         </div>
 
-                        <div>
+                        <div class="guest-right">
                             {% if guest.status == 'confirmado' %}
                                 <span class="status-badge status-confirmado">Confirmado</span>
                             {% elif guest.status == 'recusado' %}
@@ -363,6 +579,10 @@
                             {% else %}
                                 <span class="status-badge status-pendente">Pendente</span>
                             {% endif %}
+
+                            <a href="{% url 'delete_guest' guest.id %}" class="small-btn small-btn-red">
+                                Eliminar
+                            </a>
                         </div>
                     </div>
                 {% endfor %}
