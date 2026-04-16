@@ -165,6 +165,17 @@
         display: block;
     }
 
+    .qr-missing {
+        margin-top: 14px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        background: #fff7ed;
+        border: 1px solid #fdba74;
+        color: #9a3412;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
     .account-card {
         margin-top: 22px;
         background: #eff6ff;
@@ -325,18 +336,22 @@
             {% endif %}
         </div>
 
-        {% if guest.qr_code %}
-            <div class="qr-card">
-                <h2 class="qr-title">QR Code de acesso</h2>
-                <p class="qr-text">
-                    Guarda este QR Code e apresenta-o no acesso ao evento.
-                </p>
+        <div class="qr-card">
+            <h2 class="qr-title">QR Code de acesso</h2>
+            <p class="qr-text">
+                Guarda este QR Code e apresenta-o no acesso ao evento.
+            </p>
 
+            {% if guest.qr_code %}
                 <div class="qr-image-wrap">
                     <img src="{{ guest.qr_code.url }}" alt="QR Code do convite" class="qr-image">
                 </div>
-            </div>
-        {% endif %}
+            {% else %}
+                <div class="qr-missing">
+                    QR Code ainda não disponível.
+                </div>
+            {% endif %}
+        </div>
 
         {% if request.user.is_authenticated %}
             <div class="account-card">

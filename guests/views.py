@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.shortcuts import get_object_or_404, redirect, render
 
-from events.models import Event
 from invitations.models import Invitation
 from .models import Guest
 
@@ -81,7 +80,7 @@ def invite_page_by_token(request, token):
 def invite_status(request, slug):
     guest = get_object_or_404(Guest, slug=slug)
 
-    if guest.status == 'confirmado' and not guest.qr_code:
+    if guest.status == 'confirmado':
         generate_qr_for_guest(guest)
         guest.refresh_from_db()
 
@@ -111,9 +110,7 @@ def invite_response(request, slug, action):
         guest.save()
         invitation.save()
 
-        if not guest.qr_code:
-            generate_qr_for_guest(guest)
-
+        generate_qr_for_guest(guest)
         guest.refresh_from_db()
 
     elif action == 'decline':
@@ -151,9 +148,7 @@ def invite_response_by_token(request, token, action):
         guest.save()
         invitation.save()
 
-        if not guest.qr_code:
-            generate_qr_for_guest(guest)
-
+        generate_qr_for_guest(guest)
         guest.refresh_from_db()
 
     elif action == 'decline':
@@ -182,9 +177,7 @@ def confirm_guest(request, token):
     guest.save()
     invitation.save()
 
-    if not guest.qr_code:
-        generate_qr_for_guest(guest)
-
+    generate_qr_for_guest(guest)
     guest.refresh_from_db()
 
     return render(request, 'guests/invite_response.html', {
