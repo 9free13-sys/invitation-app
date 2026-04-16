@@ -1,0 +1,329 @@
+{% extends "base.html" %}
+
+{% block title %}Ler QR Code | Kixanu{% endblock %}
+
+{% block content %}
+<style>
+    .scan-page {
+        max-width: 900px;
+        margin: 0 auto;
+        display: grid;
+        gap: 22px;
+    }
+
+    .scan-hero {
+        background: linear-gradient(135deg, #020617, #0f172a);
+        color: white;
+        border-radius: 28px;
+        padding: 28px;
+        box-shadow: 0 20px 50px rgba(15, 23, 42, 0.18);
+    }
+
+    .scan-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        min-height: 34px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.08);
+        color: #e2e8f0;
+        font-size: 13px;
+        font-weight: 700;
+        margin-bottom: 14px;
+    }
+
+    .scan-title {
+        margin: 0 0 10px 0;
+        font-size: 38px;
+        line-height: 1.05;
+        font-weight: 900;
+        letter-spacing: -0.6px;
+    }
+
+    .scan-text {
+        margin: 0;
+        font-size: 15px;
+        line-height: 1.7;
+        color: #cbd5e1;
+    }
+
+    .scan-card {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 24px;
+        padding: 22px;
+        box-shadow: 0 12px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .scan-card-title {
+        margin: 0 0 10px 0;
+        font-size: 24px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .scan-card-text {
+        margin: 0 0 20px 0;
+        font-size: 14px;
+        line-height: 1.7;
+        color: #64748b;
+    }
+
+    #reader {
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 20px;
+        border: 1px solid #e2e8f0;
+    }
+
+    .scan-actions {
+        display: flex;
+        justify-content: center;
+        margin-top: 18px;
+    }
+
+    .scan-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 12px 18px;
+        border-radius: 14px;
+        border: none;
+        background: #2563eb;
+        color: white;
+        font-size: 14px;
+        font-weight: 800;
+        cursor: pointer;
+        transition: 0.2s ease;
+    }
+
+    .scan-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .result-card {
+        border-radius: 22px;
+        padding: 20px;
+        border: 1px solid #e2e8f0;
+        background: #f8fafc;
+    }
+
+    .result-ok {
+        background: #ecfdf5;
+        border-color: #86efac;
+    }
+
+    .result-error {
+        background: #fef2f2;
+        border-color: #fca5a5;
+    }
+
+    .result-title {
+        margin: 0 0 10px 0;
+        font-size: 22px;
+        font-weight: 900;
+        color: #0f172a;
+    }
+
+    .result-message {
+        margin: 0 0 12px 0;
+        font-size: 15px;
+        line-height: 1.7;
+        color: #334155;
+    }
+
+    .result-meta {
+        display: grid;
+        gap: 8px;
+    }
+
+    .result-line {
+        margin: 0;
+        font-size: 14px;
+        color: #334155;
+    }
+
+    .result-line strong {
+        color: #0f172a;
+    }
+
+    @media (max-width: 640px) {
+        .scan-hero {
+            padding: 22px 18px;
+            border-radius: 22px;
+        }
+
+        .scan-title {
+            font-size: 30px;
+        }
+
+        .scan-card {
+            padding: 18px;
+            border-radius: 20px;
+        }
+    }
+</style>
+
+<div class="scan-page">
+    <section class="scan-hero">
+        <div class="scan-badge">📷 Leitor de QR</div>
+        <h1 class="scan-title">Validar entrada</h1>
+        <p class="scan-text">
+            Usa a câmara do dispositivo para ler o QR Code do convidado e confirmar se ele pertence a este evento.
+        </p>
+    </section>
+
+    <section class="scan-card">
+        <h2 class="scan-card-title">{{ event.name }}</h2>
+        <p class="scan-card-text">
+            Aponta a câmara para o QR Code do convidado. Se o QR for válido, a entrada será registada automaticamente.
+        </p>
+
+        <div id="reader"></div>
+
+        <div class="scan-actions">
+            <button type="button" id="restartScanner" class="scan-btn">Ler outro QR</button>
+        </div>
+    </section>
+
+    <section id="resultBox" class="result-card" style="display:none;">
+        <h3 id="resultTitle" class="result-title"></h3>
+        <p id="resultMessage" class="result-message"></p>
+        <div id="resultMeta" class="result-meta"></div>
+    </section>
+</div>
+
+<script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+<script>
+    const validateUrl = "{% url 'validate_qr_code' event.id %}";
+    const csrfToken = "{{ csrf_token }}";
+    const resultBox = document.getElementById("resultBox");
+    const resultTitle = document.getElementById("resultTitle");
+    const resultMessage = document.getElementById("resultMessage");
+    const resultMeta = document.getElementById("resultMeta");
+    const restartScannerBtn = document.getElementById("restartScanner");
+
+    let html5QrCode = null;
+    let scannerRunning = false;
+    let scanLocked = false;
+
+    function setResult(ok, data) {
+        resultBox.style.display = "block";
+        resultBox.className = ok ? "result-card result-ok" : "result-card result-error";
+        resultTitle.textContent = ok ? "QR válido" : "QR inválido";
+        resultMessage.textContent = data.message || "";
+
+        let metaHtml = "";
+
+        if (data.guest_name) {
+            metaHtml += `<p class="result-line"><strong>Convidado:</strong> ${data.guest_name}</p>`;
+        }
+
+        if (data.status) {
+            metaHtml += `<p class="result-line"><strong>Estado:</strong> ${data.status}</p>`;
+        }
+
+        if (data.checked_in_at) {
+            metaHtml += `<p class="result-line"><strong>Entrada registada em:</strong> ${data.checked_in_at}</p>`;
+        }
+
+        if (data.companion_name) {
+            metaHtml += `<p class="result-line"><strong>Acompanhante:</strong> ${data.companion_name}</p>`;
+        }
+
+        resultMeta.innerHTML = metaHtml;
+    }
+
+    async function validateQrText(decodedText) {
+        const response = await fetch(validateUrl, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrfToken
+            },
+            body: JSON.stringify({
+                qr_text: decodedText
+            })
+        });
+
+        const data = await response.json();
+        setResult(response.ok && data.ok, data);
+    }
+
+    async function stopScanner() {
+        if (html5QrCode && scannerRunning) {
+            await html5QrCode.stop();
+            scannerRunning = false;
+        }
+    }
+
+    async function startScanner() {
+        scanLocked = false;
+
+        if (!html5QrCode) {
+            html5QrCode = new Html5Qrcode("reader");
+        }
+
+        async function handleScan(result) {
+    try {
+        const response = await fetch(`/guests/verify-qr/?token=${result}`);
+        const data = await response.json();
+
+        if (data.valid) {
+            alert(data.message);
+        } else {
+            alert(data.message);
+        }
+
+    } catch (error) {
+        alert("Erro ao validar QR");
+    }
+}
+
+        await html5QrCode.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: { width: 250, height: 250 }
+            },
+            async (decodedText) => {
+                if (scanLocked) {
+                    return;
+                }
+
+                scanLocked = true;
+                await stopScanner();
+
+                try {
+                    await validateQrText(decodedText);
+                } catch (error) {
+                    setResult(false, { message: "Erro ao validar o QR Code." });
+                }
+            },
+            () => {}
+        );
+
+        scannerRunning = true;
+    }
+
+    restartScannerBtn.addEventListener("click", async function () {
+        try {
+            await startScanner();
+        } catch (error) {
+            setResult(false, { message: "Não foi possível iniciar a câmara." });
+        }
+    });
+
+    window.addEventListener("load", async function () {
+        try {
+            await startScanner();
+        } catch (error) {
+            setResult(false, { message: "Não foi possível iniciar a câmara." });
+        }
+    });
+</script>
+{% endblock %}

@@ -15,5 +15,8 @@ urlpatterns = [
 
     path('invite-status/<slug:slug>/', views.invite_status, name='invite_status'),
 
+    path('event/<int:event_id>/scan-qr/', views.scan_qr_page, name='scan_qr_page'),
+    path('event/<int:event_id>/scan-qr/validate/', views.validate_qr_code, name='validate_qr_code'),
+
     path('delete/<int:guest_id>/', views.delete_guest, name='delete_guest'),
 ]

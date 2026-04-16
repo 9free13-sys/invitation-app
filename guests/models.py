@@ -19,15 +19,18 @@ class Guest(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pendente')
     qr_code = models.ImageField(upload_to='qr_codes/', blank=True, null=True)
     companion_name = models.CharField(max_length=255, blank=True, null=True)
+    checked_in = models.BooleanField(default=False)
+    checked_in_at = models.DateTimeField(blank=True, null=True)
 
     def _generate_unique_slug(self):
-        base_slug = slugify(self.full_name) or "convidado"
-        unique_part = str(self.token).replace("-", "")
-        slug = f"{base_slug}-{unique_part}"
-
+        base_slug = slugify(self.full_name) or 'convidado'
+        base_slug = base_slug[:200]
+        unique_part = str(self.token)[:8]
+        slug = f'{base_slug}-{unique_part}'
         counter = 1
+
         while Guest.objects.filter(slug=slug).exclude(pk=self.pk).exists():
-            slug = f"{base_slug}-{unique_part}-{counter}"
+            slug = f'{base_slug}-{unique_part}-{counter}'
             counter += 1
 
         return slug
@@ -37,6 +40,8 @@ class Guest(models.Model):
             self.token = uuid.uuid4()
 
         if not self.slug:
+            self.slug = self._generate_unique_slug()
+        elif Guest.objects.filter(slug=self.slug).exclude(pk=self.pk).exists():
             self.slug = self._generate_unique_slug()
 
         super().save(*args, **kwargs)
